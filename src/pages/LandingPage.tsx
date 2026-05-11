@@ -10,6 +10,14 @@ export function LandingPage() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
+  const startTrading = () => {
+    navigate('/trade');
+  };
+
+  const openAuth = () => {
+    navigate('/login?next=/trade');
+  };
+
   return (
     <main className="min-h-screen px-5 py-5">
       <section className="mx-auto min-h-[calc(100vh-2.5rem)] max-w-7xl rounded-2xl border border-[#dfe3ee] bg-white px-6 py-5 shadow-card sm:px-8">
@@ -18,14 +26,15 @@ export function LandingPage() {
           <nav className="hidden items-center gap-10 text-sm font-extrabold text-[#111827] md:flex">
             <a href="#service">서비스 소개</a>
             <button onClick={() => navigate('/select')}>시나리오</button>
+            <button onClick={startTrading}>10억 모의투자</button>
             <button onClick={() => navigate('/tutorial')}>학습 가이드</button>
             <a href="#about">이용 방법</a>
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => setIsOpen(true)}>
+            <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={openAuth}>
               로그인
             </Button>
-            <Button className="px-4 py-2 text-xs" onClick={() => setIsOpen(true)}>
+            <Button className="px-4 py-2 text-xs" onClick={openAuth}>
               회원가입
             </Button>
           </div>
@@ -101,7 +110,7 @@ export function LandingPage() {
             </button>
             <button
               className="rounded-2xl bg-[#f7f6ff] p-6 text-left transition hover:bg-[#f0edff]"
-              onClick={() => navigate('/select')}
+              onClick={() => navigate('/mode-select')}
             >
               <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-white text-[#5b45f2] shadow-card">
                 <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden="true">
@@ -110,7 +119,7 @@ export function LandingPage() {
                 </svg>
               </div>
               <strong className="text-lg text-[#111827]">아니오, 바로 실전!</strong>
-              <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">실전 시뮬레이션을 바로 시작할래요</p>
+              <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">시나리오 모드와 모의투자 모드 중 선택할래요</p>
             </button>
           </div>
         </div>

@@ -35,3 +35,15 @@ export const scenarios: Scenario[] = [
     revealText: '정체는 2000년 닷컴버블 붕괴 NASDAQ이었습니다. 모두가 낙관할 때도 버블의 끝은 갑자기 찾아올 수 있습니다.',
   },
 ];
+
+export const practiceScenario: Scenario = {
+  id: 'practice',
+  title: '10억 모의투자',
+  subtitle: '랭킹 반영 없는 자유 연습',
+  dataFile: '/data/kospi_2020.json',
+  market: 'KOSPI 자유 연습장',
+  period: '2020.01 ~ 2020.12',
+  lesson: '초기금 10억 원으로 매수와 매도를 자유롭게 연습',
+  initialCash: 1000000000,
+  revealText: '10억 모의투자 연습이 완료되었습니다. 시나리오 결과와 별개로 큰 자금을 운용할 때 현금 비중과 진입 타이밍이 어떻게 달라지는지 확인해보세요.',
+};

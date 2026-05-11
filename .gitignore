@@ -3,3 +3,8 @@ dist
 .env
 .env.local
 npm-debug.log*
+server/.gradle
+server/build
+server/data
+server/out
+server/*.log

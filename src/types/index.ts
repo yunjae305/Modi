@@ -8,7 +8,7 @@ export interface OHLCVBar {
 }
 
 export interface Scenario {
-  id: 'corona' | 'subprime' | 'dotcom';
+  id: 'corona' | 'subprime' | 'dotcom' | 'practice';
   title: string;
   subtitle: string;
   dataFile: string;
