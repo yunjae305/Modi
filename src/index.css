@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #f7f8fc;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: #111827;
+  background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 32rem),
+    radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.1), transparent 34rem),
+    linear-gradient(180deg, #ffffff 0%, #f7f8fc 42%, #f4f6fb 100%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+::selection {
+  color: #ffffff;
+  background: #5b45f2;
+}
