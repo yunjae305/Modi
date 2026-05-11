@@ -1,4 +1,5 @@
 # Modi
+<img width="1254" height="1254" alt="Modi_profile" src="https://github.com/user-attachments/assets/47a4a62a-2e2b-49ec-a3ef-afbff6b88b3f" />
 
 Modi는 과거 주식 시장 데이터를 블라인드로 체험하는 모의 투자 학습 시뮬레이션입니다. 코로나 폭락장, 서브프라임 금융위기, 닷컴버블 붕괴 시나리오를 선택해 다음 날로 이동하며 매수와 매도를 연습하고 결과 리포트에서 내 수익률, 존버 수익률, 최대 낙폭, 투자 성향을 확인합니다.
 
