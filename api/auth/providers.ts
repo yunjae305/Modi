@@ -1,5 +1,5 @@
-import { hasProvider } from '../_lib/auth';
-import { allowMethods, handleError, ok } from '../_lib/http';
+import { hasProvider } from '../_lib/auth.ts';
+import { allowMethods, handleError, ok } from '../_lib/http.ts';
 
 export default async function handler(req: any, res: any) {
   if (!allowMethods(req, res, ['GET'])) {
@@ -8,9 +8,8 @@ export default async function handler(req: any, res: any) {
   try {
     return ok(res, {
       providers: {
-        google: hasProvider('GOOGLE'),
+        email: hasProvider('EMAIL'),
         kakao: hasProvider('KAKAO'),
-        guest: true,
       },
     });
   } catch (error) {

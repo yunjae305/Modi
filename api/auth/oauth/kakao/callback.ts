@@ -1,5 +1,5 @@
-import { callback } from '../../../_lib/oauth';
-import { allowMethods, handleError } from '../../../_lib/http';
+import { callback } from '../../../_lib/oauth.ts';
+import { allowMethods, handleError } from '../../../_lib/http.ts';
 
 export default async function handler(req: any, res: any) {
   if (!allowMethods(req, res, ['GET'])) {

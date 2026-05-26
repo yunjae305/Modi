@@ -1,33 +1,41 @@
-import { useEffect, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
-import { API_ORIGIN, apiGet } from '../services/api';
-import { useAuthStore } from '../store/authStore';
-import type { ProviderStatus } from '../types/auth';
+import { normalizeNextPath, useAuthStore } from '../store/authStore';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const loginGuest = useAuthStore((state) => state.loginGuest);
+  const loginEmail = useAuthStore((state) => state.loginEmail);
+  const registerEmail = useAuthStore((state) => state.registerEmail);
+  const loginKakao = useAuthStore((state) => state.loginKakao);
   const loading = useAuthStore((state) => state.loading);
-  const [providers, setProviders] = useState<ProviderStatus['providers'] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const next = new URLSearchParams(location.search).get('next') ?? '/trade';
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [error, setError] = useState('');
+  const next = normalizeNextPath(new URLSearchParams(location.search).get('next'));
 
-  useEffect(() => {
-    apiGet<ProviderStatus>('/auth/providers')
-      .then((data) => setProviders(data.providers))
-      .catch((error: Error) => setError(error.message));
-  }, []);
-
-  const startOAuth = (provider: 'google' | 'kakao') => {
-    window.location.href = `${API_ORIGIN}/api/auth/oauth/${provider}/authorize`;
+  const submitCredentials = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+    try {
+      if (authMode === 'login') {
+        await loginEmail(email, password);
+      } else {
+        await registerEmail(email, password, nickname);
+      }
+      navigate(next, { replace: true });
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '요청을 처리하지 못했습니다.');
+    }
   };
 
-  const startGuest = async () => {
-    await loginGuest();
-    navigate(next);
+  const startKakao = () => {
+    setError('');
+    loginKakao(next);
   };
 
   return (
@@ -40,37 +48,68 @@ export function LoginPage() {
           </button>
         </header>
         <div className="mx-auto w-full max-w-xl rounded-2xl border border-[#edf0f6] bg-[#fbfbfe] p-6">
-          <p className="text-sm font-extrabold text-[#5b45f2]">소셜 로그인</p>
-          <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">10억 모의투자를 시작하세요</h1>
+          <p className="text-sm font-extrabold text-[#5b45f2]">로그인</p>
+          <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">시나리오 투자 계정으로 시작하세요</h1>
           <p className="mt-3 text-sm font-bold leading-6 text-[#667085]">
-            로그인하면 포트폴리오, 매수·매도 내역, 랭킹이 서버에 저장됩니다.
+            아이디와 비밀번호로 로그인하거나 Kakao로 빠르게 시작할 수 있습니다.
           </p>
-          <div className="mt-6 grid gap-3">
-            <Button
-              variant="ghost"
-              className="w-full"
-              disabled={providers?.google === false}
-              onClick={() => startOAuth('google')}
+          <div className="mt-6 grid grid-cols-2 rounded-xl bg-white p-1 text-sm font-extrabold">
+            <button
+              type="button"
+              className={`rounded-lg px-4 py-3 ${authMode === 'login' ? 'bg-[#5b45f2] text-white shadow-glow' : 'text-[#667085]'}`}
+              onClick={() => setAuthMode('login')}
             >
-              Google로 시작하기
-            </Button>
-            <Button
-              variant="soft"
-              className="w-full bg-[#fee500] text-[#111827] hover:bg-[#f4da00]"
-              disabled={providers?.kakao === false}
-              onClick={() => startOAuth('kakao')}
+              로그인
+            </button>
+            <button
+              type="button"
+              className={`rounded-lg px-4 py-3 ${authMode === 'register' ? 'bg-[#5b45f2] text-white shadow-glow' : 'text-[#667085]'}`}
+              onClick={() => setAuthMode('register')}
             >
-              Kakao로 시작하기
-            </Button>
-            <Button className="w-full" disabled={loading} onClick={startGuest}>
-              게스트로 10억 모의투자 체험
-            </Button>
+              회원가입
+            </button>
           </div>
-          {providers && (!providers.google || !providers.kakao) && (
-            <p className="mt-4 rounded-xl bg-white p-4 text-xs font-bold leading-5 text-[#667085]">
-              Google/Kakao 키가 아직 없으면 버튼이 비활성화됩니다. 서버 환경변수에 Client ID와 Secret을 넣으면 실제 OAuth 버튼이 열립니다.
-            </p>
-          )}
+          <form className="mt-5 grid gap-3" onSubmit={submitCredentials}>
+            {authMode === 'register' && (
+              <input
+                className="w-full rounded-xl border border-[#dfe3ee] bg-white px-4 py-3 text-sm font-bold text-[#111827] outline-none focus:border-[#5b45f2]"
+                value={nickname}
+                onChange={(event) => setNickname(event.target.value)}
+                placeholder="닉네임"
+              />
+            )}
+            <input
+              className="w-full rounded-xl border border-[#dfe3ee] bg-white px-4 py-3 text-sm font-bold text-[#111827] outline-none focus:border-[#5b45f2]"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="아이디(이메일)"
+            />
+            <input
+              className="w-full rounded-xl border border-[#dfe3ee] bg-white px-4 py-3 text-sm font-bold text-[#111827] outline-none focus:border-[#5b45f2]"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="비밀번호"
+            />
+            <Button className="w-full" disabled={loading}>
+              {authMode === 'login' ? '아이디로 로그인' : '회원가입하고 시작'}
+            </Button>
+          </form>
+          <div className="my-6 flex items-center gap-4">
+            <span className="h-px flex-1 bg-[#dfe3ee]" />
+            <span className="text-xs font-extrabold text-[#8b95a7]">또는</span>
+            <span className="h-px flex-1 bg-[#dfe3ee]" />
+          </div>
+          <Button
+            type="button"
+            variant="soft"
+            className="w-full bg-[#fee500] text-[#111827] hover:bg-[#f4da00]"
+            disabled={loading}
+            onClick={startKakao}
+          >
+            Kakao로 시작하기
+          </Button>
           {error && <p className="mt-4 text-sm font-bold text-[#ff3f55]">{error}</p>}
         </div>
       </section>

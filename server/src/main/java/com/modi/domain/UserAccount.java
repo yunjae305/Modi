@@ -38,6 +38,9 @@ public class UserAccount {
     @Column(name = "profile_image")
     private String profileImage;
 
+    @Column(name = "password_hash")
+    private String passwordHash;
+
     @Column(name = "seed_money", nullable = false)
     private Long seedMoney;
 
@@ -51,11 +54,16 @@ public class UserAccount {
     }
 
     public UserAccount(AuthProvider provider, String providerId, String email, String nickname, String profileImage, Long seedMoney) {
+        this(provider, providerId, email, nickname, profileImage, null, seedMoney);
+    }
+
+    public UserAccount(AuthProvider provider, String providerId, String email, String nickname, String profileImage, String passwordHash, Long seedMoney) {
         this.provider = provider;
         this.providerId = providerId;
         this.email = email;
         this.nickname = nickname;
         this.profileImage = profileImage;
+        this.passwordHash = passwordHash;
         this.seedMoney = seedMoney;
         this.cash = seedMoney;
         this.createdAt = LocalDateTime.now();
@@ -93,6 +101,10 @@ public class UserAccount {
 
     public String getProfileImage() {
         return profileImage;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public Long getSeedMoney() {

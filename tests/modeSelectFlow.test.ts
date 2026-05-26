@@ -2,18 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 
-test('아니오 선택 후 시나리오 모드와 모의투자 모드를 다시 선택한다', () => {
+test('모드 선택 화면 없이 시나리오 선택으로 바로 이어진다', () => {
   const app = readFileSync('src/App.tsx', 'utf8');
   const landing = readFileSync('src/pages/LandingPage.tsx', 'utf8');
 
-  assert.equal(existsSync('src/pages/ModeSelectPage.tsx'), true);
-  assert.match(app, /path="\/mode-select"/);
-  assert.match(landing, /navigate\('\/mode-select'\)/);
-
-  const modeSelect = readFileSync('src/pages/ModeSelectPage.tsx', 'utf8');
-
-  assert.match(modeSelect, /시나리오 모드/);
-  assert.match(modeSelect, /모의투자 모드/);
-  assert.match(modeSelect, /navigate\('\/select'\)/);
-  assert.match(modeSelect, /navigate\('\/trade'\)/);
+  assert.equal(existsSync('src/pages/ModeSelectPage.tsx'), false);
+  assert.equal(app.includes('/mode-select'), false);
+  assert.equal(app.includes('/trade'), false);
+  assert.equal(landing.includes('/mode-select'), false);
+  assert.equal(landing.includes('/trade'), false);
+  assert.equal(landing.includes('모의투자 모드'), false);
 });

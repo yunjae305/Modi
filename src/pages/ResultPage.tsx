@@ -7,21 +7,23 @@ import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { Mascot } from '../components/ui/Mascot';
 import { useTradeStore } from '../store/tradeStore';
-import { calcHoldReturn, calcPortfolioTimeSeries } from '../utils/calcMetrics';
+import { calcHoldReturn, calcHoldReturnFromStocks, calcPortfolioTimeSeries, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
 import { formatRate } from '../utils/format';
 
 export function ResultPage() {
   const navigate = useNavigate();
   const scenario = useTradeStore((state) => state.scenario);
+  const scenarioStocks = useTradeStore((state) => state.scenarioStocks);
   const chartData = useTradeStore((state) => state.chartData);
   const tradeHistory = useTradeStore((state) => state.tradeHistory);
   const maxDrawdown = useTradeStore((state) => state.maxDrawdown);
   const profitRate = useTradeStore((state) => state.profitRate());
+  const finalAsset = useTradeStore((state) => state.portfolioValue());
   const reset = useTradeStore((state) => state.reset);
-  const holdReturn = scenario ? calcHoldReturn(chartData, scenario.initialCash) : 0;
+  const holdReturn = scenario ? (scenarioStocks.length ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : calcHoldReturn(chartData, scenario.initialCash)) : 0;
   const series = useMemo(
-    () => (scenario ? calcPortfolioTimeSeries(chartData, tradeHistory, scenario.initialCash) : []),
-    [chartData, scenario, tradeHistory],
+    () => (scenario ? (scenarioStocks.length ? calcPortfolioTimeSeriesFromStocks(scenarioStocks, tradeHistory, scenario.initialCash) : calcPortfolioTimeSeries(chartData, tradeHistory, scenario.initialCash)) : []),
+    [chartData, scenario, scenarioStocks, tradeHistory],
   );
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export function ResultPage() {
 
   return (
     <main className="min-h-screen px-5 py-5">
-      <section className="mx-auto grid max-w-6xl gap-6 rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
+      <section className="mx-auto grid max-w-6xl gap-6 rounded-2xl border border-[#dfe3ee] bg-white p-3 shadow-card sm:p-5">
         <header className="flex items-center justify-between">
           <BrandLogo />
           <Button variant="ghost" className="px-4 py-2 text-xs" onClick={() => navigate('/')}>
@@ -58,7 +60,7 @@ export function ResultPage() {
           <MetricCard title="총 매매 횟수" value={`${tradeHistory.length}회`} tone="neutral" />
         </div>
         <div className="rounded-2xl border border-[#dfe3ee] bg-white p-2 shadow-card">
-          <div className="grid grid-cols-3 rounded-xl bg-[#f7f8fc] p-1 text-center text-sm font-extrabold">
+          <div className="grid gap-1 rounded-xl bg-[#f7f8fc] p-1 text-center text-sm font-extrabold sm:grid-cols-3">
             <span className="rounded-lg bg-white px-4 py-3 text-[#5b45f2] shadow-sm">성과 요약</span>
             <span className="px-4 py-3 text-[#667085]">자산 흐름</span>
             <span className="px-4 py-3 text-[#667085]">거래 내역</span>

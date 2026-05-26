@@ -7,11 +7,14 @@ create table if not exists public.users (
   email text,
   nickname text not null,
   profile_image text,
+  password_hash text,
   seed_money bigint not null default 1000000000,
   cash bigint not null default 1000000000,
   created_at timestamptz not null default now(),
   unique (provider, provider_id)
 );
+
+alter table public.users add column if not exists password_hash text;
 
 create table if not exists public.stocks (
   id text primary key,
@@ -54,6 +57,18 @@ create table if not exists public.executions (
   executed_at timestamptz not null default now()
 );
 
+create table if not exists public.result_records (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  scenario_id text not null,
+  final_asset bigint not null check (final_asset >= 0),
+  profit_rate double precision not null,
+  max_drawdown double precision not null,
+  trade_count integer not null check (trade_count >= 0),
+  investor_type text not null check (investor_type in ('lion', 'turtle', 'rabbit', 'monkey')),
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.kis_tokens (
   id text primary key,
   access_token text not null,
@@ -94,6 +109,7 @@ alter table public.stocks enable row level security;
 alter table public.latest_prices enable row level security;
 alter table public.positions enable row level security;
 alter table public.executions enable row level security;
+alter table public.result_records enable row level security;
 alter table public.kis_tokens enable row level security;
 
 drop policy if exists stocks_public_select on public.stocks;

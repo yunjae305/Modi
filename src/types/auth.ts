@@ -1,11 +1,11 @@
-export type AuthProvider = 'GOOGLE' | 'KAKAO' | 'GUEST';
+export type AuthProvider = 'EMAIL' | 'KAKAO';
 
 export interface AuthUser {
   id: string;
   provider: AuthProvider;
   nickname: string;
-  email?: string | null;
-  profileImage?: string | null;
+  email: string | null;
+  profileImage: string | null;
   seedMoney: number;
   cash: number;
   createdAt: string;
@@ -13,8 +13,7 @@ export interface AuthUser {
 
 export interface ProviderStatus {
   providers: {
-    google: boolean;
+    email: boolean;
     kakao: boolean;
-    guest: boolean;
   };
 }

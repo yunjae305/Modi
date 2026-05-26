@@ -6,6 +6,8 @@ export function AssetStatus() {
   const cash = useTradeStore((state) => state.cash);
   const holdings = useTradeStore((state) => state.holdings);
   const avgPrice = useTradeStore((state) => state.avgPrice);
+  const positionCount = useTradeStore((state) => state.positionList().length);
+  const selectedStock = useTradeStore((state) => state.selectedStock());
   const profitRate = useTradeStore((state) => state.profitRate());
   const currentPrice = useTradeStore((state) => state.currentPrice());
   const portfolioValue = useTradeStore((state) => state.portfolioValue());
@@ -30,13 +32,13 @@ export function AssetStatus() {
             <p className="mt-1 font-extrabold text-[#111827]">{formatKRW(cash)}</p>
           </div>
           <div className="rounded-xl bg-[#f7f8fc] p-4">
-            <p className="text-xs font-bold text-[#7b8496]">보유 수량</p>
-            <p className="mt-1 font-extrabold text-[#111827]">{formatCount(holdings)}</p>
+          <p className="text-xs font-bold text-[#7b8496]">보유 종목</p>
+          <p className="mt-1 font-extrabold text-[#111827]">{positionCount.toLocaleString('ko-KR')}개</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-[#f7f8fc] p-4">
-            <p className="text-xs font-bold text-[#7b8496]">평균가</p>
+            <p className="text-xs font-bold text-[#7b8496]">{selectedStock ? `${selectedStock.name} 평균가` : '평균가'}</p>
             <p className="mt-1 font-extrabold text-[#111827]">{holdings === 0 ? '-' : formatKRW(avgPrice)}</p>
           </div>
           <div className="rounded-xl bg-[#f7f8fc] p-4">

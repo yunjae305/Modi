@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CandleChart } from '../components/chart/CandleChart';
 import { TradeHistory } from '../components/result/TradeHistory';
 import { AssetStatus } from '../components/trade/AssetStatus';
+import { MarketTimeControls } from '../components/trade/MarketTimeControls';
 import { NextDayButton } from '../components/trade/NextDayButton';
+import { StockList } from '../components/trade/StockList';
 import { TradePanel } from '../components/trade/TradePanel';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
@@ -17,10 +19,25 @@ export function SimulationPage() {
   const scenario = useTradeStore((state) => state.scenario);
   const chartData = useTradeStore((state) => state.chartData);
   const currentDay = useTradeStore((state) => state.currentDay);
+  const currentPrice = useTradeStore((state) => state.currentPrice());
+  const selectedStock = useTradeStore((state) => state.selectedStock());
   const tradeHistory = useTradeStore((state) => state.tradeHistory);
   const reset = useTradeStore((state) => state.reset);
   const { loading, error } = useChartData(scenario);
   useSimulation();
+  const liveChartData = useMemo(
+    () => chartData.map((bar, index) => (
+      index === currentDay
+        ? {
+            ...bar,
+            high: Math.max(bar.high, currentPrice),
+            low: Math.min(bar.low, currentPrice),
+            close: currentPrice,
+          }
+        : bar
+    )),
+    [chartData, currentDay, currentPrice],
+  );
 
   useEffect(() => {
     if (!scenario) {
@@ -67,7 +84,7 @@ export function SimulationPage() {
             <div>
               <h1 className="text-sm font-black text-[#111827]">{scenario.title} ({scenario.subtitle})</h1>
               <p className="mt-1 text-xs font-bold text-[#667085]">
-                {scenario.market} · {scenario.lesson}
+                {selectedStock ? `${selectedStock.name} · ${selectedStock.id}` : scenario.market} · {scenario.lesson}
               </p>
             </div>
           </div>
@@ -95,15 +112,16 @@ export function SimulationPage() {
           </button>
           </div>
         </header>
-        <div className="grid gap-5 p-5 lg:grid-cols-[7fr_3fr]">
+        <div className="grid gap-5 p-5 lg:grid-cols-[280px_minmax(0,1fr)_320px]">
+          <StockList />
           <div className="grid gap-6">
             <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-extrabold text-[#667085]">{scenario.market}</p>
+                  <p className="text-sm font-extrabold text-[#667085]">{selectedStock ? `${selectedStock.market} · ${selectedStock.id}` : scenario.market}</p>
                   <div className="mt-2 flex flex-wrap items-baseline gap-3">
-                    <h2 className="text-3xl font-black text-[#111827]">{(chartData[currentDay]?.close ?? 0).toLocaleString('ko-KR')}</h2>
-                    <span className="font-extrabold text-[#16a34a]">블라인드 시뮬레이션</span>
+                    <h2 className="text-3xl font-black text-[#111827]">{currentPrice.toLocaleString('ko-KR')}</h2>
+                    <span className="font-extrabold text-[#16a34a]">실시간형 시뮬레이션</span>
                   </div>
                 </div>
                 <div className="flex rounded-xl bg-[#f7f8fc] p-1 text-xs font-extrabold text-[#667085]">
@@ -114,13 +132,14 @@ export function SimulationPage() {
                   ))}
                 </div>
               </div>
-              <CandleChart data={chartData} visibleCount={currentDay + 1} />
+              <CandleChart data={liveChartData} visibleCount={currentDay + 1} />
             </section>
             <TradeHistory trades={tradeHistory} />
           </div>
           <aside className="grid content-start gap-5">
             <AssetStatus />
             <TradePanel />
+            <MarketTimeControls />
             <NextDayButton />
             <section className="rounded-2xl border border-[#ded9ff] bg-[#f8f7ff] p-5">
               <h2 className="font-black text-[#5b45f2]">도움말</h2>

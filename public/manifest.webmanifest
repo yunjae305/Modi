@@ -1,0 +1,31 @@
+{
+  "name": "Modi",
+  "short_name": "Modi",
+  "description": "과거 시장 시나리오로 투자 판단을 연습하는 학습 시뮬레이션",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f8fc",
+  "theme_color": "#5b45f2",
+  "icons": [
+    {
+      "src": "/icons/modi-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/modi-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/modi-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

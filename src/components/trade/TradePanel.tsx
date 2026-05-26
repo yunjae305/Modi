@@ -9,6 +9,7 @@ export function TradePanel() {
   const sell = useTradeStore((state) => state.sell);
   const cash = useTradeStore((state) => state.cash);
   const holdings = useTradeStore((state) => state.holdings);
+  const selectedStock = useTradeStore((state) => state.selectedStock());
   const currentPrice = useTradeStore((state) => state.currentPrice());
   const [buyQty, setBuyQty] = useState(10);
   const [sellQty, setSellQty] = useState(10);
@@ -47,6 +48,13 @@ export function TradePanel() {
           <h2 className="text-lg font-black text-[#111827]">주문</h2>
           <span className="text-xs font-extrabold text-[#5b45f2]">시장가</span>
         </div>
+        {selectedStock && (
+          <div className="mb-5 rounded-xl bg-[#f7f8fc] p-4">
+            <p className="text-xs font-bold text-[#8b95a7]">{selectedStock.market} · {selectedStock.id}</p>
+            <p className="mt-1 text-xl font-black text-[#111827]">{selectedStock.name}</p>
+            <p className="mt-2 font-extrabold text-[#5b45f2]">{formatCount(holdings)} 보유</p>
+          </div>
+        )}
         <div className="space-y-5">
           <div className="rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-4">
             <div className="mb-3 flex items-center justify-between">

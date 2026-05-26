@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import type { OHLCVBar, Scenario } from '../types';
+import type { Scenario, ScenarioStock } from '../types';
 import { useTradeStore } from '../store/tradeStore';
 
 interface ChartDataState {
-  data: OHLCVBar[];
+  data: ScenarioStock[];
   loading: boolean;
   error: string | null;
 }
@@ -34,7 +34,10 @@ export function useChartData(scenario: Scenario | null): ChartDataState {
         if (!Array.isArray(raw)) {
           throw new Error('데이터 형식이 올바르지 않습니다.');
         }
-        const data = raw as OHLCVBar[];
+        const data = raw as ScenarioStock[];
+        if (data.length < 20) {
+          throw new Error('대표 종목 데이터가 부족합니다.');
+        }
         if (!ignore) {
           initScenario(scenario, data);
           setState({ data, loading: false, error: null });

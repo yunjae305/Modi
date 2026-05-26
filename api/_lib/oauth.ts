@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
-import { backendUrl, frontendUrl, optionalEnv, requiredEnv } from './env';
-import { cookie, expiredCookie, parseCookies, redirect } from './http';
-import { loginOAuth, oauthStateCookieName, sessionCookie, type AuthProvider, type OAuthProfile } from './auth';
+import { backendUrl, frontendUrl, optionalEnv, requiredEnv } from './env.ts';
+import { cookie, expiredCookie, parseCookies, redirect } from './http.ts';
+import { loginOAuth, oauthStateCookieName, sessionCookie, type AuthProvider, type OAuthProfile } from './auth.ts';
 
 function encode(value: string) {
   return encodeURIComponent(value);

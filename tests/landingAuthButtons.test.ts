@@ -2,14 +2,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-test('랜딩의 로그인과 회원가입 버튼은 소셜 로그인 화면으로 이동한다', () => {
+test('랜딩은 시나리오 투자와 로그인으로 진입한다', () => {
+  const app = readFileSync('src/App.tsx', 'utf8');
   const landing = readFileSync('src/pages/LandingPage.tsx', 'utf8');
-  const login = readFileSync('src/pages/LoginPage.tsx', 'utf8');
-  const api = readFileSync('src/services/api.ts', 'utf8');
 
-  assert.match(landing, /const openAuth = \(\) =>/);
-  assert.equal((landing.match(/onClick=\{openAuth\}/g) ?? []).length, 2);
-  assert.match(login, /Google로 시작하기/);
-  assert.match(login, /Kakao로 시작하기/);
-  assert.equal(api.includes("?? '/api'"), true);
+  assert.match(app, /path="\/select"/);
+  assert.match(app, /path="\/login"/);
+  assert.match(landing, /navigate\('\/select'\)/);
+  assert.match(landing, /navigate\('\/login\?next=\/select'\)/);
+  assert.match(landing, /로그인/);
+
+  for (const forbidden of ['/trade', '10억', '게스트']) {
+    assert.equal(landing.includes(forbidden), false, forbidden);
+  }
+
+  for (const forbidden of ['ProtectedRoute', 'RealTradingPage']) {
+    assert.equal(app.includes(forbidden), false, forbidden);
+  }
 });

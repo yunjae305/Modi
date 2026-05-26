@@ -10,14 +10,6 @@ export function LandingPage() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const startTrading = () => {
-    navigate('/trade');
-  };
-
-  const openAuth = () => {
-    navigate('/login?next=/trade');
-  };
-
   return (
     <main className="min-h-screen px-5 py-5">
       <section className="mx-auto min-h-[calc(100vh-2.5rem)] max-w-7xl rounded-2xl border border-[#dfe3ee] bg-white px-6 py-5 shadow-card sm:px-8">
@@ -26,16 +18,15 @@ export function LandingPage() {
           <nav className="hidden items-center gap-10 text-sm font-extrabold text-[#111827] md:flex">
             <a href="#service">서비스 소개</a>
             <button onClick={() => navigate('/select')}>시나리오</button>
-            <button onClick={startTrading}>10억 모의투자</button>
             <button onClick={() => navigate('/tutorial')}>학습 가이드</button>
             <a href="#about">이용 방법</a>
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={openAuth}>
+            <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => navigate('/login?next=/select')}>
               로그인
             </Button>
-            <Button className="px-4 py-2 text-xs" onClick={openAuth}>
-              회원가입
+            <Button className="px-4 py-2 text-xs" onClick={() => navigate('/select')}>
+              시나리오 시작
             </Button>
           </div>
         </header>
@@ -51,7 +42,7 @@ export function LandingPage() {
               더 나은 <span className="text-[#5b45f2]">투자</span>의 선택
             </h1>
             <p className="mt-6 max-w-xl text-base font-medium leading-8 text-[#667085]">
-              실제 시장 데이터를 기반으로 한 모의투자 시뮬레이션으로 위기 속에서 기회를 찾는 능력을 키워보세요.
+              실제 시장 데이터를 기반으로 한 시나리오 투자로 위기 속에서 기회를 찾는 능력을 키워보세요.
             </p>
             <div className="mt-8">
               <Button className="px-8" onClick={() => setIsOpen(true)}>
@@ -110,7 +101,7 @@ export function LandingPage() {
             </button>
             <button
               className="rounded-2xl bg-[#f7f6ff] p-6 text-left transition hover:bg-[#f0edff]"
-              onClick={() => navigate('/mode-select')}
+              onClick={() => navigate('/select')}
             >
               <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-white text-[#5b45f2] shadow-card">
                 <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden="true">
@@ -118,8 +109,8 @@ export function LandingPage() {
                   <path d="M12 7v5l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </div>
-              <strong className="text-lg text-[#111827]">아니오, 바로 실전!</strong>
-              <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">시나리오 모드와 모의투자 모드 중 선택할래요</p>
+              <strong className="text-lg text-[#111827]">아니오, 바로 시나리오!</strong>
+              <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">과거 시장 시나리오를 선택해 바로 투자해요</p>
             </button>
           </div>
         </div>

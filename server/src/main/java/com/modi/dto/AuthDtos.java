@@ -2,6 +2,9 @@ package com.modi.dto;
 
 import com.modi.domain.AuthProvider;
 import com.modi.domain.UserAccount;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -16,6 +19,50 @@ public class AuthDtos {
 
         public Map<String, Boolean> getProviders() {
             return providers;
+        }
+    }
+
+    public static class RegisterRequest {
+        @Email
+        @NotBlank
+        private String email;
+
+        @Size(min = 8)
+        @NotBlank
+        private String password;
+
+        @Size(min = 2)
+        @NotBlank
+        private String nickname;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+    }
+
+    public static class LoginRequest {
+        @Email
+        @NotBlank
+        private String email;
+
+        @Size(min = 8)
+        @NotBlank
+        private String password;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getPassword() {
+            return password;
         }
     }
 

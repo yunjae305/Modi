@@ -1,17 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as scenarioModule from '../src/data/scenarios.ts';
-import type { Scenario } from '../src/types/index.ts';
 
-test('과거 시나리오 3개와 별도 모의투자 모드를 구분한다', () => {
-  const practiceScenario = scenarioModule.practiceScenario as Scenario | undefined;
-
+test('과거 시나리오 3개만 투자 대상으로 제공한다', () => {
   assert.equal(scenarioModule.scenarios.length, 3);
   assert.deepEqual(
     scenarioModule.scenarios.map((scenario) => scenario.id),
     ['corona', 'subprime', 'dotcom'],
   );
-  assert.equal(practiceScenario?.id, 'practice');
-  assert.equal(practiceScenario?.initialCash, 1000000000);
-  assert.equal(scenarioModule.scenarios.some((scenario) => scenario.id === practiceScenario?.id), false);
+  assert.equal('practiceScenario' in scenarioModule, false);
+  assert.equal(scenarioModule.scenarios.some((scenario) => scenario.id === 'practice'), false);
+  assert.equal(scenarioModule.scenarios.some((scenario) => scenario.initialCash === 1000000000), false);
 });

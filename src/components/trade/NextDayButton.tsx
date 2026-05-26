@@ -4,6 +4,7 @@ import { useTradeStore } from '../../store/tradeStore';
 export function NextDayButton() {
   const nextDay = useTradeStore((state) => state.nextDay);
   const currentDay = useTradeStore((state) => state.currentDay);
+  const dayProgress = useTradeStore((state) => state.dayProgress);
   const chartData = useTradeStore((state) => state.chartData);
   const isFinished = useTradeStore((state) => state.isFinished);
   const date = chartData[currentDay]?.date ?? '-';
@@ -18,7 +19,7 @@ export function NextDayButton() {
     >
       ▶ 다음 날로 가기
       <span className="mt-1 block text-xs font-bold text-white/90">
-        D+{currentDay} · {date}
+        D+{currentDay} · {date} · {Math.round(dayProgress * 100)}%
       </span>
     </motion.button>
   );

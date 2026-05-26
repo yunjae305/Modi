@@ -1,1044 +1,458 @@
-# 📈 [Project 모디] 모의 주식 투자 & 학습 시뮬레이션 웹서비스 기획서 (v5 - API 추가)
+# Project 모디 최종 기획서
 
-> **모디** = '모의투자' + '스터디'의 줄임말. **Modi**
+## 0. 문서 목적
 
----
+이 문서는 React + TypeScript 기말 프로젝트 평가항목에 맞춘 모디 최종 구현 범위를 정리한다.
 
-## 1. 기획 배경 및 목적
+모디는 주식 초보자가 실제 돈을 쓰기 전에 과거 시장 데이터를 보며 매수, 매도, 보유 판단을 연습하는 프론트엔드 학습 시뮬레이션 서비스다.
 
-- **배경**: 주식 투자 열풍 속에서 용어와 차트 패턴을 모른 채 뛰어드는 초보자(주린이) 급증.
-- **문제점**: 실제 주식 시장은 변동성이 커서 초보자가 예측하기 어렵고, 무작정 투자하다 큰 손실을 볼 위험이 높음.
-- **해결책**: 미래 예측이 아닌 **과거 데이터 기반의 학습과 시뮬레이션**을 통해 리스크 없이 주식의 기초를 다지고 위기 대처 능력을 기르는 웹서비스 제공.
+최종 제출 범위는 프론트엔드 구현 역량 평가에 맞춘다.
 
----
-
-## 2. 핵심 타겟층
-
-- 주식 계좌는 만들었지만 호가창과 캔들 차트를 볼 줄 모르는 **완전 초보자**
-- 과거 경제 위기(코로나 폭락장 등) 상황에서 자신의 투자 판단력을 테스트해보고 싶은 **일반 투자자**
-
----
-
-## 3. 2인 프로젝트 기준 기능 우선순위
-
-> 전체 기획을 모두 구현하면 일정 초과 위험이 있으므로, 아래 우선순위에 따라 개발한다.
-
-| 우선순위 | 기능 | 사유 |
-|---|---|---|
-| 🔴 필수 | 실전 시나리오 2개 (코로나 폭락장, 서브프라임) | 서비스의 핵심 차별화 포인트 |
-| 🔴 필수 | 다음 날로 가기 + 매매 체결 엔진 | 서비스의 본체 |
-| 🟡 권장 | 초보자 튜토리얼 1~2단계 | 전체 구현은 일정 부담 |
-| 🟢 여유 시 | 결과 리포트 + 투자 성향 피드백 | 발표 임팩트 극대화 |
-| ⛔ 제외 | 스크롤 애니메이션 랜딩 페이지 | 시간 대비 효과 낮음 |
-
----
-
-## 4. 핵심 화면 및 기능 명세
-
-### A. 메인 랜딩 페이지
-- **목적**: 서비스 첫인상 형성 및 사용자 호기심 유발 (Dark Mode 기반 세련된 UI)
-- **주요 기능**:
-  - 정중앙의 `[지금 체험해보기!]` 버튼 클릭 시 진입 팝업 등장
-  - *"주식이 처음이신가요? 🤔"* 질문과 함께 `[예 (초보자)]` / `[아니오 (실전)]` 버튼으로 맞춤형 페이지 이동
-  - ~~스크롤 애니메이션 (v2에서 제외)~~
-
-### B. 초보자 단계 (학습 및 튜토리얼 모드)
-- **목적**: 주식 기초 화면을 이해하고 첫 매수를 경험하는 인터랙티브 가이드
-- **v2 축소 커리큘럼** (4단계 → 2단계):
-  1. **차트의 언어 배우기**: 양봉/음봉에 마우스를 올리면 시가/종가/고가/저가 설명 툴팁 등장
-  2. **최종 훈련**: *"시장가로 10주를 매수해 보세요!"* 지시문에 따라 직접 주문을 넣어보는 실습
-
-### C. 실전 단계 (과거 데이터 시뮬레이션)
-- **목적**: 실제 과거 시장 데이터를 블라인드 테스트하며 실전 감각 배양
-- **주요 기능**:
-  - **시간 흐름 제어 및 매매 체결 엔진**: `[다음 날로 가기]` 클릭 시 차트 1일치 전진, 예수금/보유주식/수익률 즉시 업데이트
-  - **결과 리포트**: 시뮬레이션 종료 후 종목/연도 공개 + 최종 수익률 + 투자 성향 피드백 제공
-
-- **실전 시나리오 (3개)**:
-
-  | 시나리오 | 데이터 | 학습 포인트 |
-  |---|---|---|
-  | V자 반등의 정석 | 2020년 코로나 폭락장 코스피 지수 | 공포에 매수하는 법 |
-  | 끝없는 하락의 공포 | 2008년 서브프라임 사태 S&P 500 | 손절매의 중요성 체감 |
-  | 버블의 끝 | 2000년 닷컴버블 나스닥 | 고점에서 탐욕을 경계하는 법 |
-
-  > 세 시나리오가 "상승→폭락→반등 / 장기하락 / 버블붕괴" 를 각각 다뤄 발표 스토리텔링이 더 풍부해짐
-  > 닷컴버블은 yfinance `^IXIC` (1999-01-01 ~ 2002-12-31) 으로 수급 가능
-
----
-
-## 5. 데이터 수급 전략
-
-> 실시간 API 호출 대신 **과거 데이터를 미리 가공해 JSON으로 저장 후 서빙**하는 방식 채택.
-> → rate limit / CORS 이슈 없이 안정적으로 동작.
-
-### 무료 데이터 소스
-
-| API / 라이브러리 | 무료 한도 / 조건 | 한국 시장 | 특징 | 추천도 | 사용 위치 |
-|---|---:|---|---|---|---|
-| **pykrx** (Python) | 무료 / 비공식 스크래핑 기반 | ✅ KOSPI/KOSDAQ | API 키 불필요, OHLCV 직접 추출. 단, 호출 남발 금지 | ⭐⭐⭐ | 1차 데이터 수집 |
-| **yfinance** (Python) | 무료 / 비공식, 개인·교육 목적 중심 | ✅ `^KS11` 가능 | S&P500/나스닥 등 글로벌 지수에 최적. Yahoo 약관 확인 필요 | ⭐⭐⭐ | 해외 지수 수집 |
-| **FinanceDataReader** (Python) | 무료 / 오픈소스 | ✅ KRX 전체 | pykrx 대안, 한국+미국 동시 지원 | ⭐⭐⭐ | 백업 수집 |
-| **KRX Open API** | 무료 / 회원가입·인증 필요 | ✅ 공식 | KOSPI/KOSDAQ/ETF/ETN/채권/파생 등 일별 시세. 2010-01-04 이후 데이터 중심 | ⭐⭐⭐ | 공식 데이터 백업 |
-| **공공데이터포털 금융위원회_지수시세정보** | 무료 / 개발계정 10,000 트래픽 | ✅ 공식 | KOSPI/KOSDAQ 등 지수 OHLCV. 2020-01-01 이후 데이터 | ⭐⭐⭐ | 코로나/KOSPI 공식 검증 |
-| **공공데이터포털 금융위원회_주식시세정보** | 무료 / 개발계정 10,000 트래픽 | ✅ 공식 | 개별 종목의 시가·고가·저가·종가·거래량 조회 | ⭐⭐ | 개별 종목 시나리오 확장 |
-| **OpenDART** | 무료 / API Key, 일반적으로 20,000건 이상 요청 시 제한 가능 | ✅ 공식 | 공시 원문, 재무정보, 주요사항보고서. 가격 데이터가 아니라 학습/힌트 카드용 | ⭐⭐ | 결과 리포트/뉴스 카드 |
-| **한국은행 ECOS Open API** | 무료 / API Key | ✅ 거시경제 | 기준금리, 환율, 물가, 통화량 등 거시 지표 | ⭐⭐ | 시나리오 배경 설명 |
-| **FRED** | 무료 / API Key, 한도는 운영 정책에 따라 조정 가능 | ❌ 미국 | 미국 금리, CPI, 실업률, S&P 500 등 거시·시장 지표 | ⭐⭐ | 서브프라임/닷컴버블 배경 |
-| **Alpha Vantage** | 무료 25 req/day | ❌ | 일별 주가·기술지표. 한도가 낮아 백업용 | ⭐ | 백업 수집 |
-| **Finnhub** | 무료 플랜 있음 / 한도 초과 시 429 | ❌ | 해외 주식, 뉴스, 기업정보. 무료 범위는 가입 후 확인 필요 | ⭐ | 뉴스/보조 데이터 |
-
-> **핵심 전략**: 개발 전 `pykrx + yfinance`로 JSON을 미리 추출해 `public/data/` 에 저장한다. 한국 지수는 가능하면 **KRX Open API / 공공데이터포털 지수시세정보**로 교차 검증한다. 런타임에는 외부 API를 직접 호출하지 않고 정적 JSON만 fetch하여 rate limit / CORS / API Key 노출 문제를 피한다.
-
-### API 활용 추가안
-
-#### 1) 공식 데이터 검증 레이어 추가
-- 기존 `pykrx` 결과를 그대로 쓰되, 발표 자료에는 **공식 출처 백업**으로 `KRX Open API` 또는 `공공데이터포털 금융위원회_지수시세정보`를 명시한다.
-- 코로나 KOSPI 시나리오는 2020년 이후 데이터라 공공데이터포털 지수시세정보와 궁합이 좋다.
-- 서브프라임(2007~2009), 닷컴버블(1999~2002)은 국내 공공 API 범위를 벗어나므로 `yfinance` 또는 `FRED`를 유지한다.
-
-#### 2) 결과 리포트에 “그때의 시장 배경” 카드 추가
-- `FRED`: 미국 기준금리, 실업률, CPI, S&P500 계열 지표를 가져와 서브프라임/닷컴버블 결과 페이지에 배경 설명으로 표시한다.
-- `한국은행 ECOS`: 한국 기준금리, 환율, 소비자물가 등을 가져와 코로나 KOSPI 결과 페이지에 배경 설명으로 표시한다.
-- 구현은 MVP 이후 권장. 가격 차트와 매매 엔진이 먼저다.
-
-#### 3) OpenDART 기반 “기업 공시 읽기” 확장 모드
-- 현재 MVP는 지수 중심이라 DART가 필수는 아니다.
-- 여유가 있으면 개별 종목 시나리오를 추가할 때 `OpenDART`로 사업보고서, 주요사항보고서, 재무제표 일부를 가져와 “공시 힌트 카드”로 제공한다.
-- 예: 사용자가 특정 날짜까지 진행했을 때 “이 시점의 기업 공시/이슈를 열람하시겠습니까?” 버튼 제공.
-
-#### 4) API Key 보안 원칙
-- Vercel/GitHub Pages 정적 배포에서는 API Key를 프론트엔드에 넣지 않는다.
-- API Key가 필요한 데이터는 `scripts/fetch_data.py`에서 로컬로 미리 수집한 뒤 JSON으로 저장한다.
-- `.env` 예시:
-
-```bash
-DART_API_KEY=...
-ECOS_API_KEY=...
-ALPHA_VANTAGE_API_KEY=...
-FINNHUB_API_KEY=...
-```
-
-#### 5) 추천 우선순위
-
-| 우선순위 | 추가 소스 | 이유 |
-|---|---|---|
-| 1 | KRX Open API / 공공데이터포털 지수시세정보 | 한국 지수 데이터의 공식성 확보 |
-| 2 | FRED | 미국 위기 시나리오 배경 설명 강화 |
-| 3 | 한국은행 ECOS | 코로나 KOSPI 시나리오의 거시 배경 설명 강화 |
-| 4 | OpenDART | 개별 종목/공시 학습 모드 확장용 |
-| 5 | Alpha Vantage / Finnhub | 백업·뉴스·보조 데이터용. MVP 필수 아님 |
-
-### 데이터 준비 워크플로우
-
-```python
-# pip install pykrx yfinance finance-datareader
-
-from pykrx import stock
-import yfinance as yf
-
-# ── 코스피 (코로나 폭락장) ── pykrx 사용
-kospi = stock.get_index_ohlcv("20200101", "20201231", "1001")  # 1001 = KOSPI
-kospi.to_json("public/data/kospi_2020.json", orient="records", date_format="iso")
-
-# ── S&P500 (서브프라임) ── yfinance 사용
-sp500 = yf.download("^GSPC", start="2007-01-01", end="2009-12-31")
-sp500.to_json("public/data/sp500_2008.json", orient="records", date_format="iso")
-
-# ── 나스닥 (닷컴버블) ── yfinance 사용
-nasdaq = yf.download("^IXIC", start="1999-01-01", end="2002-12-31")
-nasdaq.to_json("public/data/nasdaq_2000.json", orient="records", date_format="iso")
-```
-
-```
-데이터 흐름 (서버리스 버전):
-pykrx / yfinance 추출 → JSON 저장 (public/data/) → React에서 fetch → Vercel/GitHub Pages 배포
-
-데이터 흐름 (Express 버전):
-pykrx / yfinance 추출 → JSON 저장 → Express API 서빙 → React 프론트엔드 수신
-```
-
----
-
-## 6. 매매 체결 엔진 설계
-
-> Zustand store 구조를 개발 시작 전에 먼저 설계하고 진행한다.
-
-```ts
-// Zustand store 구조 (예시)
-interface TradeStore {
-  cash: number;           // 예수금
-  holdings: number;       // 보유 수량
-  avgPrice: number;       // 평균 매수가
-  currentDay: number;     // 현재 날짜 인덱스
-  profitRate: number;     // 수익률 (%)
-  maxDrawdown: number;    // 최대 낙폭 (MDD) — 결과 리포트용
-  tradeHistory: Trade[];  // 매매 이력 — 결과 리포트 차트용
-
-  nextDay: () => void;    // 다음 날로 이동
-  buy: (qty: number) => void;
-  sell: (qty: number) => void;
-}
-
-interface Trade {
-  day: number;
-  type: 'buy' | 'sell';
-  qty: number;
-  price: number;
-}
-```
-
-> **구현 시 주의사항**
-> - `buy()` 에서 예수금 초과 주문 방지 처리 필수 (전재산 날리기 버그 방지)
-> - `sell()` 에서 보유 수량 초과 매도 방지 처리 필수
-> - `nextDay()` 는 마지막 날 이후 호출 시 시뮬레이션 종료 트리거
-
----
-
-## 7. 투자 성향 피드백 (결과 리포트)
-
-> 복잡한 AI 없이 수익률 기반 단순 분기로 구현. 발표 임팩트 극대화.
-
-| 최종 수익률 | 투자 성향 | 한 줄 피드백 |
-|---|---|---|
-| +20% 이상 | 🦁 대담한 역발상 투자자 | "공포가 곧 기회임을 아는 당신, 워런 버핏의 재림!" |
-| 0% ~ +20% | 🐢 안정 추구형 투자자 | "흔들리지 않는 멘탈, 장기 투자에 최적화된 성향입니다." |
-| -20% ~ 0% | 🐇 눈치 보기형 투자자 | "조금 더 과감하게! 손절 타이밍을 연습해보세요." |
-| -20% 이하 | 🙈 FOMO형 투자자 | "뇌동매매 주의! 감정보다 차트를 먼저 보는 연습이 필요합니다." |
-
-> **결과 리포트에 추가 표시할 지표 (발표 임팩트용)**
-> - **최대 낙폭 (MDD)**: 시뮬레이션 중 포트폴리오가 최고점 대비 얼마나 떨어졌는지 → "당신의 멘탈은 -XX% 를 버텼습니다"
-> - **총 매매 횟수**: 뇨동매매 여부 체크
-> - **내 수익률 vs 존버 수익률**: 시작일에 사서 끝까지 들고 있었을 때와 비교 — 충격적인 결과가 나올 때 발표 포인트가 됨
-
----
-
-## 8. 개발 기술 스택
-
-| 분류 | 기술 | 선택 이유 |
-|---|---|---|
-| 프론트엔드 | React + Vite | 빠른 개발 환경 |
-| 백엔드 | Node.js (Express) | JSON 데이터 서빙 용도 |
-| 상태 관리 | Zustand | 예수금/수익률 등 전역 상태 관리, 가볍고 직관적 |
-| 차트 | Lightweight Charts (TradingView) | 금융 차트 최적화, 무료, 번들 작음 |
-| 데이터 가공 | Python + yfinance | 과거 데이터 전처리용 (배포와 무관) |
-| 애니메이션 | Framer Motion | 매매 체결 시 자산 변화 애니메이션 |
-| 배포 | GitHub Pages / Vercel | 프론트엔드 정적 배포. JSON 데이터는 public/ 폴더에 포함 |
-
-> **배포 전략**: Express 백엔드 없이도 가능. JSON 파일을 `public/data/` 에 넣고 프론트에서 직접 fetch 하면 서버 없이 GitHub Pages 배포 가능. Express는 필요 시 추가.
-
----
-
-## 9. 역할 분담 (안)
-
-| 역할 | 담당 | 주요 작업 |
-|---|---|---|
-| 프론트엔드 | 팀원 A | 차트 렌더링, 매매 UI, 결과 리포트 화면 |
-| 백엔드 + 데이터 | 팀원 B | yfinance 데이터 가공, Express API, Zustand 스토어 설계 |
-
----
-
-## 10. 개발 일정 (안)
-
-| 주차 | 목표 |
+| 항목 | 최종 결정 |
 |---|---|
-| 1주차 | 데이터 수집 (yfinance) + Zustand 스토어 설계 + 프로젝트 세팅 |
-| 2주차 | 차트 렌더링 + 다음 날로 가기 엔진 구현 |
-| 3주차 | 매매 체결 로직 + 자산 상태 업데이트 |
-| 4주차 | 초보자 튜토리얼 + 결과 리포트 + 투자 성향 피드백 |
-| 5주차 | UI 다듬기 + 버그 수정 + 발표 준비 |
+| 배포 | Vercel |
+| 백엔드 서버 | 제외 |
+| DB | 초기 정적 MVP에서는 제외, 최종 가산점 범위에서 Supabase 유저 DB 포함 |
+| 실제 시세 기반 모의투자대회 | 제외 |
+| 랭킹, 대회방, 친구 초대 | 제외 |
+| 로그인 필수 여부 | 이메일 로그인은 결과 저장용 추가 기능으로 처리 |
+| 핵심 기능 | 초보자 튜토리얼, 과거 데이터 시나리오, 매매 시뮬레이션, 결과 리포트 |
+| 데이터 방식 | `public/data/` 정적 JSON |
 
----
+## 1. 평가항목 반영 요약
 
-## 11. 폴더 구조 & 파일 설계 (구체화)
+| 평가항목 | 반영 방향 |
+|---|---|
+| 프로젝트 기획 및 설계 20% | 주식 초보자의 학습 문제를 해결하는 주제, 자연스러운 화면 흐름, 명확한 컴포넌트 구조와 데이터 흐름 제시 |
+| 프로젝트 구현 완성도 30% | 튜토리얼, 시나리오 선택, 매매, 다음 날 진행, 결과 리포트가 정상 동작하도록 구현 |
+| React + TypeScript 활용 30% | 페이지, 차트, 거래 패널, 결과 컴포넌트를 분리하고 props, state, 타입을 명확히 정의 |
+| 발표 및 프로젝트 설명 20% | 상태 변경 흐름, 주요 함수 역할, AI 활용 요구사항과 수정 과정을 설명할 수 있게 정리 |
 
+## 2. 프로젝트 개요
+
+### 2-1. 프로젝트명
+
+Modi
+
+### 2-2. 이름 의미
+
+모의투자와 스터디를 합친 이름이다.
+
+### 2-3. 핵심 문제
+
+주식 초보자는 차트 용어, 캔들 의미, 매수와 매도 타이밍, 손실 관리 방식을 충분히 이해하지 못한 상태에서 실제 투자에 진입하기 쉽다.
+
+### 2-4. 해결 방식
+
+실제 계좌나 실시간 주문 없이 과거 시장 데이터를 하루씩 공개하고, 사용자가 가상의 자금으로 매수, 매도, 보유를 선택하게 한다. 시뮬레이션이 끝나면 수익률, 최대 손실, 매매 횟수, 보유 현금 비율을 바탕으로 투자 습관 피드백을 제공한다.
+
+## 3. 최종 구현 범위
+
+### 3-1. 포함 기능
+
+| 우선순위 | 기능 | 설명 |
+|---|---|---|
+| 필수 | 랜딩 페이지 | 서비스 목적 안내, 초보자 튜토리얼과 시나리오 모드 진입 |
+| 필수 | 초보자 튜토리얼 | 캔들 읽기, 시장가 매수 연습, 입력 검증 |
+| 필수 | 시나리오 선택 | 과거 시장 시나리오 3개 카드 제공 |
+| 필수 | 시뮬레이션 화면 | 캔들 차트, 자산 현황, 매수/매도 패널, 다음 날 진행 |
+| 필수 | 결과 리포트 | 최종 수익률, 거래 기록, 투자 성향 피드백 |
+| 권장 | 예외 처리 | 잘못된 수량, 현금 부족, 보유 수량 초과, 데이터 로딩 실패 처리 |
+| 권장 | 반응형 UI | 발표용 노트북 화면과 일반 데스크톱 화면에서 안정 출력 |
+
+### 3-2. 제외 기능과 최종 조정
+
+| 제외 항목 | 제외 이유 |
+|---|---|
+| 대규모 DB 기능 | 실시간 대회, 랭킹, 친구 초대처럼 서버 운영이 필요한 기능은 제외 |
+| 실제 시세 기반 대회 | 실시간 API, 백엔드, 스케줄러, 저장소가 필요하여 범위 초과 |
+| 사용자 랭킹 | 실시간 경쟁 서비스가 되므로 제외 |
+| 대회방 생성 | 실시간 사용자 식별과 저장소가 필요하므로 제외 |
+| 소셜 로그인 필수 기능 | Google/Kakao OAuth 설정 부담이 커서 확장 가능 항목으로 분리 |
+| 서버 주문 API | 과거 시나리오 주문은 브라우저 상태에서 처리 |
+
+단, 최종 가산점 범위에서는 이메일 로그인과 결과 저장을 위해 Supabase 유저 DB 포함 방향으로 조정한다. 저장 대상은 사용자 계정과 시뮬레이션 결과 요약이며, 실제 모의투자 대회나 실시간 랭킹 DB는 구현하지 않는다.
+
+## 4. 사용자 흐름
+
+```text
+랜딩 페이지
+→ 초보자인지 선택
+→ 초보자 튜토리얼 또는 시나리오 선택
+→ 시나리오 선택
+→ 시뮬레이션 진행
+→ 결과 리포트 확인
+→ 다른 시나리오 재도전
 ```
-modi/
-├── public/
-│   └── data/
-│       ├── kospi_2020.json        # 코로나 폭락장 (2020-01-01 ~ 2020-12-31)
-│       ├── sp500_2008.json        # 서브프라임 (2007-01-01 ~ 2009-12-31)
-│       └── nasdaq_2000.json       # 닷컴버블 (1999-01-01 ~ 2002-12-31)
-│
-├── scripts/
-│   └── fetch_data.py              # 데이터 수집 스크립트 (배포 무관, 로컬 실행용)
-│
-├── src/
-│   ├── main.tsx
-│   ├── App.tsx                    # 라우터 루트
-│   │
-│   ├── store/
-│   │   └── tradeStore.ts          # Zustand 전역 상태
-│   │
-│   ├── types/
-│   │   └── index.ts               # OHLCV, Trade, Scenario, InvestorType 타입 정의
-│   │
-│   ├── data/
-│   │   └── scenarios.ts           # 시나리오 메타데이터 (이름, 파일경로, 날짜범위, 설명)
-│   │
-│   ├── hooks/
-│   │   ├── useChartData.ts        # JSON fetch + 파싱 커스텀 훅
-│   │   └── useSimulation.ts       # nextDay / 종료 감지 훅
-│   │
-│   ├── utils/
-│   │   ├── calcMetrics.ts         # MDD, 수익률, 존버수익률 계산 순수 함수
-│   │   └── getInvestorType.ts     # 수익률 → 투자 성향 분류 함수
-│   │
-│   ├── pages/
-│   │   ├── LandingPage.tsx        # 메인 랜딩 + 진입 팝업
-│   │   ├── TutorialPage.tsx       # 초보자 2단계 튜토리얼
-│   │   ├── ScenarioSelectPage.tsx # 시나리오 선택 카드 UI
-│   │   ├── SimulationPage.tsx     # 실전 시뮬레이션 메인
-│   │   └── ResultPage.tsx         # 결과 리포트 + 성향 피드백
-│   │
-│   └── components/
-│       ├── chart/
-│       │   ├── CandleChart.tsx    # lightweight-charts 캔들 차트 래퍼
-│       │   └── ChartTooltip.tsx   # 튜토리얼용 OHLC 설명 툴팁
-│       ├── trade/
-│       │   ├── TradePanel.tsx     # 매수/매도 수량 입력 + 체결 버튼
-│       │   ├── AssetStatus.tsx    # 예수금 / 보유수량 / 수익률 HUD
-│       │   └── NextDayButton.tsx  # 다음 날로 가기 버튼 (Framer Motion)
-│       ├── result/
-│       │   ├── ProfitChart.tsx    # 내 수익률 vs 존버 수익률 라인 차트
-│       │   ├── TradeHistory.tsx   # 매매 이력 테이블
-│       │   └── InvestorBadge.tsx  # 투자 성향 뱃지 + 피드백 카드
-│       └── ui/
-│           ├── Modal.tsx          # 공통 모달
-│           └── Button.tsx         # 공통 버튼 (variant: primary/danger/ghost)
-│
-├── index.html
-├── vite.config.ts
-├── tsconfig.json
-└── package.json
+
+### 4-1. 랜딩 페이지
+
+| 요소 | 동작 |
+|---|---|
+| 서비스 소개 | 실제 돈 없이 과거 시장으로 투자 판단을 연습한다는 메시지 |
+| 초보자 버튼 | 튜토리얼 페이지로 이동 |
+| 실전 연습 버튼 | 시나리오 선택 페이지로 이동 |
+| 시각 요소 | Modi 브랜드, 차트 느낌의 일러스트, 핵심 기능 요약 |
+
+### 4-2. 초보자 튜토리얼
+
+초보자 튜토리얼은 단순 설명 페이지가 아니라 사용자가 직접 입력하고 피드백을 받는 연습 화면으로 구성한다.
+
+| 단계 | 학습 목표 | 사용자 행동 | 검증 |
+|---|---|---|---|
+| 1단계 | 캔들 구조 이해 | 캔들 위에 마우스를 올려 시가, 고가, 저가, 종가 확인 | 툴팁 값 표시 |
+| 2단계 | 상승 캔들과 하락 캔들 구분 | 빨간 캔들과 파란 캔들의 의미 확인 | 설명 카드 표시 |
+| 3단계 | 시장가 매수 연습 | 수량 입력 후 매수 버튼 클릭 | 수량이 10주가 아니면 안내 메시지 |
+| 4단계 | 예상 주문 금액 확인 | 현재가와 수량으로 금액 계산 | 금액이 즉시 갱신 |
+
+### 4-3. 시나리오 선택
+
+사용자는 실제 시장 이름을 처음부터 알 수 없다. 먼저 학습 포인트와 난이도만 보고 선택하고, 결과 화면에서 실제 시기와 시장을 공개한다.
+
+| 카드 정보 | 설명 |
+|---|---|
+| 시나리오 제목 | 학습용 별칭 |
+| 난이도 | 쉬움, 보통, 어려움 |
+| 학습 포인트 | 공포 매수, 현금 관리, 버블 경계 |
+| 기간 | 숨김 처리 또는 대략적인 기간 |
+| 시작 버튼 | 선택한 시나리오를 상태에 저장하고 시뮬레이션으로 이동 |
+
+### 4-4. 시뮬레이션
+
+| 영역 | 역할 |
+|---|---|
+| 상단 헤더 | 시나리오 선택으로 돌아가기, 현재 진행 일수 표시 |
+| 캔들 차트 | 현재 날짜까지의 가격 흐름 표시 |
+| 자산 현황 | 현금, 보유 수량, 평균 단가, 평가 금액, 수익률 표시 |
+| 거래 패널 | 매수, 매도, 수량 입력, 예상 금액 표시 |
+| 다음 날 버튼 | 하루 진행, 마지막 날이면 결과 페이지 이동 |
+| 메시지 영역 | 입력 오류, 체결 완료, 현금 부족, 보유 수량 부족 안내 |
+
+### 4-5. 결과 리포트
+
+| 항목 | 설명 |
+|---|---|
+| 시나리오 공개 | 실제 시장과 기간 공개 |
+| 최종 자산 | 현금과 보유 주식 평가액 합산 |
+| 수익률 | 초기 자금 대비 최종 수익률 |
+| 최대 손실 | 시뮬레이션 중 가장 크게 하락한 구간 |
+| 거래 횟수 | 매수와 매도 횟수 합산 |
+| 투자 성향 | 수익률과 거래 습관에 따른 피드백 |
+| 재도전 버튼 | 다른 시나리오 선택 페이지로 이동 |
+
+## 5. 최종 시나리오 설계
+
+### 5-1. 시나리오 목록
+
+| id | 표시 제목 | 실제 데이터 | 학습 포인트 | 난이도 |
+|---|---|---|---|---|
+| `corona` | V자 반등의 정석 | 2020년 KOSPI | 공포 구간에서 분할 매수 판단 | 쉬움 |
+| `subprime` | 끝없는 하락장 공포 | 2007년부터 2009년 S&P 500 | 손실 제한과 현금 비중 관리 | 어려움 |
+| `dotcom` | 버블의 끝 | 1999년부터 2002년 NASDAQ | 고점 추격 매수 경계 | 보통 |
+
+### 5-2. 코로나 KOSPI 시나리오
+
+| 항목 | 내용 |
+|---|---|
+| 시작 상황 | 상승장이 이어지다가 갑자기 큰 하락이 발생한다 |
+| 사용자 고민 | 지금 매수해야 하는지, 더 기다려야 하는지 판단한다 |
+| 핵심 연습 | 분할 매수, 공포 구간 진입, 반등 전 현금 관리 |
+| 결과 피드백 | 하락 중 매수 비중과 반등 구간 보유 여부를 설명한다 |
+
+### 5-3. 서브프라임 S&P 500 시나리오
+
+| 항목 | 내용 |
+|---|---|
+| 시작 상황 | 하락이 짧게 끝나지 않고 장기간 이어진다 |
+| 사용자 고민 | 손실을 버틸지, 일부 매도하고 현금을 확보할지 판단한다 |
+| 핵심 연습 | 손절, 현금 보유, 무리한 물타기 방지 |
+| 결과 피드백 | 손실 구간에서 매수 규모가 과했는지 설명한다 |
+
+### 5-4. 닷컴버블 NASDAQ 시나리오
+
+| 항목 | 내용 |
+|---|---|
+| 시작 상황 | 모두가 낙관하는 상승장이 이어진다 |
+| 사용자 고민 | 더 오를 것 같다는 감정에 따라 추격 매수할지 판단한다 |
+| 핵심 연습 | 고점 매수 경계, 수익 실현, 변동성 대응 |
+| 결과 피드백 | 고점 부근 매수 비중과 하락 전 매도 여부를 설명한다 |
+
+## 6. 데이터 수급 전략
+
+### 6-1. 최종 데이터 방식
+
+최종 앱은 런타임에 외부 금융 API를 호출하지 않는다. 모든 시나리오 데이터는 미리 수집한 뒤 `public/data/`에 JSON 파일로 저장한다.
+
+```text
+외부 데이터 수집
+→ JSON 파일 생성
+→ public/data/ 저장
+→ React fetch
+→ 브라우저 상태로 시뮬레이션 진행
+→ Vercel 정적 배포
 ```
 
----
+### 6-2. 데이터 파일
 
-## 12. 데이터 JSON 스키마 (구체화)
+| 파일 | 내용 |
+|---|---|
+| `public/data/kospi_2020.json` | 코로나 KOSPI 시나리오 |
+| `public/data/sp500_2008.json` | 서브프라임 S&P 500 시나리오 |
+| `public/data/nasdaq_2000.json` | 닷컴버블 NASDAQ 시나리오 |
 
-> `fetch_data.py` 실행 후 `public/data/` 에 저장될 파일의 정확한 구조.
-> 프론트엔드는 이 구조를 기준으로 파싱한다.
+### 6-3. JSON 스키마
 
 ```ts
-// src/types/index.ts
-
-/** OHLCV 단일 거래일 데이터 */
 export interface OHLCVBar {
-  date: string;    // "2020-01-02" (ISO 8601, 시간 없음)
-  open: number;    // 시가
-  high: number;    // 고가
-  low: number;     // 저가
-  close: number;   // 종가
-  volume: number;  // 거래량
-}
-
-/** 시나리오 메타데이터 */
-export interface Scenario {
-  id: 'corona' | 'subprime' | 'dotcom';
-  title: string;           // "V자 반등의 정석"
-  subtitle: string;        // "2020년 코로나 폭락장"
-  dataFile: string;        // "/data/kospi_2020.json"
-  market: string;          // "KOSPI"
-  period: string;          // "2020.01 ~ 2020.12"
-  lesson: string;          // "공포에 매수하는 법"
-  initialCash: number;     // 10_000_000 (1000만원 고정)
-  revealText: string;      // 종료 후 공개 메시지
-}
-
-/** 매매 이력 단건 */
-export interface Trade {
-  day: number;             // currentDay 인덱스
-  date: string;            // "2020-03-19"
-  type: 'buy' | 'sell';
-  qty: number;
-  price: number;
-  totalAmount: number;     // qty * price
-}
-
-/** 투자 성향 타입 */
-export type InvestorType = 'lion' | 'turtle' | 'rabbit' | 'monkey';
-```
-
-> **JSON 파일 실제 구조 예시** (`public/data/kospi_2020.json` 첫 2행):
-```json
-[
-  { "date": "2020-01-02", "open": 2201.20, "high": 2216.30, "low": 2196.61, "close": 2175.17, "volume": 358821000 },
-  { "date": "2020-01-03", "open": 2175.17, "high": 2189.74, "low": 2161.88, "close": 2176.46, "volume": 412034000 }
-]
-```
-
----
-
-## 13. 핵심 로직 의사코드 (구체화)
-
-### 13-1. Zustand 스토어 전체 구현체
-
-```ts
-// src/store/tradeStore.ts
-import { create } from 'zustand';
-import type { OHLCVBar, Trade, Scenario } from '../types';
-
-interface TradeState {
-  // ── 시나리오 ──
-  scenario: Scenario | null;
-  chartData: OHLCVBar[];
-  
-  // ── 진행 상태 ──
-  currentDay: number;        // 현재 보이는 마지막 날 인덱스 (0-based)
-  isFinished: boolean;
-  
-  // ── 자산 ──
-  cash: number;
-  holdings: number;
-  avgPrice: number;
-  peakPortfolio: number;     // MDD 계산용 최고 포트폴리오 가치
-  maxDrawdown: number;       // 최대 낙폭 (음수, e.g. -0.35 = -35%)
-  tradeHistory: Trade[];
-
-  // ── 파생값 (계산) ──
-  currentPrice: () => number;
-  portfolioValue: () => number;
-  profitRate: () => number;
-
-  // ── 액션 ──
-  initScenario: (scenario: Scenario, data: OHLCVBar[]) => void;
-  nextDay: () => void;
-  buy: (qty: number) => void;
-  sell: (qty: number) => void;
-  reset: () => void;
-}
-
-// buy() 핵심 로직
-// 1. qty <= 0 → return (유효성)
-// 2. cost = qty * currentPrice()
-// 3. cost > cash → qty = Math.floor(cash / currentPrice()) 로 재조정 (예수금 초과 방지)
-// 4. avgPrice = (avgPrice * holdings + cost) / (holdings + qty)
-// 5. cash -= cost, holdings += qty
-// 6. tradeHistory.push(...)
-
-// sell() 핵심 로직
-// 1. qty <= 0 → return
-// 2. qty > holdings → qty = holdings (보유 수량 초과 방지)
-// 3. cash += qty * currentPrice()
-// 4. holdings -= qty
-// 5. holdings === 0 → avgPrice = 0
-// 6. tradeHistory.push(...)
-
-// nextDay() 핵심 로직
-// 1. currentDay === chartData.length - 1 → isFinished = true, return
-// 2. currentDay += 1
-// 3. portfolio = cash + holdings * currentPrice()
-// 4. peakPortfolio = Math.max(peakPortfolio, portfolio)
-// 5. drawdown = (portfolio - peakPortfolio) / peakPortfolio
-// 6. maxDrawdown = Math.min(maxDrawdown, drawdown)
-```
-
-### 13-2. calcMetrics 유틸 함수
-
-```ts
-// src/utils/calcMetrics.ts
-
-/** 존버 수익률: 시작일 종가에 전부 매수했을 때 */
-export function calcHoldReturn(data: OHLCVBar[], initialCash: number): number {
-  const startPrice = data[0].close;
-  const endPrice = data[data.length - 1].close;
-  const qty = Math.floor(initialCash / startPrice);
-  const finalValue = qty * endPrice + (initialCash - qty * startPrice);
-  return (finalValue - initialCash) / initialCash;
-}
-
-/** 날짜별 포트폴리오 가치 시계열 (ProfitChart용) */
-export function calcPortfolioTimeSeries(
-  data: OHLCVBar[],
-  tradeHistory: Trade[],
-  initialCash: number,
-  currentDay: number
-): { date: string; value: number }[] { /* ... */ }
-
-/** MDD: 최고점 대비 최대 낙폭 */
-export function calcMDD(series: number[]): number { /* ... */ }
-```
-
-### 13-3. 투자 성향 분류
-
-```ts
-// src/utils/getInvestorType.ts
-export function getInvestorType(profitRate: number): {
-  type: InvestorType;
-  emoji: string;
-  label: string;
-  feedback: string;
-} {
-  if (profitRate >= 0.20) return { type: 'lion',   emoji: '🦁', label: '대담한 역발상 투자자', feedback: '공포가 곧 기회임을 아는 당신, 워런 버핏의 재림!' };
-  if (profitRate >= 0)    return { type: 'turtle', emoji: '🐢', label: '안정 추구형 투자자',   feedback: '흔들리지 않는 멘탈, 장기 투자에 최적화된 성향입니다.' };
-  if (profitRate >= -0.2) return { type: 'rabbit', emoji: '🐇', label: '눈치 보기형 투자자',   feedback: '조금 더 과감하게! 손절 타이밍을 연습해보세요.' };
-  return                         { type: 'monkey', emoji: '🙈', label: 'FOMO형 투자자',        feedback: '뇌동매매 주의! 감정보다 차트를 먼저 보는 연습이 필요합니다.' };
-}
-```
-
----
-
-## 14. UI 컴포넌트 상세 명세 (구체화)
-
-### SimulationPage 레이아웃
-```
-┌─────────────────────────────────────────────────────────┐
-│  [← 시나리오 선택]          Modi           [포기하기]    │ ← 헤더
-├──────────────────────────┬──────────────────────────────┤
-│                          │  💰 예수금      9,234,500원   │
-│   CandleChart            │  📦 보유수량    27주           │
-│   (캔들 차트)             │  📊 평균매수가  27,150원       │
-│   * 현재 날짜까지만 표시   │  📈 수익률      +12.3%        │
-│   * 미래 데이터 블라인드   │                              │
-│                          │  매수 [_27_주] [매수하기]     │
-│                          │  매도 [_27_주] [전량매도]     │
-│                          │                              │
-│                          │  [▶ 다음 날로 가기]           │
-│                          │  현재: 2020년 ?? 월 ?? 일    │ ← 날짜는 블라인드
-├──────────────────────────┴──────────────────────────────┤
-│  매매 이력: 2020-?-? 매수 10주 @26,450 / 2020-?-? ...   │ ← 스크롤 가능
-└─────────────────────────────────────────────────────────┘
-```
-
-> **블라인드 정책**: 연도/종목명은 결과 페이지 전까지 숨긴다. 날짜는 경과일수(D+N)로만 표시.
-
-### ResultPage 레이아웃
-```
-┌─────────────────────────────────────────────────────────┐
-│           🎉 시뮬레이션 종료!                            │
-│   공개: 2020년 코로나 폭락장 KOSPI (2020.01~2020.12)    │
-├─────────────────────────────────────────────────────────┤
-│  내 수익률  +12.3%   vs   존버 수익률  +30.8%           │
-│  최대 낙폭 (MDD)  -18.4%  ("멘탈이 -18.4%를 버텼습니다")│
-│  총 매매 횟수  7회                                       │
-├─────────────────────────────────────────────────────────┤
-│  [ProfitChart: 내 포트폴리오 vs 존버 라인 차트]          │
-├─────────────────────────────────────────────────────────┤
-│  🐢 안정 추구형 투자자                                    │
-│  "흔들리지 않는 멘탈, 장기 투자에 최적화된 성향입니다."   │
-│            [다른 시나리오 도전하기]                       │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
-## 15. 데이터 수집 스크립트 (완성본)
-
-```python
-# scripts/fetch_data.py
-# 실행: python scripts/fetch_data.py
-# 결과물: public/data/ 에 JSON 3개 생성
-
-import os, json
-import pandas as pd
-from pykrx import stock
-import yfinance as yf
-
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), '..', 'public', 'data')
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-def normalize_df(df: pd.DataFrame) -> list[dict]:
-    """DataFrame → [{"date", "open", "high", "low", "close", "volume"}, ...] 변환"""
-    df = df.copy()
-    df.index = pd.to_datetime(df.index)
-    df.index.name = 'date'
-    df.columns = [c.lower().split()[0] for c in df.columns]  # yfinance 멀티레벨 컬럼 대응
-    df = df[['open', 'high', 'low', 'close', 'volume']].dropna()
-    records = []
-    for idx, row in df.iterrows():
-        records.append({
-            "date": idx.strftime("%Y-%m-%d"),
-            "open": round(float(row['open']), 2),
-            "high": round(float(row['high']), 2),
-            "low":  round(float(row['low']),  2),
-            "close": round(float(row['close']), 2),
-            "volume": int(row['volume'])
-        })
-    return records
-
-# ── 1. KOSPI 코로나 폭락장 (pykrx) ──
-print("KOSPI 데이터 수집 중...")
-kospi_raw = stock.get_index_ohlcv("20200101", "20201231", "1001")
-kospi_raw.columns = ['open', 'high', 'low', 'close', 'volume', 'trading_value', 'market_cap']
-kospi_records = normalize_df(kospi_raw)
-with open(os.path.join(OUTPUT_DIR, 'kospi_2020.json'), 'w', encoding='utf-8') as f:
-    json.dump(kospi_records, f, ensure_ascii=False, indent=2)
-print(f"  → kospi_2020.json 저장 ({len(kospi_records)}일)")
-
-# ── 2. S&P500 서브프라임 (yfinance) ──
-print("S&P500 데이터 수집 중...")
-sp500_raw = yf.download("^GSPC", start="2007-01-01", end="2009-12-31", auto_adjust=True)
-sp500_records = normalize_df(sp500_raw)
-with open(os.path.join(OUTPUT_DIR, 'sp500_2008.json'), 'w', encoding='utf-8') as f:
-    json.dump(sp500_records, f, ensure_ascii=False, indent=2)
-print(f"  → sp500_2008.json 저장 ({len(sp500_records)}일)")
-
-# ── 3. NASDAQ 닷컴버블 (yfinance) ──
-print("NASDAQ 데이터 수집 중...")
-nasdaq_raw = yf.download("^IXIC", start="1999-01-01", end="2002-12-31", auto_adjust=True)
-nasdaq_records = normalize_df(nasdaq_raw)
-with open(os.path.join(OUTPUT_DIR, 'nasdaq_2000.json'), 'w', encoding='utf-8') as f:
-    json.dump(nasdaq_records, f, ensure_ascii=False, indent=2)
-print(f"  → nasdaq_2000.json 저장 ({len(nasdaq_records)}일)")
-
-print("\n✅ 모든 데이터 수집 완료!")
-```
-
----
-
-## 16. AI 개발 프롬프트 (Claude Code / Codex 즉시 사용)
-
-> 아래 프롬프트를 **세션 순서대로** 사용한다.
-> 각 프롬프트는 독립적으로 동작하며, 이전 세션 결과가 파일로 존재하면 그 위에 이어 작업한다.
-
----
-
-### 🤖 [Session 0] 프로젝트 초기 세팅
-
-**대상**: Claude Code 또는 Codex  
-**사용 타이밍**: 저장소 클론 직후, 아무것도 없는 상태에서 시작
-
-```
-아래 스펙대로 React + Vite + TypeScript 프로젝트를 세팅해줘.
-
-## 프로젝트명
-modi
-
-## 설치할 패키지
-- react, react-dom
-- react-router-dom v6
-- zustand
-- lightweight-charts (TradingView 공식 패키지)
-- framer-motion
-- 개발 의존성: vite, @vitejs/plugin-react, typescript, @types/react, @types/react-dom, tailwindcss, autoprefixer, postcss
-
-## 해야 할 작업
-1. `npm create vite@latest modi -- --template react-ts` 실행
-2. 위 패키지 전부 설치
-3. Tailwind CSS 초기화 (tailwind.config.js, postcss.config.js 생성)
-4. tailwind.config.js content에 './src/**/*.{ts,tsx}' 포함
-5. src/index.css 에 @tailwind base/components/utilities 추가
-6. 다크모드 기반으로 tailwind.config.js에 `darkMode: 'class'` 설정
-7. index.html의 <html> 태그에 class="dark" 추가
-8. public/data/ 폴더 생성 (빈 폴더, .gitkeep 추가)
-9. scripts/ 폴더 생성
-
-## 결과 확인
-- `npm run dev` 실행 시 에러 없이 Vite 기본 화면 뜨면 성공
-```
-
----
-
-### 🤖 [Session 1] 타입 정의 + Zustand 스토어 구현
-
-**대상**: Claude Code  
-**선행 조건**: Session 0 완료, `public/data/*.json` 파일 존재
-
-```
-아래 스펙대로 TypeScript 타입과 Zustand 스토어를 구현해줘.
-
-## 생성할 파일: src/types/index.ts
-
-아래 인터페이스와 타입을 정의해:
-
-interface OHLCVBar {
-  date: string;    // "2020-01-02"
+  date: string;
   open: number;
   high: number;
   low: number;
   close: number;
   volume: number;
 }
-
-interface Scenario {
-  id: 'corona' | 'subprime' | 'dotcom';
-  title: string;
-  subtitle: string;
-  dataFile: string;      // fetch URL, e.g. "/data/kospi_2020.json"
-  market: string;
-  period: string;
-  lesson: string;
-  initialCash: number;
-  revealText: string;    // 시뮬레이션 종료 후 공개 텍스트
-}
-
-interface Trade {
-  day: number;
-  date: string;
-  type: 'buy' | 'sell';
-  qty: number;
-  price: number;
-  totalAmount: number;
-}
-
-type InvestorType = 'lion' | 'turtle' | 'rabbit' | 'monkey';
-
-## 생성할 파일: src/data/scenarios.ts
-
-아래 3개 시나리오 데이터를 Scenario[] 배열로 export 해:
-1. corona: "V자 반등의 정석" / KOSPI 2020 / /data/kospi_2020.json / 초기자금 10,000,000
-2. subprime: "끝없는 하락의 공포" / S&P500 2008 / /data/sp500_2008.json / 초기자금 10,000,000
-3. dotcom: "버블의 끝" / NASDAQ 2000 / /data/nasdaq_2000.json / 초기자금 10,000,000
-
-## 생성할 파일: src/store/tradeStore.ts
-
-Zustand create()로 아래 로직을 구현해:
-
-**상태**:
-- scenario: Scenario | null = null
-- chartData: OHLCVBar[] = []
-- currentDay: number = 0          // 현재 보이는 마지막 캔들 인덱스
-- isFinished: boolean = false
-- cash: number = 0
-- holdings: number = 0
-- avgPrice: number = 0
-- peakPortfolio: number = 0       // MDD 계산용
-- maxDrawdown: number = 0         // 음수 값, e.g. -0.35
-- tradeHistory: Trade[] = []
-
-**파생값 (get 함수로 구현)**:
-- currentPrice(): chartData[currentDay]?.close ?? 0
-- portfolioValue(): cash + holdings * currentPrice()
-- profitRate(): scenario가 있을 때 (portfolioValue() - scenario.initialCash) / scenario.initialCash
-
-**액션**:
-- initScenario(scenario, data): 스토어 전체 초기화 후 scenario, chartData, cash 세팅
-- nextDay(): 
-  - currentDay === chartData.length - 1 이면 isFinished = true 후 return
-  - currentDay += 1
-  - 현재 포트폴리오 가치 계산 → peakPortfolio 갱신 → maxDrawdown 갱신
-- buy(qty):
-  - qty <= 0 이면 return
-  - 예수금 초과 시 qty = Math.floor(cash / currentPrice()) 로 조정
-  - qty === 0 이면 return (살 수 있는 돈이 없음)
-  - avgPrice 가중평균 갱신
-  - cash 차감, holdings 증가
-  - tradeHistory에 추가
-- sell(qty):
-  - qty <= 0 이면 return
-  - qty > holdings 이면 qty = holdings
-  - cash 증가, holdings 차감
-  - holdings === 0 이면 avgPrice = 0
-  - tradeHistory에 추가
-- reset(): 모든 상태를 초기값으로 리셋
-
-**주의**: Zustand devtools 미들웨어 포함. immer는 사용하지 말 것.
 ```
 
----
+### 6-4. API 활용 위치
 
-### 🤖 [Session 2] 유틸 함수 + 커스텀 훅 구현
+API는 최종 배포 앱 내부 기능이 아니라 데이터 준비 단계에서만 사용한다.
 
-**대상**: Claude Code 또는 Codex
+| 용도 | 처리 방식 |
+|---|---|
+| 과거 지수 데이터 수집 | 로컬 스크립트로 수집 후 JSON 저장 |
+| 배포 앱에서 데이터 읽기 | `fetch('/data/file.json')` |
+| API Key 보관 | 최종 제출 앱에는 포함하지 않음 |
+| 데이터 오류 대응 | 로딩 실패 메시지와 재시도 버튼 제공 |
 
-```
-아래 파일들을 구현해줘.
+## 7. 상태와 데이터 흐름
 
-## 생성할 파일: src/utils/calcMetrics.ts
+### 7-1. 주요 상태
 
-/**
- * 존버 수익률: 시작일 close 기준으로 최대한 매수해 마지막 날까지 보유했을 때 수익률
- */
-export function calcHoldReturn(data: OHLCVBar[], initialCash: number): number
+| 상태 | 역할 |
+|---|---|
+| `scenario` | 사용자가 선택한 시나리오 |
+| `bars` | 현재 시나리오의 OHLCV 데이터 |
+| `currentDay` | 현재 공개된 날짜 인덱스 |
+| `cash` | 보유 현금 |
+| `shares` | 보유 수량 |
+| `averagePrice` | 평균 매수 단가 |
+| `trades` | 거래 기록 |
+| `message` | 사용자 피드백 메시지 |
+| `result` | 최종 결과 계산값 |
 
-/**
- * 날짜별 포트폴리오 가치 시계열 반환 (ProfitChart에서 사용)
- * tradeHistory를 날짜별로 시뮬레이션 재구성해서 [{date, myValue, holdValue}] 반환
- */
-export function calcPortfolioTimeSeries(
-  data: OHLCVBar[],
-  tradeHistory: Trade[],
-  initialCash: number
-): { date: string; myValue: number; holdValue: number }[]
+### 7-2. 상태 변경 흐름
 
-/**
- * MDD 계산: 누적 최고점 대비 최대 낙폭 (음수 반환, e.g. -0.35)
- */
-export function calcMDD(values: number[]): number
-
-## 생성할 파일: src/utils/getInvestorType.ts
-
-수익률(소수점, e.g. 0.123 = 12.3%)을 입력받아 아래 분기로 투자 성향 반환:
-- >= 0.20  → lion   🦁 대담한 역발상 투자자 / "공포가 곧 기회임을 아는 당신, 워런 버핏의 재림!"
-- >= 0     → turtle 🐢 안정 추구형 투자자   / "흔들리지 않는 멘탈, 장기 투자에 최적화된 성향입니다."
-- >= -0.20 → rabbit 🐇 눈치 보기형 투자자   / "조금 더 과감하게! 손절 타이밍을 연습해보세요."
-- < -0.20  → monkey 🙈 FOMO형 투자자       / "뇌동매매 주의! 감정보다 차트를 먼저 보는 연습이 필요합니다."
-
-반환 타입: { type: InvestorType; emoji: string; label: string; feedback: string }
-
-## 생성할 파일: src/hooks/useChartData.ts
-
-Scenario를 입력받아 dataFile을 fetch해서 OHLCVBar[]를 반환하는 커스텀 훅.
-상태: { data: OHLCVBar[], loading: boolean, error: string | null }
-fetch 성공 시 tradeStore.initScenario(scenario, data) 자동 호출.
-
-## 생성할 파일: src/hooks/useSimulation.ts
-
-tradeStore의 isFinished를 구독하고, true가 되면 navigate('/result')를 호출하는 훅.
-react-router-dom의 useNavigate 사용.
+```text
+시나리오 선택
+→ scenario 저장
+→ JSON 데이터 로딩
+→ currentDay 초기화
+→ 사용자가 수량 입력
+→ 매수 또는 매도 실행
+→ cash, shares, averagePrice, trades 변경
+→ 다음 날 버튼 클릭
+→ currentDay 증가
+→ 마지막 날이면 result 계산
+→ 결과 페이지 이동
 ```
 
----
+### 7-3. 매수 검증
 
-### 🤖 [Session 3] CandleChart 컴포넌트 구현
+| 조건 | 처리 |
+|---|---|
+| 수량이 비어 있음 | 수량을 입력하라는 메시지 표시 |
+| 수량이 1보다 작음 | 1주 이상 입력하라는 메시지 표시 |
+| 주문 금액이 현금보다 큼 | 현금 부족 메시지 표시 |
+| 정상 주문 | 현금 차감, 보유 수량 증가, 평균 단가 갱신 |
 
-**대상**: Claude Code  
-**선행 조건**: lightweight-charts 패키지 설치됨
+### 7-4. 매도 검증
 
-```
-lightweight-charts v4 (TradingView)를 사용해 캔들스틱 차트 컴포넌트를 구현해줘.
+| 조건 | 처리 |
+|---|---|
+| 수량이 비어 있음 | 수량을 입력하라는 메시지 표시 |
+| 수량이 1보다 작음 | 1주 이상 입력하라는 메시지 표시 |
+| 매도 수량이 보유 수량보다 큼 | 보유 수량 부족 메시지 표시 |
+| 정상 주문 | 현금 증가, 보유 수량 감소, 거래 기록 추가 |
 
-## 생성할 파일: src/components/chart/CandleChart.tsx
+## 8. 컴포넌트 구조
 
-**Props**:
-interface CandleChatProps {
-  data: OHLCVBar[];        // 전체 데이터
-  visibleCount: number;    // currentDay + 1 (이 개수만큼만 표시)
-  isTutorial?: boolean;    // 튜토리얼 모드 (툴팁 활성화)
-}
-
-**구현 요구사항**:
-1. useRef로 DOM 컨테이너 참조, useEffect에서 createChart() 호출
-2. chart 옵션: 다크 테마, 배경 '#0f172a', 격자선 '#1e293b', 텍스트 '#94a3b8'
-3. addCandlestickSeries() 호출: 양봉 '#22c55e', 음봉 '#ef4444'
-4. data를 lightweight-charts 형식으로 변환:
-   { time: bar.date, open, high, low, close } (time은 "YYYY-MM-DD" 문자열)
-5. visibleCount 개수만큼만 slice해서 setData()
-6. visibleCount 변경 시 setData() 다시 호출 (미래 데이터 블라인드)
-7. chart.timeScale().fitContent() 로 전체 표시
-8. 컴포넌트 언마운트 시 chart.remove() 정리
-9. isTutorial=true 일 때 crosshairMove 이벤트에서 ChartTooltip 컴포넌트 표시
-
-**스타일**: w-full h-[400px] 또는 h-full, 배경 투명
-
-## 생성할 파일: src/components/chart/ChartTooltip.tsx
-
-캔들에 마우스 호버 시 나타나는 툴팁.
-Props: { bar: OHLCVBar | null; x: number; y: number }
-표시 항목: 시가 / 고가 / 저가 / 종가 (라벨+값, 한국어)
-스타일: fixed 포지션, 다크 배경, 그림자, 애니메이션
-```
-
----
-
-### 🤖 [Session 4] 매매 패널 + HUD 구현
-
-**대상**: Claude Code
-
-```
-실전 시뮬레이션 화면의 우측 패널 컴포넌트들을 구현해줘.
-모든 컴포넌트는 tradeStore에서 직접 상태를 가져온다.
-
-## 생성할 파일: src/components/trade/AssetStatus.tsx
-
-tradeStore에서 cash, holdings, avgPrice, profitRate() 를 구독.
-표시 항목 (세로 카드 형태):
-- 💰 예수금: xxx,xxx원 (숫자 포맷: toLocaleString('ko-KR'))
-- 📦 보유수량: N주
-- 📊 평균매수가: xxx원 (holdings === 0이면 '-' 표시)
-- 📈 수익률: +12.3% (양수 초록, 음수 빨강, Framer Motion 숫자 카운트업 애니메이션)
-
-## 생성할 파일: src/components/trade/TradePanel.tsx
-
-매수/매도 입력 UI.
-- 매수 섹션: 수량 number input + [매수하기] 버튼 + [최대] 버튼 (예수금으로 살 수 있는 최대 수량 자동 입력)
-- 매도 섹션: 수량 number input + [매도하기] 버튼 + [전량] 버튼 (보유 수량 전체 자동 입력)
-- 버튼 클릭 시 tradeStore.buy() / sell() 호출
-- holdings === 0 이면 매도 섹션 비활성화 처리
-- 각 버튼 클릭 후 Framer Motion으로 체결 확인 플래시 효과 (0.3초 녹색/빨간 배경 flash)
-
-## 생성할 파일: src/components/trade/NextDayButton.tsx
-
-[▶ 다음 날로 가기] 버튼.
-- tradeStore.nextDay() 호출
-- Framer Motion whileHover scale 1.05, whileTap scale 0.95
-- 클릭 후 현재 날짜 D+N 표시 업데이트 (currentDay 기준)
-- 스타일: 풀 너비, 파란색 그라데이션 배경, 흰색 텍스트
+```text
+src/
+  components/
+    chart/
+      CandleChart.tsx
+      ChartTooltip.tsx
+    result/
+      InvestorBadge.tsx
+      ProfitChart.tsx
+      TradeHistory.tsx
+    trade/
+      AssetStatus.tsx
+      TradePanel.tsx
+      NextDayButton.tsx
+    ui/
+      Button.tsx
+      Modal.tsx
+      BrandLogo.tsx
+  data/
+    scenarios.ts
+  hooks/
+    useChartData.ts
+    useSimulation.ts
+  pages/
+    LandingPage.tsx
+    TutorialPage.tsx
+    ScenarioSelectPage.tsx
+    SimulationPage.tsx
+    ResultPage.tsx
+  store/
+    tradeStore.ts
+  types/
+    index.ts
+  utils/
+    calcMetrics.ts
+    format.ts
+    getInvestorType.ts
 ```
 
----
+## 9. React + TypeScript 활용 계획
 
-### 🤖 [Session 5] 페이지 조립 (SimulationPage + ResultPage)
+| 평가 포인트 | 구현 방식 |
+|---|---|
+| 컴포넌트 분리 | 차트, 거래 패널, 자산 현황, 결과 리포트를 별도 컴포넌트로 분리 |
+| props 사용 | `CandleChart`, `AssetStatus`, `TradePanel`에 필요한 데이터와 핸들러 전달 |
+| state 사용 | 페이지 상태와 전역 시뮬레이션 상태를 구분 |
+| 타입 지정 | `Scenario`, `OHLCVBar`, `Trade`, `InvestorType` 타입 정의 |
+| 이벤트 타입 | input 변경, 버튼 클릭 이벤트를 명확하게 처리 |
+| React 패턴 | 조건부 렌더링, 배열 렌더링, 커스텀 훅, 라우팅 활용 |
 
-**대상**: Claude Code
+## 10. 결과 리포트 피드백 기준
 
-```
-실전 시뮬레이션 페이지와 결과 페이지를 조립해줘.
+| 조건 | 투자 성향 | 피드백 방향 |
+|---|---|---|
+| 수익률 20% 이상 | 대담한 역발상 투자자 | 공포 구간에서 기회를 잡은 점 설명 |
+| 수익률 0% 이상 | 안정 추구형 투자자 | 손실을 피하고 안정적으로 대응한 점 설명 |
+| 수익률 -20% 이상 | 눈치 보기형 투자자 | 진입과 손절 타이밍을 더 연습하도록 안내 |
+| 수익률 -20% 미만 | FOMO형 투자자 | 감정적 추격 매수와 리스크 관리 부족 안내 |
 
-## 생성할 파일: src/pages/SimulationPage.tsx
+## 11. 배포 및 모바일/PWA 대응
 
-레이아웃:
-- 헤더: 좌측 "← 시나리오 선택" (navigate('/select')), 우측 "포기하기" (confirm 후 reset + navigate('/'))
-- 본문: CSS Grid (2컬럼, 좌 7:우 3 비율)
-  - 좌: CandleChart (data=chartData, visibleCount=currentDay+1)
-  - 우: AssetStatus + TradePanel + NextDayButton 세로 배치
-- 하단: 매매이력 테이블 (date, type, qty, price, totalAmount 컬럼)
+### 11-1. 배포 방식
 
-useChartData(scenario) 훅 호출로 데이터 로딩.
-useSimulation() 훅 호출로 종료 감지.
-scenario가 null이면 navigate('/select') 리다이렉트.
+| 항목 | 값 |
+|---|---|
+| 플랫폼 | Vercel |
+| 프레임워크 | Vite |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+| 데이터 위치 | `public/data/` |
+| DB | Supabase 유저 DB 포함 |
+| 서버 | Vercel Functions |
 
-## 생성할 파일: src/pages/ResultPage.tsx
+### 11-2. Vercel 환경변수
 
-표시 내용:
-1. 타이틀: "시뮬레이션 종료!" + 시나리오 공개 텍스트 (scenario.revealText)
-2. 핵심 지표 3개 카드:
-   - 내 최종 수익률 (profitRate, 색상 강조)
-   - 존버 수익률 (calcHoldReturn)
-   - 최대 낙폭 MDD (maxDrawdown)
-   - 총 매매 횟수 (tradeHistory.length)
-3. ProfitChart (내 포트폴리오 vs 존버 라인 차트, lightweight-charts LineChart 사용)
-4. InvestorBadge (getInvestorType 결과 표시, Framer Motion 등장 애니메이션)
-5. [다른 시나리오 도전하기] 버튼 → reset() + navigate('/select')
+| 환경변수 | 용도 |
+|---|---|
+| `VITE_API_BASE_URL=/api` | 프론트엔드가 Vercel Functions를 호출하는 기본 경로 |
+| `SUPABASE_URL` | Vercel Functions가 Supabase REST API에 접근하는 URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | 서버 함수 전용 Supabase 권한 키 |
+| `JWT_SECRET` | 로그인 세션 쿠키 서명 |
 
-## 수정할 파일: src/App.tsx
+`SUPABASE_SERVICE_ROLE_KEY`는 브라우저에 노출하지 않고 Vercel Functions 내부에서만 사용한다.
 
-react-router-dom BrowserRouter + Routes 설정:
-- /           → LandingPage
-- /select     → ScenarioSelectPage
-- /tutorial   → TutorialPage
-- /simulation → SimulationPage
-- /result     → ResultPage
-```
+### 11-3. 로그인과 유저 DB
 
----
+| 기능 | 구현 방식 |
+|---|---|
+| 이메일 회원가입 | `/api/auth/register`에서 이메일, 비밀번호, 닉네임을 검증하고 `users`에 저장 |
+| 이메일 로그인 | `/api/auth/login`에서 비밀번호 해시를 검증하고 세션 쿠키 발급 |
+| 로그인 유지 | `/api/auth/me`에서 쿠키를 확인해 현재 사용자 조회 |
+| 로그아웃 | `/api/auth/logout`에서 세션 쿠키 만료 |
+| 결과 저장 | `/api/results`에서 로그인 사용자 기준으로 `result_records`에 저장 |
 
-### 🤖 [Session 6] 랜딩 + 시나리오 선택 페이지
+### 11-4. PWA 대응
 
-**대상**: Claude Code 또는 Codex
+| 항목 | 구현 방식 |
+|---|---|
+| 설치 정보 | `public/manifest.webmanifest` |
+| 앱 아이콘 | `public/icons/`의 192px, 512px, maskable PNG |
+| 오프라인 화면 | `public/offline.html` |
+| 서비스 워커 | `public/sw.js`에서 앱 shell과 시나리오 JSON 캐시 |
+| 모바일 메타 | `index.html`에 theme color, manifest, apple mobile 태그 추가 |
 
-```
-랜딩 페이지와 시나리오 선택 페이지를 구현해줘. 디자인은 다크 테마 기반으로 세련되게.
+### 11-5. 배포 전 확인
 
-## 생성할 파일: src/pages/LandingPage.tsx
-
-배경: 다크 그라데이션 (slate-900 → slate-800)
-중앙 요소:
-- 로고/타이틀: "Modi 📈" (대형 폰트, 흰색)
-- 서브타이틀: "리스크 없이 주식을 배우다"
-- [지금 체험해보기!] 버튼 클릭 시 Modal 등장
-  - 모달 내용: "주식이 처음이신가요? 🤔"
-  - [예, 처음이에요 (초보자 튜토리얼)] → navigate('/tutorial')
-  - [아니오, 바로 실전으로] → navigate('/select')
-Framer Motion으로 타이틀 페이드인 + 버튼 스케일업 애니메이션.
-
-## 생성할 파일: src/pages/ScenarioSelectPage.tsx
-
-scenarios 배열을 map()으로 카드 3개 렌더링.
-카드 구성:
-- 시나리오 이름 (title)
-- 시장/기간 (market, period)
-- 학습 포인트 (lesson)
-- [이 시나리오 선택] 버튼 → tradeStore에 scenario 세팅 + navigate('/simulation')
-Framer Motion staggerChildren으로 카드 순차 등장 애니메이션.
-
-## 생성할 파일: src/components/ui/Modal.tsx
-
-Props: { isOpen: boolean; onClose: () => void; children: ReactNode }
-Framer Motion AnimatePresence로 등장/퇴장 애니메이션.
-배경 오버레이 클릭 시 onClose() 호출.
+```bash
+npm install
+npm run build
+npm run preview
 ```
 
----
+### 11-6. 모바일 검증 기준
 
-### 🤖 [Session 7] 초보자 튜토리얼 페이지
+| 확인 항목 | 방법 |
+|---|---|
+| 랜딩 페이지 출력 | `/` 접속 |
+| 튜토리얼 작동 | `/tutorial`에서 수량 입력과 메시지 확인 |
+| 시나리오 선택 | `/select`에서 카드 선택 |
+| 시뮬레이션 진행 | `/simulation`에서 매수, 매도, 다음 날 진행 |
+| 결과 리포트 | 마지막 날 이후 `/result` 이동 확인 |
+| 로그인 | `/login`에서 회원가입, 로그인, 로그아웃 확인 |
+| 모바일 폭 | 360x740, 390x844, 768x1024에서 레이아웃 깨짐 확인 |
+| PWA 설치 | manifest, service worker, 아이콘 로딩 확인 |
+| 오프라인 | 네트워크 차단 시 오프라인 화면 표시 확인 |
 
-**대상**: Claude Code
+## 12. 개발 일정
 
-```
-초보자를 위한 인터랙티브 2단계 튜토리얼 페이지를 구현해줘.
+| 주차 | 작업 |
+|---|---|
+| 1주차 | 최종 기획 확정, 화면 흐름, 타입, 데이터 구조 정리 |
+| 2주차 | 랜딩, 튜토리얼, 시나리오 선택 화면 구현 |
+| 3주차 | 시뮬레이션 상태, 거래 패널, 차트 연동 구현 |
+| 4주차 | 결과 리포트, 예외 처리, 반응형 정리, Vercel 배포, PWA 확인 |
 
-## 생성할 파일: src/pages/TutorialPage.tsx
+## 13. 역할 분담
 
-**단계 1: 차트의 언어 배우기**
-- 튜토리얼용 샘플 OHLCV 데이터 10일치를 하드코딩으로 준비 (실제 시장 데이터처럼 보이도록)
-- CandleChart isTutorial=true로 렌더링
-- 우측에 설명 박스: "캔들에 마우스를 올려보세요!"
-- 양봉/음봉 개념 설명 텍스트
-- [다음 단계로] 버튼
+| 담당 | 작업 |
+|---|---|
+| 팀원 A | 시나리오 데이터, 차트, 시뮬레이션 흐름, 결과 계산 |
+| 팀원 B | 랜딩, 튜토리얼, 거래 패널, 결과 리포트 UI |
+| 공동 | 타입 정의, 상태 흐름 설명, 발표 자료, Vercel 배포 확인 |
 
-**단계 2: 첫 매매 실습**
-- 지시문: "시장가로 10주를 매수해 보세요!"
-- 간단한 TradePanel (매수만 가능)
-- 10주 매수 완료 시 성공 메시지 + [실전으로 이동하기] 버튼 → navigate('/select')
+## 14. 발표 준비 포인트
 
-상단에 단계 표시 (Step 1/2 프로그레스 바).
-Framer Motion으로 단계 전환 슬라이드 애니메이션.
-```
+### 14-1. 코드 흐름 설명
 
----
-
-### 🤖 [Session 8] 마무리 & 배포 준비
-
-**대상**: Claude Code
-
-```
-프로젝트 마무리 작업을 해줘.
-
-## 1. 반응형 처리
-SimulationPage: md 미만에서 CandleChart 전체 너비, TradePanel 하단 배치
-ScenarioSelectPage: sm 미만에서 카드 1열
-
-## 2. 에러 처리
-- useChartData에서 fetch 실패 시 에러 화면 컴포넌트 표시
-- JSON 파싱 실패 시 콘솔 에러 + 사용자에게 토스트 메시지
-
-## 3. vite.config.ts 수정
-- base: '/modi/' 설정 (GitHub Pages 배포용, 저장소명이 modi인 경우)
-- 또는 Vercel 배포 시 base: '/' 유지
-
-## 4. package.json scripts 추가
-- "predeploy": "npm run build"
-- "deploy": "gh-pages -d dist" (gh-pages 패키지 설치 포함)
-
-## 5. README.md 작성
-- 프로젝트 소개, 스크린샷 placeholder, 로컬 실행 방법, 데이터 수집 방법 포함
-
-## 6. 최종 빌드 테스트
-`npm run build` 실행 후 에러 없음 확인.
-TypeScript 타입 에러 전부 수정.
+```text
+App 라우팅
+→ 페이지 컴포넌트
+→ 전역 시뮬레이션 상태
+→ 차트와 거래 컴포넌트
+→ 거래 이벤트 처리
+→ 결과 계산
 ```
 
----
+### 14-2. state 변경 설명
 
-### 🤖 [Codex 단발 프롬프트] 개별 함수 생성용
+발표에서는 매수 버튼 클릭 시 `cash`, `shares`, `averagePrice`, `trades`가 어떻게 바뀌는지 설명한다. 다음 날 버튼 클릭 시 `currentDay`가 증가하고, 마지막 날에는 결과 계산 후 결과 페이지로 이동하는 흐름을 설명한다.
 
-> Claude Code 없이 Codex (ChatGPT)에서 단일 함수/컴포넌트만 빠르게 만들 때 사용.
+### 14-3. AI 활용 이력 제출 항목
 
-#### calcMDD 함수
-```
-TypeScript로 calcMDD(values: number[]): number 함수를 구현해줘.
-입력: 날짜순 포트폴리오 가치 배열 (e.g. [10000000, 9800000, 8500000, 11000000])
-출력: 최고점 대비 최대 낙폭 비율 (음수, e.g. -0.15)
-알고리즘: 누적 최고점 peak를 유지하면서 (current - peak) / peak 의 최솟값 반환
-엣지 케이스: 빈 배열 → 0 반환
-```
+| 항목 | 작성 내용 |
+|---|---|
+| 전달한 Context | React + TypeScript 기말 프로젝트, 프론트엔드 평가, DB 제외, Vercel 배포 |
+| 요청한 기능 | 초보자 튜토리얼, 과거 데이터 시나리오, 매매 시뮬레이션, 결과 리포트 |
+| AI가 도운 부분 | 타입 구조 정리, 컴포넌트 분리 방향, 예외 처리 체크리스트, 문서 정리 |
+| 직접 확인한 부분 | 빌드 실행, 화면 흐름, 상태 변경, 결과 리포트 값 |
 
-#### 숫자 포맷 유틸
-```
-TypeScript로 아래 포맷 유틸 함수들을 구현해줘.
-- formatKRW(n: number): string  → "9,234,500원"
-- formatRate(n: number): string → "+12.3%" 또는 "-5.2%" (양수면 + 기호 포함)
-- formatCount(n: number): string → "27주" 또는 "N/A"
-```
+## 15. 최종 체크리스트
 
-#### lightweight-charts 라인 차트 (ProfitChart)
-```
-lightweight-charts v4로 두 개의 라인(내 수익률 vs 존버 수익률)을 그리는
-ProfitChart React 컴포넌트를 구현해줘.
-
-Props:
-interface ProfitChartProps {
-  series: { date: string; myValue: number; holdValue: number }[];
-  initialCash: number;
-}
-
-두 라인:
-- "내 포트폴리오": 파란색 (#3b82f6)
-- "존버 전략": 회색 (#6b7280) 점선
-
-x축: date 문자열 (YYYY-MM-DD)
-y축: 원화 금액 (formatKRW로 레이블)
-범례 포함.
-```
+| 항목 | 기준 |
+|---|---|
+| 실행 가능 | `npm run build` 통과 |
+| 기능 완성 | 튜토리얼, 시나리오, 매매, 결과 리포트 동작 |
+| 예외 처리 | 입력 오류와 데이터 로딩 실패 대응 |
+| 타입 안정성 | 주요 데이터와 함수에 TypeScript 타입 적용 |
+| 발표 가능성 | 상태 변경과 AI 활용 과정을 설명 가능 |
+| 배포 적합성 | Vercel Functions와 Supabase 유저 DB 포함 구조로 배포 가능 |
+| 모바일 적합성 | PWA 설치와 360px 폭 모바일 사용 가능 |

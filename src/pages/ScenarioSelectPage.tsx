@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BrandLogo } from '../components/ui/BrandLogo';
-import { practiceScenario, scenarios } from '../data/scenarios';
+import { scenarios } from '../data/scenarios';
 import { useTradeStore } from '../store/tradeStore';
 import { Button } from '../components/ui/Button';
 
@@ -14,9 +14,14 @@ export function ScenarioSelectPage() {
       <section className="mx-auto max-w-6xl rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-card">
         <header className="mb-10 flex items-center justify-between">
           <BrandLogo />
-          <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/')}>
-            처음으로
-          </button>
+          <div className="flex items-center gap-4">
+            <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/login?next=/select')}>
+              로그인
+            </button>
+            <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/')}>
+              처음으로
+            </button>
+          </div>
         </header>
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-black tracking-[-0.03em] text-[#111827] sm:text-4xl">실전 시뮬레이션 시나리오를 선택하세요</h1>
@@ -70,33 +75,6 @@ export function ScenarioSelectPage() {
             </motion.article>
           ))}
         </motion.div>
-        <section className="mt-6 overflow-hidden rounded-2xl border border-[#ded9ff] bg-[#f8f7ff] p-6 shadow-card">
-          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <div>
-              <p className="text-sm font-extrabold text-[#5b45f2]">별도 모의투자</p>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] text-[#111827]">{practiceScenario.title}</h2>
-              <p className="mt-3 text-sm font-bold leading-6 text-[#667085]">{practiceScenario.lesson}</p>
-            </div>
-            <div className="grid gap-4 rounded-2xl bg-white p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-[#8b95a7]">초기 자금</span>
-                <strong className="text-xl font-black text-[#111827]">1,000,000,000원</strong>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-[#8b95a7]">진행 방식</span>
-                <strong className="text-sm font-black text-[#5b45f2]">자유 연습</strong>
-              </div>
-              <Button
-                className="w-full"
-                onClick={() => {
-                  navigate('/trade');
-                }}
-              >
-                10억 모의투자 시작
-              </Button>
-            </div>
-          </div>
-        </section>
       </section>
     </main>
   );

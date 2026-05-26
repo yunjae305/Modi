@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +50,7 @@ public class AuthController {
     @GetMapping("/providers")
     public ApiResponse<AuthDtos.ProviderStatus> providers() {
         return ApiResponse.success(new AuthDtos.ProviderStatus(Map.of(
+            "email", true,
             "google", oAuthService.isConfigured(AuthProvider.GOOGLE),
             "kakao", oAuthService.isConfigured(AuthProvider.KAKAO),
             "guest", true
@@ -86,6 +88,22 @@ public class AuthController {
     @PostMapping("/guest")
     public ResponseEntity<ApiResponse<AuthDtos.UserInfo>> guest() {
         UserAccount user = authService.loginGuest();
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, sessionCookie(authService.createSessionToken(user)).toString())
+            .body(ApiResponse.success(new AuthDtos.UserInfo(user)));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<AuthDtos.UserInfo>> register(@Valid @RequestBody AuthDtos.RegisterRequest request) {
+        UserAccount user = authService.registerEmail(request.getEmail(), request.getPassword(), request.getNickname());
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, sessionCookie(authService.createSessionToken(user)).toString())
+            .body(ApiResponse.success(new AuthDtos.UserInfo(user)));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<AuthDtos.UserInfo>> login(@Valid @RequestBody AuthDtos.LoginRequest request) {
+        UserAccount user = authService.loginEmail(request.getEmail(), request.getPassword());
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, sessionCookie(authService.createSessionToken(user)).toString())
             .body(ApiResponse.success(new AuthDtos.UserInfo(user)));

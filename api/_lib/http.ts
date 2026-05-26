@@ -1,4 +1,4 @@
-import { isProduction } from './env';
+import { isProduction } from './env.ts';
 
 export function ok(res: any, data: unknown) {
   return res.status(200).json({ success: true, data, error: null });

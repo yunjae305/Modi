@@ -22,6 +22,7 @@ export function TradeHistory({ trades }: TradeHistoryProps) {
             <thead className="sticky top-0 bg-white text-xs uppercase text-[#8b95a7]">
               <tr>
                 <th className="py-3">날짜</th>
+                <th>종목</th>
                 <th>구분</th>
                 <th>수량</th>
                 <th>가격</th>
@@ -32,6 +33,7 @@ export function TradeHistory({ trades }: TradeHistoryProps) {
               {trades.map((trade, index) => (
                 <tr key={`${trade.date}-${trade.type}-${index}`} className="border-t border-[#edf0f6]">
                   <td className="py-3 text-[#4b5563]">{trade.date}</td>
+                  <td className="font-extrabold text-[#111827]">{trade.stockName}</td>
                   <td className={trade.type === 'buy' ? 'font-extrabold text-[#5b45f2]' : 'font-extrabold text-[#ff3f55]'}>
                     {trade.type === 'buy' ? '매수' : '매도'}
                   </td>
