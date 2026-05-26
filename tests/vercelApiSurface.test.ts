@@ -57,6 +57,16 @@ test('Vercel API functions compile with Node globals and node protocol imports',
   assert.ok(tsconfig.compilerOptions?.types?.includes('node'));
 });
 
+test('Vercel API emitted JavaScript rewrites relative TypeScript imports', () => {
+  const tsconfig = JSON.parse(readFileSync('tsconfig.json', 'utf8')) as {
+    compilerOptions?: {
+      rewriteRelativeImportExtensions?: boolean;
+    };
+  };
+
+  assert.equal(tsconfig.compilerOptions?.rewriteRelativeImportExtensions, true);
+});
+
 function vercelFunctionFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);
