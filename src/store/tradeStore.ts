@@ -110,6 +110,7 @@ export const useTradeStore = create<TradeState>()(
           scenarioStocks: data,
           selectedStockId: selectedStock?.id ?? '',
           chartData: selectedStock?.bars ?? [],
+          isPlaying: data.length > 0,
           cash: scenario.initialCash,
           peakPortfolio: scenario.initialCash,
         },
@@ -139,11 +140,15 @@ export const useTradeStore = create<TradeState>()(
       set({ marketSpeed: speed }, false, 'trade/setMarketSpeed');
     },
     togglePlaying: () => {
-      set({ isPlaying: !get().isPlaying }, false, 'trade/togglePlaying');
+      const state = get();
+      if (!state.scenarioStocks.length || state.isFinished) {
+        return;
+      }
+      set({ isPlaying: !state.isPlaying }, false, 'trade/togglePlaying');
     },
     tick: (elapsedMs) => {
       const state = get();
-      if (!state.scenarioStocks.length || state.isFinished || elapsedMs <= 0) {
+      if (!state.isPlaying || !state.scenarioStocks.length || state.isFinished || elapsedMs <= 0) {
         return;
       }
       const duration = getDayDurationMs(state.marketSpeed);
@@ -168,6 +173,7 @@ export const useTradeStore = create<TradeState>()(
           currentDay,
           dayProgress,
           isFinished,
+          isPlaying: !isFinished,
           peakPortfolio,
           maxDrawdown: Math.min(state.maxDrawdown, drawdown),
         },
@@ -182,7 +188,7 @@ export const useTradeStore = create<TradeState>()(
       }
       const lastDayIndex = getLastDayIndex(state.scenarioStocks);
       if (state.currentDay >= lastDayIndex) {
-        set({ isFinished: true, dayProgress: 1 }, false, 'trade/finish');
+        set({ isFinished: true, isPlaying: false, dayProgress: 1 }, false, 'trade/finish');
         return;
       }
       const currentDay = state.currentDay + 1;
