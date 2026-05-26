@@ -37,3 +37,13 @@ test('Vercel API와 Supabase 1차 모의투자 표면이 존재한다', () => {
   assert.match(schema, /create table if not exists public\.latest_prices/);
   assert.match(schema, /alter publication supabase_realtime/);
 });
+
+test('Vercel API functions compile with Node globals and node protocol imports', () => {
+  const tsconfig = JSON.parse(readFileSync('tsconfig.json', 'utf8')) as {
+    compilerOptions?: {
+      types?: string[];
+    };
+  };
+
+  assert.ok(tsconfig.compilerOptions?.types?.includes('node'));
+});
