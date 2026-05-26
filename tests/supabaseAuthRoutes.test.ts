@@ -23,6 +23,9 @@ test('카카오 간편 로그인과 콜백 라우트를 제공한다', () => {
   assert.match(app, /path="\/login\/callback"/);
   assert.match(login, /Kakao로 시작하기/);
   assert.match(login, /loginKakao/);
+  assert.match(login, /ProviderStatus/);
+  assert.match(login, /apiGet<ProviderStatus>\('\/auth\/providers'\)/);
+  assert.match(login, /providers\?\.providers\.kakao/);
   assert.match(callback, /refreshUser/);
   assert.match(store, /loginKakao/);
   assert.match(providers, /kakao/);

@@ -1,8 +1,10 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
+import { apiGet } from '../services/api';
 import { normalizeNextPath, useAuthStore } from '../store/authStore';
+import type { ProviderStatus } from '../types/auth';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -16,7 +18,26 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
+  const [providers, setProviders] = useState<ProviderStatus | null>(null);
   const next = normalizeNextPath(new URLSearchParams(location.search).get('next'));
+
+  useEffect(() => {
+    let active = true;
+    apiGet<ProviderStatus>('/auth/providers')
+      .then((status) => {
+        if (active) {
+          setProviders(status);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setProviders({ providers: { email: true, kakao: false } });
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const submitCredentials = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,7 +72,7 @@ export function LoginPage() {
           <p className="text-sm font-extrabold text-[#5b45f2]">로그인</p>
           <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">시나리오 투자 계정으로 시작하세요</h1>
           <p className="mt-3 text-sm font-bold leading-6 text-[#667085]">
-            아이디와 비밀번호로 로그인하거나 Kakao로 빠르게 시작할 수 있습니다.
+            {providers?.providers.kakao ? '아이디와 비밀번호로 로그인하거나 Kakao로 빠르게 시작할 수 있습니다.' : '아이디와 비밀번호로 로그인할 수 있습니다.'}
           </p>
           <div className="mt-6 grid grid-cols-2 rounded-xl bg-white p-1 text-sm font-extrabold">
             <button
@@ -96,20 +117,24 @@ export function LoginPage() {
               {authMode === 'login' ? '아이디로 로그인' : '회원가입하고 시작'}
             </Button>
           </form>
-          <div className="my-6 flex items-center gap-4">
-            <span className="h-px flex-1 bg-[#dfe3ee]" />
-            <span className="text-xs font-extrabold text-[#8b95a7]">또는</span>
-            <span className="h-px flex-1 bg-[#dfe3ee]" />
-          </div>
-          <Button
-            type="button"
-            variant="soft"
-            className="w-full bg-[#fee500] text-[#111827] hover:bg-[#f4da00]"
-            disabled={loading}
-            onClick={startKakao}
-          >
-            Kakao로 시작하기
-          </Button>
+          {providers?.providers.kakao && (
+            <>
+              <div className="my-6 flex items-center gap-4">
+                <span className="h-px flex-1 bg-[#dfe3ee]" />
+                <span className="text-xs font-extrabold text-[#8b95a7]">또는</span>
+                <span className="h-px flex-1 bg-[#dfe3ee]" />
+              </div>
+              <Button
+                type="button"
+                variant="soft"
+                className="w-full bg-[#fee500] text-[#111827] hover:bg-[#f4da00]"
+                disabled={loading}
+                onClick={startKakao}
+              >
+                Kakao로 시작하기
+              </Button>
+            </>
+          )}
           {error && <p className="mt-4 text-sm font-bold text-[#ff3f55]">{error}</p>}
         </div>
       </section>
