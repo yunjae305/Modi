@@ -40,6 +40,8 @@ test('Vercel API는 현재 로그인에 필요한 함수만 배포한다', () =>
   assert.match(env, /SUPABASE_SERVICE_ROLE_KEY=/);
   assert.match(schema, /password_hash text/);
   assert.match(schema, /create table if not exists public\.latest_prices/);
+  assert.match(schema, /grant select, insert, update, delete on table public\.users to service_role/);
+  assert.match(schema, /notify pgrst, 'reload schema'/);
   assert.match(schema, /alter publication supabase_realtime/);
   assert.ok(vercelFunctionFiles('api').length <= 12);
   for (const file of obsoleteFiles) {

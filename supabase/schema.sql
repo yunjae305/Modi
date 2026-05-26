@@ -112,6 +112,17 @@ alter table public.executions enable row level security;
 alter table public.result_records enable row level security;
 alter table public.kis_tokens enable row level security;
 
+grant usage on schema public to anon, authenticated, service_role;
+grant select on table public.stocks to anon, authenticated;
+grant select on table public.latest_prices to anon, authenticated;
+grant select, insert, update, delete on table public.users to service_role;
+grant select, insert, update, delete on table public.stocks to service_role;
+grant select, insert, update, delete on table public.latest_prices to service_role;
+grant select, insert, update, delete on table public.positions to service_role;
+grant select, insert, update, delete on table public.executions to service_role;
+grant select, insert, update, delete on table public.result_records to service_role;
+grant select, insert, update, delete on table public.kis_tokens to service_role;
+
 drop policy if exists stocks_public_select on public.stocks;
 create policy stocks_public_select on public.stocks for select to anon, authenticated using (true);
 
@@ -130,3 +141,5 @@ begin
     alter publication supabase_realtime add table public.latest_prices;
   end if;
 end $$;
+
+notify pgrst, 'reload schema';

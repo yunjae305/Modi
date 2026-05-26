@@ -112,11 +112,18 @@ npm run dev
 VITE_API_BASE_URL=http://localhost:8080/api
 SUPABASE_URL=...
 SUPABASE_SERVICE_ROLE_KEY=...
+SUPABASE_DB_URL=...
 KAKAO_CLIENT_ID=...
 KAKAO_CLIENT_SECRET=...
 JWT_SECRET=change-this-to-a-long-random-local-secret
 FRONTEND_URL=http://localhost:5173
 BACKEND_URL=http://localhost:8080
+```
+
+Supabase 프로젝트를 새로 켰거나 `PGRST205`가 발생하면 DB에 스키마를 적용합니다. `SUPABASE_DB_URL`은 Supabase Dashboard의 Connect 화면에서 복사한 Postgres 연결 문자열입니다.
+
+```bash
+npx.cmd supabase db query --db-url "$env:SUPABASE_DB_URL" --file supabase/schema.sql
 ```
 
 Kakao Developers의 Redirect URI에는 다음 값을 등록합니다.
