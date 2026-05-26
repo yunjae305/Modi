@@ -1,24 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
-test('Vercel API와 Supabase 1차 모의투자 표면이 존재한다', () => {
+test('Vercel API는 현재 로그인에 필요한 함수만 배포한다', () => {
   const files = [
     'api/auth/providers.ts',
     'api/auth/register.ts',
     'api/auth/login.ts',
-    'api/auth/guest.ts',
     'api/auth/me.ts',
     'api/auth/logout.ts',
     'api/auth/oauth/kakao/authorize.ts',
     'api/auth/oauth/kakao/callback.ts',
-    'api/stocks.ts',
-    'api/portfolio.ts',
-    'api/executions.ts',
-    'api/rankings.ts',
-    'api/orders/buy.ts',
-    'api/orders/sell.ts',
-    'api/prices/sync.ts',
     'supabase/schema.sql',
   ];
 
@@ -28,14 +21,30 @@ test('Vercel API와 Supabase 1차 모의투자 표면이 존재한다', () => {
 
   const env = readFileSync('.env.example', 'utf8');
   const schema = readFileSync('supabase/schema.sql', 'utf8');
+  const obsoleteFiles = [
+    'api/auth/guest.ts',
+    'api/auth/supabase.ts',
+    'api/auth/oauth/google/authorize.ts',
+    'api/auth/oauth/google/callback.ts',
+    'api/stocks.ts',
+    'api/portfolio.ts',
+    'api/executions.ts',
+    'api/rankings.ts',
+    'api/results.ts',
+    'api/orders/buy.ts',
+    'api/orders/sell.ts',
+    'api/prices/sync.ts',
+  ];
 
   assert.match(env, /SUPABASE_URL=/);
   assert.match(env, /SUPABASE_SERVICE_ROLE_KEY=/);
-  assert.match(env, /KIS_APP_KEY=/);
-  assert.match(env, /KIS_APP_SECRET=/);
   assert.match(schema, /password_hash text/);
   assert.match(schema, /create table if not exists public\.latest_prices/);
   assert.match(schema, /alter publication supabase_realtime/);
+  assert.ok(vercelFunctionFiles('api').length <= 12);
+  for (const file of obsoleteFiles) {
+    assert.equal(existsSync(file), false, file);
+  }
 });
 
 test('Vercel API functions compile with Node globals and node protocol imports', () => {
@@ -47,3 +56,17 @@ test('Vercel API functions compile with Node globals and node protocol imports',
 
   assert.ok(tsconfig.compilerOptions?.types?.includes('node'));
 });
+
+function vercelFunctionFiles(dir: string): string[] {
+  return readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    const stats = statSync(path);
+    if (stats.isDirectory()) {
+      if (name === '_lib') {
+        return [];
+      }
+      return vercelFunctionFiles(path);
+    }
+    return name.endsWith('.ts') ? [path] : [];
+  });
+}
