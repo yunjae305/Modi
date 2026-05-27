@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { HeroIllustration } from '../components/ui/HeroIllustration';
 import { Modal } from '../components/ui/Modal';
+import { useAuthStore } from '../store/authStore';
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const refreshUser = useAuthStore((state) => state.refreshUser);
+  const logout = useAuthStore((state) => state.logout);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      refreshUser();
+    }
+  }, [refreshUser, user]);
 
   return (
     <main className="min-h-screen px-5 py-5">
@@ -22,9 +32,18 @@ export function LandingPage() {
             <a href="#about">이용 방법</a>
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => navigate('/login?next=/select')}>
-              로그인
-            </Button>
+            {user ? (
+              <>
+                <span className="hidden text-xs font-extrabold text-[#111827] sm:block">{user.nickname}님</span>
+                <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => navigate('/login?next=/select')}>
+                로그인
+              </Button>
+            )}
             <Button className="px-4 py-2 text-xs" onClick={() => navigate('/select')}>
               시나리오 시작
             </Button>
