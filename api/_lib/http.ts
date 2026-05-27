@@ -1,10 +1,12 @@
 import { isProduction } from './env.ts';
 
 export function ok(res: any, data: unknown) {
+  noStore(res);
   return res.status(200).json({ success: true, data, error: null });
 }
 
 export function fail(res: any, status: number, error: string) {
+  noStore(res);
   return res.status(status).json({ success: false, data: null, error });
 }
 
@@ -18,6 +20,7 @@ export function allowMethods(req: any, res: any, methods: string[]) {
 }
 
 export function redirect(res: any, location: string, cookies: string[] = []) {
+  noStore(res);
   if (cookies.length > 0) {
     res.setHeader('Set-Cookie', cookies);
   }
@@ -77,4 +80,9 @@ export async function readBody(req: any) {
 export function handleError(res: any, error: unknown) {
   const message = error instanceof Error ? error.message : '요청을 처리하지 못했습니다.';
   return fail(res, 500, message);
+}
+
+function noStore(res: any) {
+  res.setHeader('Cache-Control', 'no-store, max-age=0');
+  res.setHeader('Vary', 'Cookie');
 }
