@@ -17,6 +17,7 @@ test('카카오 간편 로그인과 콜백 라우트를 제공한다', () => {
 
   const login = readFileSync('src/pages/LoginPage.tsx', 'utf8');
   const callback = readFileSync('src/pages/LoginCallbackPage.tsx', 'utf8');
+  const select = readFileSync('src/pages/ScenarioSelectPage.tsx', 'utf8');
   const store = readFileSync('src/store/authStore.ts', 'utf8');
   const providers = readFileSync('api/auth/providers.ts', 'utf8');
 
@@ -27,6 +28,10 @@ test('카카오 간편 로그인과 콜백 라우트를 제공한다', () => {
   assert.match(login, /apiGet<ProviderStatus>\('\/auth\/providers'\)/);
   assert.match(login, /providers\?\.providers\.kakao/);
   assert.match(callback, /refreshUser/);
+  assert.match(select, /useAuthStore/);
+  assert.match(select, /refreshUser/);
+  assert.match(select, /user\.nickname/);
+  assert.match(select, /로그아웃/);
   assert.match(store, /loginKakao/);
   assert.match(providers, /kakao/);
 

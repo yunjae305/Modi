@@ -1,13 +1,24 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { scenarios } from '../data/scenarios';
+import { useAuthStore } from '../store/authStore';
 import { useTradeStore } from '../store/tradeStore';
 import { Button } from '../components/ui/Button';
 
 export function ScenarioSelectPage() {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const refreshUser = useAuthStore((state) => state.refreshUser);
+  const logout = useAuthStore((state) => state.logout);
   const selectScenario = useTradeStore((state) => state.selectScenario);
+
+  useEffect(() => {
+    if (!user) {
+      refreshUser();
+    }
+  }, [refreshUser, user]);
 
   return (
     <main className="min-h-screen px-5 py-5">
@@ -15,9 +26,18 @@ export function ScenarioSelectPage() {
         <header className="mb-10 flex items-center justify-between">
           <BrandLogo />
           <div className="flex items-center gap-4">
-            <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/login?next=/select')}>
-              로그인
-            </button>
+            {user ? (
+              <>
+                <span className="text-sm font-extrabold text-[#111827]">{user.nickname}님</span>
+                <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => logout()}>
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/login?next=/select')}>
+                로그인
+              </button>
+            )}
             <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/')}>
               처음으로
             </button>
