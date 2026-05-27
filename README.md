@@ -99,10 +99,10 @@ tests/                주요 플로우 검증 테스트
 
 ```bash
 npm install
-npm run dev
+npm run dev:vercel
 ```
 
-브라우저에서 `http://localhost:5173`으로 접속합니다.
+브라우저에서 `http://localhost:8080`으로 접속합니다. `npm run dev:vercel`은 Vercel dev로 프론트엔드와 `/api` 로그인 함수를 함께 실행합니다. 프론트엔드 화면만 빠르게 확인할 때는 `npm run dev`를 사용할 수 있습니다.
 
 ### 로그인 API 설정
 
@@ -116,7 +116,7 @@ SUPABASE_DB_URL=...
 KAKAO_CLIENT_ID=...
 KAKAO_CLIENT_SECRET=...
 JWT_SECRET=change-this-to-a-long-random-local-secret
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=http://localhost:8080
 BACKEND_URL=http://localhost:8080
 ```
 

@@ -1,5 +1,5 @@
-import { requireUser, toUserInfo } from '../_lib/auth';
-import { allowMethods, fail, handleError, ok } from '../_lib/http';
+import { requireUser, toUserInfo } from '../_lib/auth.ts';
+import { allowMethods, fail, handleError, ok } from '../_lib/http.ts';
 
 export default async function handler(req: any, res: any) {
   if (!allowMethods(req, res, ['GET'])) {

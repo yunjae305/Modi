@@ -34,3 +34,20 @@ test('카카오 간편 로그인과 콜백 라우트를 제공한다', () => {
     assert.equal(login.includes(forbidden) || store.includes(forbidden) || providers.includes(forbidden), false, forbidden);
   }
 });
+
+test('로컬 개발 서버는 로그인 API와 프론트엔드를 함께 실행한다', () => {
+  const packageJson = JSON.parse(readFileSync('package.json', 'utf8')) as {
+    scripts: Record<string, string>;
+  };
+  const envExample = readFileSync('.env.example', 'utf8');
+  const readme = readFileSync('README.md', 'utf8');
+
+  assert.match(packageJson.scripts.dev, /vite/);
+  assert.match(packageJson.scripts['dev:vercel'], /vercel dev/);
+  assert.match(packageJson.scripts['dev:vercel'], /127\.0\.0\.1:8080/);
+  assert.match(envExample, /VITE_API_BASE_URL=http:\/\/localhost:8080\/api/);
+  assert.match(envExample, /FRONTEND_URL=http:\/\/localhost:8080/);
+  assert.match(envExample, /BACKEND_URL=http:\/\/localhost:8080/);
+  assert.match(readme, /http:\/\/localhost:8080/);
+  assert.match(readme, /npm run dev:vercel/);
+});

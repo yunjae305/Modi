@@ -69,6 +69,16 @@ test('Vercel API emitted JavaScript rewrites relative TypeScript imports', () =>
   assert.equal(tsconfig.compilerOptions?.rewriteRelativeImportExtensions, true);
 });
 
+test('Vercel API handlers use explicit TypeScript extensions for relative imports', () => {
+  for (const file of vercelFunctionFiles('api')) {
+    const source = readFileSync(file, 'utf8');
+    const imports = source.matchAll(/from ['"](\.{1,2}\/[^'"]+)['"]/g);
+    for (const match of imports) {
+      assert.match(match[1], /\.ts$/, `${file} imports ${match[1]}`);
+    }
+  }
+});
+
 function vercelFunctionFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);

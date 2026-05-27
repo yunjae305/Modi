@@ -13,7 +13,7 @@ function setAuthEnv() {
   process.env.JWT_SECRET = 'local-test-secret-for-auth-handlers';
   process.env.KAKAO_CLIENT_ID = 'kakao-client';
   process.env.KAKAO_CLIENT_SECRET = 'kakao-secret';
-  process.env.FRONTEND_URL = 'http://localhost:5173';
+  process.env.FRONTEND_URL = 'http://localhost:8080';
   process.env.BACKEND_URL = 'http://localhost:8080';
 }
 
@@ -250,7 +250,7 @@ test('Kakao callback API가 카카오 프로필을 사용자 세션으로 전환
   await kakaoCallbackHandler(req, res);
 
   assert.equal(res.statusCode, 302);
-  assert.equal(res.getHeader('location'), 'http://localhost:5173/login/callback');
+  assert.equal(res.getHeader('location'), 'http://localhost:8080/login/callback');
   const cookies = res.getHeader('set-cookie') as string[];
   assert.equal(cookies.some((value) => value.includes('MODI_SESSION=')), true);
   assert.equal(cookies.some((value) => value.includes('MODI_OAUTH_STATE=')), true);

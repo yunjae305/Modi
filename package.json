@@ -4,7 +4,8 @@
   "private": true,
   "description": "Modi 모의 주식 투자 학습 시뮬레이션",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "dev:vercel": "npx vercel dev --listen 127.0.0.1:8080 --yes",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
