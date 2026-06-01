@@ -7,9 +7,10 @@ interface CandleChartProps {
   data: OHLCVBar[];
   visibleCount: number;
   isTutorial?: boolean;
+  height?: number;
 }
 
-export function CandleChart({ data, visibleCount, isTutorial = false }: CandleChartProps) {
+export function CandleChart({ data, visibleCount, isTutorial = false, height = 420 }: CandleChartProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tooltip, setTooltip] = useState<{ bar: OHLCVBar | null; x: number; y: number }>({
     bar: null,
@@ -24,7 +25,7 @@ export function CandleChart({ data, visibleCount, isTutorial = false }: CandleCh
       return;
     }
     const chart = createChart(container, {
-      height: container.clientHeight || 420,
+      height: container.clientHeight || height,
       width: container.clientWidth,
       layout: {
         background: { color: '#ffffff' },
@@ -88,10 +89,10 @@ export function CandleChart({ data, visibleCount, isTutorial = false }: CandleCh
       resizeObserver.disconnect();
       chart.remove();
     };
-  }, [isTutorial, visibleData]);
+  }, [height, isTutorial, visibleData]);
 
   return (
-    <div className="relative h-[420px] w-full overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white shadow-card">
+    <div className="relative w-full overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white shadow-card" style={{ height }}>
       <div ref={containerRef} className="h-full w-full" />
       {isTutorial && <ChartTooltip {...tooltip} />}
     </div>

@@ -7,7 +7,7 @@ interface TradeHistoryProps {
 
 export function TradeHistory({ trades }: TradeHistoryProps) {
   return (
-    <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-black text-[#111827]">매매 기록</h2>
         <span className="text-sm font-extrabold text-[#7b8496]">{trades.length}회</span>

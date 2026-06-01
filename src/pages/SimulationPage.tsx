@@ -114,8 +114,8 @@ export function SimulationPage() {
         </header>
         <div className="grid gap-5 p-5 lg:grid-cols-[280px_minmax(0,1fr)_320px]">
           <StockList />
-          <div className="grid gap-6">
-            <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
+          <div className="grid min-w-0 content-start gap-5">
+            <section className="min-w-0 rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-extrabold text-[#667085]">{selectedStock ? `${selectedStock.market} · ${selectedStock.id}` : scenario.market}</p>
@@ -132,7 +132,7 @@ export function SimulationPage() {
                   ))}
                 </div>
               </div>
-              <CandleChart data={liveChartData} visibleCount={currentDay + 1} />
+              <CandleChart data={liveChartData} visibleCount={currentDay + 1} height={320} />
             </section>
             <TradeHistory trades={tradeHistory} />
           </div>

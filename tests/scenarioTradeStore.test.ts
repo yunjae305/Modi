@@ -76,6 +76,25 @@ test('현금과 보유 수량 안에서만 매수와 매도를 체결한다', ()
   assert.equal(useTradeStore.getState().cash, 1000);
 });
 
+test('자산 현황은 매입금액 평가금액 추정자산 실현손익을 계산한다', () => {
+  useTradeStore.getState().reset();
+  useTradeStore.getState().initScenario(scenario, stocks);
+
+  useTradeStore.getState().buy(5);
+  assert.equal(useTradeStore.getState().totalPurchaseAmount(), 500);
+  assert.equal(useTradeStore.getState().totalEvaluationAmount(), 500);
+  assert.equal(useTradeStore.getState().estimatedAssets(), 1000);
+  assert.equal(useTradeStore.getState().realizedProfit, 0);
+
+  useTradeStore.getState().nextDay();
+  useTradeStore.getState().sell(2);
+
+  assert.equal(useTradeStore.getState().totalPurchaseAmount(), 300);
+  assert.equal(useTradeStore.getState().totalEvaluationAmount(), 360);
+  assert.equal(useTradeStore.getState().estimatedAssets(), 1100);
+  assert.equal(useTradeStore.getState().realizedProfit, 40);
+});
+
 test('시장 시간 진행과 속도 변경은 진행률과 날짜를 갱신한다', () => {
   useTradeStore.getState().reset();
   useTradeStore.getState().initScenario(scenario, stocks);

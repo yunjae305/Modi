@@ -19,11 +19,15 @@ interface TradeState {
   positions: Record<string, ScenarioPosition>;
   peakPortfolio: number;
   maxDrawdown: number;
+  realizedProfit: number;
   tradeHistory: Trade[];
   selectedStock: () => ScenarioStock | null;
   selectedPosition: () => ScenarioPosition | null;
   positionList: () => ScenarioPosition[];
   currentPrice: (stockId?: string) => number;
+  totalPurchaseAmount: () => number;
+  totalEvaluationAmount: () => number;
+  estimatedAssets: () => number;
   portfolioValue: () => number;
   profitRate: () => number;
   selectScenario: (scenario: Scenario) => void;
@@ -54,6 +58,7 @@ const initialState = {
   positions: {},
   peakPortfolio: 0,
   maxDrawdown: 0,
+  realizedProfit: 0,
   tradeHistory: [],
 };
 
@@ -74,6 +79,24 @@ export const useTradeStore = create<TradeState>()(
       const targetId = stockId ?? selectedStockId;
       const stock = scenarioStocks.find((item) => item.id === targetId) ?? scenarioStocks[0];
       return getStockPriceAtProgress(stock, currentDay, dayProgress);
+    },
+    totalPurchaseAmount: () => {
+      const state = get();
+      return Object.values(state.positions).reduce(
+        (total, position) => total + position.quantity * position.averagePrice,
+        0,
+      );
+    },
+    totalEvaluationAmount: () => {
+      const state = get();
+      return Object.values(state.positions).reduce(
+        (total, position) => total + position.quantity * state.currentPrice(position.stockId),
+        0,
+      );
+    },
+    estimatedAssets: () => {
+      const state = get();
+      return state.cash + state.totalEvaluationAmount();
     },
     portfolioValue: () => {
       const state = get();
@@ -288,6 +311,7 @@ export const useTradeStore = create<TradeState>()(
           holdings: quantity,
           avgPrice: quantity === 0 ? 0 : previousPosition.averagePrice,
           positions,
+          realizedProfit: state.realizedProfit + (price - previousPosition.averagePrice) * adjustedQty,
           tradeHistory: [...state.tradeHistory, trade],
         },
         false,
