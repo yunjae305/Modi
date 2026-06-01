@@ -1,11 +1,8 @@
-const CACHE_NAME = 'modi-pwa-v2';
+const CACHE_NAME = 'modi-pwa-v3';
 const APP_SHELL = [
   '/',
   '/offline.html',
   '/manifest.webmanifest',
-  '/data/corona_stocks_2020.json',
-  '/data/sp500_stocks_2008.json',
-  '/data/nasdaq_stocks_2000.json',
   '/icons/modi-192.png',
   '/icons/modi-512.png',
   '/icons/modi-maskable-512.png',
@@ -32,6 +29,18 @@ self.addEventListener('fetch', (event) => {
   }
   const url = new URL(request.url);
   if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+  if (url.pathname.startsWith('/data/')) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .then((networkResponse) => {
+          const copy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          return networkResponse;
+        })
+        .catch(() => caches.match(request).then((response) => response || Response.error())),
+    );
     return;
   }
   if (request.mode === 'navigate') {

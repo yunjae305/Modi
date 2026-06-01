@@ -24,8 +24,13 @@ test('PWA 설치에 필요한 manifest, service worker, offline page, icon이 �
   assert.match(manifest, /"name": "Modi"/);
   assert.match(manifest, /"display": "standalone"/);
   assert.match(manifest, /"start_url": "\/"/);
-  assert.match(sw, /CACHE_NAME/);
+  assert.match(sw, /modi-pwa-v3/);
   assert.match(sw, /\/offline\.html/);
+  assert.match(sw, /url\.pathname\.startsWith\('\/data\/'\)/);
+  assert.match(sw, /cache: 'no-store'/);
+  assert.equal(sw.includes("'/data/corona_stocks_2020.json'"), false);
+  assert.equal(sw.includes("'/data/sp500_stocks_2008.json'"), false);
+  assert.equal(sw.includes("'/data/nasdaq_stocks_2000.json'"), false);
   assert.match(html, /manifest\.webmanifest/);
   assert.match(html, /apple-mobile-web-app-capable/);
   assert.match(main, /registerServiceWorker/);
