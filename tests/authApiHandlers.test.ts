@@ -4,8 +4,7 @@ import registerHandler from '../api/auth/register.ts';
 import loginHandler from '../api/auth/login.ts';
 import guestHandler from '../api/auth/guest.ts';
 import providersHandler from '../api/auth/providers.ts';
-import kakaoAuthorizeHandler from '../api/auth/oauth/kakao/authorize.ts';
-import kakaoCallbackHandler from '../api/auth/oauth/kakao/callback.ts';
+import kakaoHandler from '../api/auth/oauth/kakao/[step].ts';
 import { createPasswordHash } from '../api/_lib/password.ts';
 
 function setAuthEnv() {
@@ -220,10 +219,10 @@ test('아이디와 비밀번호 로그인 API가 잘못된 비밀번호를 거�
 
 test('Kakao authorize API가 카카오 인증 URL과 state 쿠키를 반환한다', async () => {
   setAuthEnv();
-  const req = { method: 'GET', headers: { host: 'localhost:8080' } };
+  const req = { method: 'GET', query: { step: 'authorize' }, headers: { host: 'localhost:8080' } };
   const res = createRes();
 
-  await kakaoAuthorizeHandler(req, res);
+  await kakaoHandler(req, res);
 
   assert.equal(res.statusCode, 302);
   assertNoStore(res);
@@ -276,6 +275,7 @@ test('Kakao callback API가 카카오 프로필을 사용자 세션으로 전환
   const req = {
     method: 'GET',
     query: {
+      step: 'callback',
       code: 'auth-code',
       state,
     },
@@ -286,7 +286,7 @@ test('Kakao callback API가 카카오 프로필을 사용자 세션으로 전환
   };
   const res = createRes();
 
-  await kakaoCallbackHandler(req, res);
+  await kakaoHandler(req, res);
 
   assert.equal(res.statusCode, 302);
   assertNoStore(res);

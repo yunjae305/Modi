@@ -11,14 +11,9 @@ test('Vercel API는 계획서의 인증, 거래, 랭킹 함수를 배포한다',
     'api/auth/guest.ts',
     'api/auth/me.ts',
     'api/auth/logout.ts',
-    'api/auth/oauth/kakao/authorize.ts',
-    'api/auth/oauth/kakao/callback.ts',
-    'api/stocks.ts',
-    'api/portfolio.ts',
-    'api/executions.ts',
-    'api/rankings.ts',
-    'api/orders/buy.ts',
-    'api/orders/sell.ts',
+    'api/auth/oauth/kakao/[step].ts',
+    'api/[resource].ts',
+    'api/orders/[side].ts',
     'api/prices/sync.ts',
     'supabase/schema.sql',
   ];
@@ -42,7 +37,7 @@ test('Vercel API는 계획서의 인증, 거래, 랭킹 함수를 배포한다',
   assert.match(schema, /grant select, insert, update, delete on table public\.users to service_role/);
   assert.match(schema, /notify pgrst, 'reload schema'/);
   assert.match(schema, /alter publication supabase_realtime/);
-  assert.ok(vercelFunctionFiles('api').length <= 18);
+  assert.ok(vercelFunctionFiles('api').length <= 12);
 });
 
 test('Vercel API functions compile with Node globals and node protocol imports', () => {
