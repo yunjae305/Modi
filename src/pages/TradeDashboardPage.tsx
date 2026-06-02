@@ -18,7 +18,6 @@ export function TradeDashboardPage() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const refreshUser = useAuthStore((state) => state.refreshUser);
-  const loginGuest = useAuthStore((state) => state.loginGuest);
   const logout = useAuthStore((state) => state.logout);
   const [rankings, setRankings] = useState<ScenarioRankingItem[]>([]);
   const [activeFilter, setActiveFilter] = useState('');
@@ -26,9 +25,13 @@ export function TradeDashboardPage() {
 
   useEffect(() => {
     if (!user) {
-      refreshUser();
+      refreshUser().then((resolved) => {
+        if (!resolved) {
+          navigate('/login?next=/trade');
+        }
+      });
     }
-  }, [refreshUser, user]);
+  }, [refreshUser, user, navigate]);
 
   const loadRankings = useCallback(async () => {
     const items = await apiGet<ScenarioRankingItem[]>('/scenario-rankings');
@@ -43,30 +46,11 @@ export function TradeDashboardPage() {
     return () => clearInterval(timer);
   }, [loadRankings]);
 
-  const startGuest = async () => {
-    setMessage('');
-    await loginGuest();
-    await refreshUser();
-  };
-
   const filtered = activeFilter ? rankings.filter((item) => item.scenarioId === activeFilter) : rankings;
-
   const renumbered = filtered.map((item, index) => ({ ...item, rank: index + 1 }));
 
   if (!user) {
-    return (
-      <main className="grid min-h-screen place-items-center px-5 py-5">
-        <section className="w-full max-w-xl rounded-2xl border border-[#dfe3ee] bg-white p-7 text-center shadow-card">
-          <BrandLogo />
-          <h1 className="mt-8 text-3xl font-black text-[#111827]">시뮬레이션 랭킹</h1>
-          <p className="mt-3 text-sm font-bold leading-6 text-[#667085]">로그인 또는 게스트 세션으로 시나리오 랭킹을 확인하세요.</p>
-          <div className="mt-7 grid gap-3 sm:grid-cols-2">
-            <Button onClick={() => navigate('/login?next=/trade')}>로그인</Button>
-            <Button variant="ghost" onClick={startGuest}>게스트로 시작</Button>
-          </div>
-        </section>
-      </main>
-    );
+    return null;
   }
 
   return (
