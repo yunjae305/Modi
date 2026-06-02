@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
+import { useAuthStore } from '../store/authStore';
 
 export function ModeSelectPage() {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <main className="min-h-screen px-5 py-5">
@@ -34,7 +36,7 @@ export function ModeSelectPage() {
             <p className="text-sm font-extrabold text-[#5b45f2]">시나리오 모드</p>
             <h2 className="mt-3 text-2xl font-black text-[#111827]">블라인드 과거장</h2>
             <p className="mt-3 text-sm font-medium leading-7 text-[#667085]">코로나, 서브프라임, 닷컴버블 구간을 알 수 없는 상태로 매매합니다.</p>
-            <Button className="mt-auto w-full" onClick={() => navigate('/select')}>
+            <Button className="mt-auto w-full" onClick={() => user ? navigate('/select') : navigate('/login?next=/select')}>
               시나리오 시작
             </Button>
           </article>

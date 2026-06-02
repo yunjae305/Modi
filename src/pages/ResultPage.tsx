@@ -38,7 +38,7 @@ export function ResultPage() {
   }, [navigate, scenario]);
 
   useEffect(() => {
-    if (!user || !scenario || savedRef.current) return;
+    if (!user || user.provider === 'GUEST' || !scenario || savedRef.current) return;
     savedRef.current = true;
     apiPost('/result-records', {
       scenarioId: scenario.id,

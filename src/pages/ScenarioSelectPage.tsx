@@ -16,9 +16,13 @@ export function ScenarioSelectPage() {
 
   useEffect(() => {
     if (!user) {
-      refreshUser();
+      refreshUser().then((resolved) => {
+        if (!resolved) {
+          navigate('/login?next=/select');
+        }
+      });
     }
-  }, [refreshUser, user]);
+  }, [refreshUser, user, navigate]);
 
   return (
     <main className="min-h-screen px-5 py-5">
