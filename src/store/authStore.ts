@@ -16,10 +16,10 @@ interface AuthState {
 
 export function normalizeNextPath(value: string | null) {
   if (!value || !value.startsWith('/') || value.startsWith('//')) {
-    return '/select';
+    return '/';
   }
   if (value.startsWith('/login')) {
-    return '/select';
+    return '/';
   }
   return value;
 }
