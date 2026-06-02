@@ -78,6 +78,9 @@ export function TradeDashboardPage() {
             <div>
               <h1 className="text-xl font-black text-[#111827]">시뮬레이션 랭킹</h1>
               <p className="mt-1 text-xs font-bold text-[#667085]">시나리오 시뮬레이션 결과 순위입니다.</p>
+              {user.provider === 'GUEST' && (
+                <p className="mt-0.5 text-xs font-bold text-[#ff3f55]">게스트 로그인은 기록이 되지 않습니다.</p>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
