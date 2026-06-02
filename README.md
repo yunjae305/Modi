@@ -86,19 +86,18 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 ## 프로젝트 구조
 
 ```text
-api/                  Vercel Serverless Functions
-public/data/          과거 대표 종목 시나리오 JSON
-scripts/              데이터 수집 스크립트
-src/components/       공통 UI, 차트, 거래, 결과 컴포넌트
-src/data/             시나리오 메타데이터
-src/hooks/            차트 데이터와 시뮬레이션 훅
-src/pages/            라우트 단위 페이지
-src/services/         프론트 API 클라이언트
-src/store/            로그인과 시뮬레이션 상태
-src/types/            공통 타입
-src/utils/            수익률, 포맷, 투자 성향 계산
-supabase/schema.sql   Supabase 스키마와 seed 데이터
-tests/                주요 플로우 검증 테스트
+Project-modi/
+├── api/ - Vercel Serverless Functions
+├── src/
+│   ├── components/ : 공통 UI, 차트, 거래, 결과 컴포넌트
+│   ├── pages/ : 라우트 단위 페이지
+│   ├── store/ : 인증 및 시뮬레이션 상태
+│   ├── hooks/ : 차트 데이터 및 시뮬레이션 훅
+│   └── services/ : 프론트 API 클라이언트
+├── server/ : 로컬 개발용 Spring Boot API 서버
+├── supabase/ : Supabase 스키마 및 seed 데이터
+└── public/
+    └── data/ : 과거 지수 시나리오 JSON (정적 데이터)
 ```
 
 ## 실행 방법
