@@ -1,5 +1,5 @@
-import { optionalEnv, requiredEnv } from './env';
-import { eq, selectOne, upsertRows } from './supabase';
+import { optionalEnv, requiredEnv } from './env.ts';
+import { eq, selectOne, upsertRows } from './supabase.ts';
 
 interface StockSeed {
   id: string;

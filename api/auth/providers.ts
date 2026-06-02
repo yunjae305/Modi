@@ -10,6 +10,7 @@ export default async function handler(req: any, res: any) {
       providers: {
         email: hasProvider('EMAIL'),
         kakao: hasProvider('KAKAO'),
+        guest: hasProvider('GUEST'),
       },
     });
   } catch (error) {

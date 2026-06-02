@@ -1,5 +1,5 @@
-import { eq, insertRow, patchRows, selectRows, upsertRows } from './supabase';
-import { syncLatestPricesIfNeeded } from './kis';
+import { eq, insertRow, patchRows, selectRows, upsertRows } from './supabase.ts';
+import { syncLatestPricesIfNeeded } from './kis.ts';
 import type { UserRow } from './auth';
 
 interface StockRow {

@@ -5,6 +5,7 @@ import { CandleChart } from '../components/chart/CandleChart';
 import { Button } from '../components/ui/Button';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Mascot } from '../components/ui/Mascot';
+import { learningTerms } from '../data/learningTerms';
 import type { OHLCVBar } from '../types';
 import { formatKRW } from '../utils/format';
 
@@ -27,7 +28,11 @@ export function TutorialPage() {
   const [qty, setQty] = useState(1);
   const [message, setMessage] = useState('');
   const [complete, setComplete] = useState(false);
+  const [termIndex, setTermIndex] = useState(0);
+  const [termMessage, setTermMessage] = useState('');
   const currentPrice = tutorialData[tutorialData.length - 1].close;
+  const currentTerm = learningTerms[termIndex % learningTerms.length];
+  const quizOptions = Array.from({ length: 4 }, (_, index) => learningTerms[(termIndex + index) % learningTerms.length]);
 
   const submitPractice = () => {
     if (qty === 10) {
@@ -36,6 +41,19 @@ export function TutorialPage() {
       return;
     }
     setMessage('지시문에 맞게 10주를 입력해보세요.');
+  };
+
+  const submitTermAnswer = (word: string) => {
+    if (word === currentTerm.word) {
+      setTermMessage(`${word} 정답입니다.`);
+      return;
+    }
+    setTermMessage(`${word}이 아니라 ${currentTerm.word}입니다.`);
+  };
+
+  const nextTerm = () => {
+    setTermIndex((value) => (value + 1) % learningTerms.length);
+    setTermMessage('');
   };
 
   return (
@@ -80,6 +98,28 @@ export function TutorialPage() {
                     <h2 className="font-black text-[#111827]">캔들의 구성 요소</h2>
                     <p className="mt-1 text-sm font-medium text-[#667085]">시가, 고가, 저가, 종가를 한 번에 보여줘요.</p>
                   </div>
+                </div>
+                <div className="mt-5 rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="font-black text-[#5b45f2]">용어 퀴즈</h2>
+                    <button className="text-xs font-extrabold text-[#5b45f2]" type="button" onClick={nextTerm}>
+                      다음 용어
+                    </button>
+                  </div>
+                  <p className="mt-3 whitespace-pre-line text-sm font-medium leading-6 text-[#667085]">{currentTerm.meaning}</p>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    {quizOptions.map((term) => (
+                      <button
+                        key={term.word}
+                        className="rounded-lg border border-[#dfe3ee] bg-white px-3 py-2 text-sm font-extrabold text-[#111827] hover:border-[#5b45f2]"
+                        type="button"
+                        onClick={() => submitTermAnswer(term.word)}
+                      >
+                        {term.word}
+                      </button>
+                    ))}
+                  </div>
+                  {termMessage && <p className="mt-3 text-sm font-extrabold text-[#5b45f2]">{termMessage}</p>}
                 </div>
                 <div className="mt-auto pt-7">
                   <Button className="w-full" onClick={() => setStep(2)}>

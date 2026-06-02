@@ -12,6 +12,7 @@ export function LoginPage() {
   const loginEmail = useAuthStore((state) => state.loginEmail);
   const registerEmail = useAuthStore((state) => state.registerEmail);
   const loginKakao = useAuthStore((state) => state.loginKakao);
+  const loginGuest = useAuthStore((state) => state.loginGuest);
   const loading = useAuthStore((state) => state.loading);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
@@ -31,7 +32,7 @@ export function LoginPage() {
       })
       .catch(() => {
         if (active) {
-          setProviders({ providers: { email: true, kakao: false } });
+          setProviders({ providers: { email: true, kakao: false, guest: true } });
         }
       });
     return () => {
@@ -59,6 +60,16 @@ export function LoginPage() {
     loginKakao(next);
   };
 
+  const startGuest = async () => {
+    setError('');
+    try {
+      await loginGuest();
+      navigate(next, { replace: true });
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '게스트 세션을 시작하지 못했습니다.');
+    }
+  };
+
   return (
     <main className="min-h-screen px-5 py-5">
       <section className="mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-5xl content-center rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-card">
@@ -72,7 +83,7 @@ export function LoginPage() {
           <p className="text-sm font-extrabold text-[#5b45f2]">로그인</p>
           <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">시나리오 투자 계정으로 시작하세요</h1>
           <p className="mt-3 text-sm font-bold leading-6 text-[#667085]">
-            {providers?.providers.kakao ? '아이디와 비밀번호로 로그인하거나 Kakao로 빠르게 시작할 수 있습니다.' : '아이디와 비밀번호로 로그인할 수 있습니다.'}
+            {providers?.providers.kakao ? '아이디와 비밀번호로 로그인하거나 Kakao, 게스트 세션으로 빠르게 시작할 수 있습니다.' : '아이디와 비밀번호 또는 게스트 세션으로 시작할 수 있습니다.'}
           </p>
           <div className="mt-6 grid grid-cols-2 rounded-xl bg-white p-1 text-sm font-extrabold">
             <button
@@ -134,6 +145,17 @@ export function LoginPage() {
                 Kakao로 시작하기
               </Button>
             </>
+          )}
+          {providers?.providers.guest && (
+            <Button
+              type="button"
+              variant="soft"
+              className="mt-3 w-full"
+              disabled={loading}
+              onClick={startGuest}
+            >
+              게스트로 시작하기
+            </Button>
           )}
           {error && <p className="mt-4 text-sm font-bold text-[#ff3f55]">{error}</p>}
         </div>

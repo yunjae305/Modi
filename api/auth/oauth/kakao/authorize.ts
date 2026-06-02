@@ -6,7 +6,7 @@ export default async function handler(req: any, res: any) {
     return;
   }
   try {
-    return authorize(req, res, 'kakao');
+    return authorize(req, res);
   } catch (error) {
     return handleError(res, error);
   }

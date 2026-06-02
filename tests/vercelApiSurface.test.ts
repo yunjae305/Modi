@@ -3,15 +3,23 @@ import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-test('Vercel API는 현재 로그인에 필요한 함수만 배포한다', () => {
+test('Vercel API는 계획서의 인증, 거래, 랭킹 함수를 배포한다', () => {
   const files = [
     'api/auth/providers.ts',
     'api/auth/register.ts',
     'api/auth/login.ts',
+    'api/auth/guest.ts',
     'api/auth/me.ts',
     'api/auth/logout.ts',
     'api/auth/oauth/kakao/authorize.ts',
     'api/auth/oauth/kakao/callback.ts',
+    'api/stocks.ts',
+    'api/portfolio.ts',
+    'api/executions.ts',
+    'api/rankings.ts',
+    'api/orders/buy.ts',
+    'api/orders/sell.ts',
+    'api/prices/sync.ts',
     'supabase/schema.sql',
   ];
 
@@ -21,32 +29,20 @@ test('Vercel API는 현재 로그인에 필요한 함수만 배포한다', () =>
 
   const env = readFileSync('.env.example', 'utf8');
   const schema = readFileSync('supabase/schema.sql', 'utf8');
-  const obsoleteFiles = [
-    'api/auth/guest.ts',
-    'api/auth/supabase.ts',
-    'api/auth/oauth/google/authorize.ts',
-    'api/auth/oauth/google/callback.ts',
-    'api/stocks.ts',
-    'api/portfolio.ts',
-    'api/executions.ts',
-    'api/rankings.ts',
-    'api/results.ts',
-    'api/orders/buy.ts',
-    'api/orders/sell.ts',
-    'api/prices/sync.ts',
-  ];
 
   assert.match(env, /SUPABASE_URL=/);
   assert.match(env, /SUPABASE_SERVICE_ROLE_KEY=/);
+  assert.match(env, /KIS_APP_KEY=/);
+  assert.match(env, /KIS_APP_SECRET=/);
   assert.match(schema, /password_hash text/);
   assert.match(schema, /create table if not exists public\.latest_prices/);
+  assert.match(schema, /create table if not exists public\.positions/);
+  assert.match(schema, /create table if not exists public\.executions/);
+  assert.match(schema, /create table if not exists public\.kis_tokens/);
   assert.match(schema, /grant select, insert, update, delete on table public\.users to service_role/);
   assert.match(schema, /notify pgrst, 'reload schema'/);
   assert.match(schema, /alter publication supabase_realtime/);
-  assert.ok(vercelFunctionFiles('api').length <= 12);
-  for (const file of obsoleteFiles) {
-    assert.equal(existsSync(file), false, file);
-  }
+  assert.ok(vercelFunctionFiles('api').length <= 18);
 });
 
 test('Vercel API functions compile with Node globals and node protocol imports', () => {

@@ -1,4 +1,4 @@
-export type AuthProvider = 'EMAIL' | 'KAKAO';
+export type AuthProvider = 'EMAIL' | 'KAKAO' | 'GUEST';
 
 export interface AuthUser {
   id: string;
@@ -15,5 +15,6 @@ export interface ProviderStatus {
   providers: {
     email: boolean;
     kakao: boolean;
+    guest: boolean;
   };
 }

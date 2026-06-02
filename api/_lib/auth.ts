@@ -1,15 +1,14 @@
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { optionalEnv, requiredEnv } from './env.ts';
 import { cookie, parseCookies } from './http.ts';
-import { eq, insertRow, patchRows, selectOne, supabaseAuthUser, type SupabaseAuthUser, type SupabaseIdentity } from './supabase.ts';
+import { eq, insertRow, patchRows, selectOne } from './supabase.ts';
 import { createPasswordHash, normalizeCredentialEmail, verifyPasswordHash } from './password.ts';
 
 export const sessionCookieName = 'MODI_SESSION';
 export const oauthStateCookieName = 'MODI_OAUTH_STATE';
 const initialCash = 1000000000;
 
-export type AuthProvider = 'GOOGLE' | 'KAKAO' | 'GUEST' | 'EMAIL';
-type SupabaseSocialProvider = 'google' | 'kakao';
+export type AuthProvider = 'KAKAO' | 'GUEST' | 'EMAIL';
 
 export interface UserRow {
   id: string;
@@ -106,36 +105,6 @@ export async function loginOAuth(provider: AuthProvider, profile: OAuthProfile) 
   });
 }
 
-export async function loginSupabaseAuth(accessToken: string) {
-  const supabaseUser = await supabaseAuthUser(accessToken);
-  const { provider, identity } = supabaseSocialIdentity(supabaseUser);
-  const metadata = supabaseUser.user_metadata ?? {};
-  const identityData = identity?.identity_data ?? {};
-  const providerLabel = provider === 'google' ? 'Google' : 'Kakao';
-  return loginOAuth(provider.toUpperCase() as AuthProvider, {
-    providerId: textValue(identity?.provider_id) ?? textValue(identity?.id) ?? supabaseUser.id,
-    email: textValue(supabaseUser.email) ?? textValue(identity?.email) ?? textValue(identityData.email),
-    nickname: firstText([
-      metadata.full_name,
-      metadata.name,
-      metadata.nickname,
-      identityData.full_name,
-      identityData.name,
-      identityData.nickname,
-      identityData.preferred_username,
-      supabaseUser.email,
-    ]) ?? `${providerLabel} 사용자`,
-    profileImage: firstText([
-      metadata.avatar_url,
-      metadata.picture,
-      metadata.profile_image_url,
-      identityData.avatar_url,
-      identityData.picture,
-      identityData.profile_image_url,
-    ]),
-  });
-}
-
 export async function loginGuest() {
   return insertRow<UserRow>('users', {
     provider: 'GUEST',
@@ -194,48 +163,10 @@ export function hasProvider(provider: AuthProvider) {
   if (provider === 'EMAIL') {
     return true;
   }
-  if (provider === 'GOOGLE') {
-    return Boolean(optionalEnv('GOOGLE_CLIENT_ID') && optionalEnv('GOOGLE_CLIENT_SECRET'));
-  }
   if (provider === 'KAKAO') {
     return Boolean(optionalEnv('KAKAO_CLIENT_ID'));
   }
   return true;
-}
-
-function supabaseSocialIdentity(user: SupabaseAuthUser) {
-  const identities = user.identities ?? [];
-  const identity = identities.find((identity) => isSupabaseSocialProvider(identity.provider));
-  if (identity && isSupabaseSocialProvider(identity.provider)) {
-    return { provider: identity.provider, identity };
-  }
-  const provider = user.app_metadata?.provider;
-  if (isSupabaseSocialProvider(provider)) {
-    return { provider, identity: undefined as SupabaseIdentity | undefined };
-  }
-  throw new Error('지원하지 않는 Supabase 로그인 방식입니다.');
-}
-
-function isSupabaseSocialProvider(provider: unknown): provider is SupabaseSocialProvider {
-  return provider === 'google' || provider === 'kakao';
-}
-
-function textValue(value: unknown) {
-  if (typeof value !== 'string') {
-    return null;
-  }
-  const trimmed = value.trim();
-  return trimmed ? trimmed : null;
-}
-
-function firstText(values: unknown[]) {
-  for (const value of values) {
-    const text = textValue(value);
-    if (text) {
-      return text;
-    }
-  }
-  return null;
 }
 
 function normalizeAndValidateEmail(email: string) {

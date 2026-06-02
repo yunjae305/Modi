@@ -12,6 +12,7 @@ test('아이디와 비밀번호 회원가입과 로그인을 제공한다', () =
     'src/services/api.ts',
     'api/auth/register.ts',
     'api/auth/login.ts',
+    'api/auth/guest.ts',
     'api/_lib/password.ts',
   ]) {
     assert.equal(existsSync(file), true, file);
@@ -26,7 +27,10 @@ test('아이디와 비밀번호 회원가입과 로그인을 제공한다', () =
   assert.match(login, /비밀번호/);
   assert.match(login, /회원가입/);
   assert.match(login, /로그인/);
+  assert.match(login, /게스트로 시작하기/);
   assert.match(store, /loginEmail/);
   assert.match(store, /registerEmail/);
+  assert.match(store, /loginGuest/);
   assert.match(types, /EMAIL/);
+  assert.match(types, /GUEST/);
 });

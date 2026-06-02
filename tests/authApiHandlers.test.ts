@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import registerHandler from '../api/auth/register.ts';
 import loginHandler from '../api/auth/login.ts';
+import guestHandler from '../api/auth/guest.ts';
 import providersHandler from '../api/auth/providers.ts';
 import kakaoAuthorizeHandler from '../api/auth/oauth/kakao/authorize.ts';
 import kakaoCallbackHandler from '../api/auth/oauth/kakao/callback.ts';
@@ -117,7 +118,7 @@ test('아이디와 비밀번호 회원가입 API가 사용자와 세션 쿠키�
   assert.notEqual(inserted.password_hash.includes('password123'), true);
 });
 
-test('providers API가 아이디 로그인과 Kakao 로그인만 노출한다', async () => {
+test('providers API가 아이디, Kakao, 게스트 로그인을 노출한다', async () => {
   setAuthEnv();
   const req = { method: 'GET' };
   const res = createRes();
@@ -129,7 +130,35 @@ test('providers API가 아이디 로그인과 Kakao 로그인만 노출한다', 
   assert.deepEqual((res.body as any).data.providers, {
     email: true,
     kakao: true,
+    guest: true,
   });
+});
+
+test('게스트 로그인 API가 사용자와 세션 쿠키를 반환한다', async () => {
+  setAuthEnv();
+  globalThis.fetch = async (url: RequestInfo | URL, init?: RequestInit) => {
+    const href = String(url);
+    if (href.endsWith('/rest/v1/users?select=*')) {
+      const body = JSON.parse(String(init?.body));
+      return jsonResponse([userRow({
+        id: 'guest-user-1',
+        provider: 'GUEST',
+        provider_id: body.provider_id,
+        email: null,
+        nickname: body.nickname,
+      })]);
+    }
+    throw new Error(`Unexpected fetch ${href}`);
+  };
+  const req = { method: 'POST' };
+  const res = createRes();
+
+  await guestHandler(req, res);
+
+  assert.equal(res.statusCode, 200);
+  assertNoStore(res);
+  assert.equal((res.body as any).data.provider, 'GUEST');
+  assert.match(String(res.getHeader('set-cookie')), /MODI_SESSION=/);
 });
 
 test('아이디와 비밀번호 로그인 API가 저장된 해시를 검증하고 세션 쿠키를 반환한다', async () => {

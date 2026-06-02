@@ -1,11 +1,11 @@
 # Modi
 <img width="1254" height="1254" alt="Modi_profile" src="https://github.com/user-attachments/assets/47a4a62a-2e2b-49ec-a3ef-afbff6b88b3f" />
 
-Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투자 학습 서비스입니다. 사용자는 대표 종목 20개가 포함된 과거 위기장을 선택하고, 실제 주식처럼 종목을 골라 매수와 매도를 연습합니다. 계정 로그인은 일반 아이디/비밀번호와 Kakao 간편 로그인을 지원합니다.
+Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투자 학습 서비스입니다. 사용자는 대표 종목 20개가 포함된 과거 위기장을 선택하고, 실제 주식처럼 종목을 골라 매수와 매도를 연습합니다. 계정 로그인은 일반 아이디/비밀번호, Kakao 간편 로그인, 게스트 세션을 지원합니다.
 
 - 서비스 URL: https://modi-two.vercel.app/
 - 배포 플랫폼: Vercel
-- 핵심 키워드: 과거 데이터 시뮬레이션, 대표 종목 투자, 아이디/비밀번호 로그인, Kakao 간편 로그인, 포트폴리오 평가, 투자 성향 리포트
+- 핵심 키워드: 과거 데이터 시뮬레이션, 대표 종목 투자, Kakao 로그인, 게스트 세션, 포트폴리오 평가, 랭킹, 투자 성향 리포트
 
 ## 주요 기능
 
@@ -31,21 +31,30 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 
 - 양봉, 음봉, 시가, 고가, 저가, 종가를 차트 위에서 학습
 - 시장가 주문 개념을 10주 매수 미션으로 실습
+- TooT에서 선별한 주식 용어 기반 퀴즈 제공
 - 초보자와 경험자를 분기하는 첫 진입 플로우 제공
 
-### 3. 계정 로그인
+### 3. 모의투자 대시보드
+
+- seed 가격 또는 KIS 현재가 기반 국내 주식 조회
+- 사용자 포트폴리오, 매매 기록, 전체 랭킹 조회
+- 포트폴리오와 랭킹을 5초마다 갱신
+- KIS 키가 없을 때도 Supabase seed 가격으로 동작
+
+### 4. 계정 로그인
 
 - 일반 아이디(이메일)와 비밀번호로 회원가입과 로그인
 - Kakao OAuth 기반 간편 로그인
-- 로그인 완료 후 시나리오 선택 화면으로 복귀
-- 게스트 로그인과 별도 모의투자 모드는 프론트 흐름에 노출하지 않음
+- 게스트 세션으로 빠른 체험 가능
+- 로그인 완료 후 요청한 화면으로 복귀
 
-### 4. 데이터와 API
+### 5. 데이터와 API
 
 - 과거 시나리오 데이터는 `public/data/` 정적 JSON으로 제공
 - 데이터 재생성 스크립트는 `scripts/fetch_data.py`
 - 시나리오 거래 데이터는 런타임에 외부 API를 호출하지 않고 정적 JSON을 읽음
-- 로그인은 `/api/auth/login`, `/api/auth/register`, `/api/auth/oauth/kakao/*`, `/api/auth/me`, `/api/auth/logout`을 사용
+- 로그인은 `/api/auth/guest`, `/api/auth/login`, `/api/auth/register`, `/api/auth/oauth/kakao/*`, `/api/auth/me`, `/api/auth/logout`을 사용
+- 모의투자 대시보드는 `/api/stocks`, `/api/portfolio`, `/api/executions`, `/api/rankings`, `/api/orders/*`, `/api/prices/sync`를 사용
 - Vercel Serverless Functions와 Supabase 사용자 테이블을 기준으로 세션 쿠키를 발급
 
 ## 화면 흐름
@@ -53,12 +62,14 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 | 경로 | 역할 |
 |---|---|
 | `/` | 랜딩, 서비스 소개, 진입 모달 |
+| `/mode-select` | 초보자 모드, 시나리오 모드, 모의투자 대시보드 선택 |
 | `/tutorial` | 초보자 차트 학습과 매수 실습 |
-| `/login` | 아이디/비밀번호 로그인과 Kakao 간편 로그인 |
+| `/login` | 아이디/비밀번호 로그인, Kakao 간편 로그인, 게스트 세션 |
 | `/login/callback` | Kakao 로그인 완료 후 세션 확인 |
 | `/select` | 과거 시나리오 선택 |
 | `/simulation` | 과거 데이터 기반 매매 시뮬레이션 |
 | `/result` | 시뮬레이션 결과 리포트 |
+| `/trade` | 현재가 기반 모의투자 대시보드와 전체 랭킹 |
 
 ## 기술 스택
 
@@ -66,10 +77,10 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 |---|---|
 | Frontend | React, TypeScript, Vite, React Router, Zustand |
 | UI | Tailwind CSS, Framer Motion, lightweight-charts |
-| API | Vercel Serverless Functions, Spring Boot 로컬 서버 |
-| Database | Supabase PostgreSQL, 로컬 H2 |
-| Auth | Email password auth, Kakao OAuth, cookie session |
-| Market Data | 정적 OHLCV JSON, yfinance, pykrx |
+| API | Vercel Serverless Functions |
+| Database | Supabase PostgreSQL |
+| Auth | Email password auth, Kakao OAuth, guest session, cookie session |
+| Market Data | 정적 OHLCV JSON, yfinance, pykrx, KIS Open API fallback |
 | Test | Node test runner, TypeScript strip types |
 
 ## 프로젝트 구조
@@ -78,7 +89,6 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 api/                  Vercel Serverless Functions
 public/data/          과거 대표 종목 시나리오 JSON
 scripts/              데이터 수집 스크립트
-server/               로컬 개발용 Spring Boot API 서버
 src/components/       공통 UI, 차트, 거래, 결과 컴포넌트
 src/data/             시나리오 메타데이터
 src/hooks/            차트 데이터와 시뮬레이션 훅
@@ -106,7 +116,7 @@ npm run dev:vercel
 
 ### 로그인 API 설정
 
-로컬 Spring Boot API를 함께 사용할 때는 `.env.example`을 `.env`로 복사하고 다음 값을 채웁니다.
+로그인과 모의투자 API를 함께 사용할 때는 `.env.example`을 `.env`로 복사하고 다음 값을 채웁니다.
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api
@@ -148,12 +158,20 @@ Vercel 배포에서는 `VITE_API_BASE_URL=/api`, `SUPABASE_URL`, `SUPABASE_SERVI
 | Method | Path | 설명 |
 |---|---|---|
 | `GET` | `/api/auth/providers` | 사용 가능한 로그인 제공자 조회 |
+| `POST` | `/api/auth/guest` | 게스트 세션 시작 |
 | `POST` | `/api/auth/register` | 아이디/비밀번호 회원가입 |
 | `POST` | `/api/auth/login` | 아이디/비밀번호 로그인 |
 | `GET` | `/api/auth/oauth/kakao/authorize` | Kakao 로그인 시작 |
 | `GET` | `/api/auth/oauth/kakao/callback` | Kakao 로그인 콜백 |
 | `GET` | `/api/auth/me` | 현재 사용자 조회 |
 | `POST` | `/api/auth/logout` | 로그아웃 |
+| `GET` | `/api/stocks` | seed 또는 KIS 현재가 종목 목록 |
+| `GET` | `/api/portfolio` | 내 포트폴리오 조회 |
+| `GET` | `/api/executions` | 내 매매 기록 조회 |
+| `GET` | `/api/rankings` | 전체 랭킹 조회 |
+| `POST` | `/api/orders/buy` | 현재가 매수 |
+| `POST` | `/api/orders/sell` | 현재가 매도 |
+| `POST` | `/api/prices/sync` | KIS 현재가 동기화 |
 
 ## 데이터 갱신
 

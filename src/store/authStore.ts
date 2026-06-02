@@ -10,6 +10,7 @@ interface AuthState {
   loginEmail: (email: string, password: string) => Promise<AuthUser>;
   registerEmail: (email: string, password: string, nickname: string) => Promise<AuthUser>;
   loginKakao: (next: string) => void;
+  loginGuest: () => Promise<AuthUser>;
   logout: () => Promise<void>;
 }
 
@@ -68,6 +69,18 @@ export const useAuthStore = create<AuthState>()((set) => ({
   loginKakao: (next) => {
     window.sessionStorage.setItem(loginNextStorageKey, normalizeNextPath(next));
     window.location.href = `${API_BASE_URL}/auth/oauth/kakao/authorize`;
+  },
+  loginGuest: async () => {
+    set({ loading: true, error: null });
+    try {
+      const user = await apiPost<AuthUser>('/auth/guest');
+      set({ user, loading: false, error: null });
+      return user;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '게스트 세션을 시작하지 못했습니다.';
+      set({ user: null, loading: false, error: message });
+      throw new Error(message);
+    }
   },
   logout: async () => {
     set({ loading: true, error: null });
