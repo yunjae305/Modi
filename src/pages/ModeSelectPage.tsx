@@ -21,7 +21,7 @@ export function ModeSelectPage() {
             차트 기초부터 과거 위기장 시뮬레이션, 현재가 기반 모의투자까지 한 흐름으로 연습할 수 있습니다.
           </p>
         </div>
-        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+        <div className="mt-10 grid gap-5 lg:grid-cols-2">
           <article className="flex min-h-[20rem] flex-col rounded-2xl border border-[#dfe3ee] bg-[#fbfbfe] p-6">
             <p className="text-sm font-extrabold text-[#14a86b]">초보자 모드</p>
             <h2 className="mt-3 text-2xl font-black text-[#111827]">튜토리얼</h2>
@@ -36,14 +36,6 @@ export function ModeSelectPage() {
             <p className="mt-3 text-sm font-medium leading-7 text-[#667085]">코로나, 서브프라임, 닷컴버블 구간을 알 수 없는 상태로 매매합니다.</p>
             <Button className="mt-auto w-full" onClick={() => navigate('/select')}>
               시나리오 시작
-            </Button>
-          </article>
-          <article className="flex min-h-[20rem] flex-col rounded-2xl border border-[#ffe3e7] bg-[#fff7f8] p-6">
-            <p className="text-sm font-extrabold text-[#ff3f55]">모의투자 모드</p>
-            <h2 className="mt-3 text-2xl font-black text-[#111827]">거래 대시보드</h2>
-            <p className="mt-3 text-sm font-medium leading-7 text-[#667085]">seed 가격 또는 KIS 현재가로 포트폴리오와 전체 랭킹을 확인합니다.</p>
-            <Button variant="danger" className="mt-auto w-full" onClick={() => navigate('/trade')}>
-              대시보드 열기
             </Button>
           </article>
         </div>

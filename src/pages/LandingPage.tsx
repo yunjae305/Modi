@@ -29,7 +29,7 @@ export function LandingPage() {
             <a href="#service">서비스 소개</a>
             <button onClick={() => navigate('/mode-select')}>모드 선택</button>
             <button onClick={() => navigate('/tutorial')}>학습 가이드</button>
-            <a href="#about">이용 방법</a>
+            <button onClick={() => navigate('/trade')}>순위 대시보드</button>
           </nav>
           <div className="flex items-center gap-3">
             {user ? (
