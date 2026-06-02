@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CandleChart } from '../components/chart/CandleChart';
@@ -22,6 +22,8 @@ const tutorialData: OHLCVBar[] = [
   { date: '2020-01-14', open: 1060, high: 1120, low: 1055, close: 1110, volume: 149000 },
   { date: '2020-01-15', open: 1110, high: 1160, low: 1100, close: 1145, volume: 171000 },
 ];
+
+const PRACTICE_QTY = 10;
 
 interface QuizQuestion {
   term: LearningTerm;
@@ -50,11 +52,24 @@ export function TutorialPage() {
 
   // Practice state
   const [practicePhase, setPracticePhase] = useState<PracticePhase>('buy');
-  const [holdings, setHoldings] = useState(0);
-  const [qty, setQty] = useState(1);
   const [message, setMessage] = useState('');
 
-  const currentPrice = tutorialData[tutorialData.length - 1].close;
+  // Fluctuating live price
+  const basePrice = tutorialData[tutorialData.length - 1].close;
+  const [livePrice, setLivePrice] = useState(basePrice);
+  const livePriceRef = useRef(basePrice);
+
+  useEffect(() => {
+    if (step !== 3 || practicePhase === 'done') return;
+    const timer = setInterval(() => {
+      const change = (Math.random() - 0.5) * 0.012;
+      const next = Math.round(livePriceRef.current * (1 + change));
+      livePriceRef.current = next;
+      setLivePrice(next);
+    }, 1200);
+    return () => clearInterval(timer);
+  }, [step, practicePhase]);
+
   const currentQuestion = quizQuestions[quizIndex];
 
   const handleAnswer = (word: string) => {
@@ -76,25 +91,15 @@ export function TutorialPage() {
   };
 
   const submitBuy = () => {
-    if (qty <= 0) {
-      setMessage('1주 이상 입력해주세요.');
-      return;
-    }
-    setHoldings(qty);
-    setMessage(`${qty}주 매수 체결! 이제 보유 중인 주식을 매도해보세요.`);
+    setMessage(`${PRACTICE_QTY}주 매수 체결! 이제 보유 중인 주식을 매도해보세요.`);
     setTimeout(() => {
       setPracticePhase('sell');
-      setQty(qty);
       setMessage('');
     }, 1200);
   };
 
   const submitSell = () => {
-    if (qty !== holdings) {
-      setMessage(`보유 수량 ${holdings}주를 전부 매도해보세요.`);
-      return;
-    }
-    setMessage(`${qty}주 매도 체결! 수익 실현 완료!`);
+    setMessage(`${PRACTICE_QTY}주 매도 체결! 수익 실현 완료!`);
     setTimeout(() => setPracticePhase('done'), 1000);
   };
 
@@ -238,25 +243,24 @@ export function TutorialPage() {
                     {practicePhase === 'buy' && (
                       <motion.div key="buy-guide" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <p className="mt-4 text-sm font-medium leading-7 text-[#667085]">
-                          시장가로 원하는 수량만큼 매수해보세요.
+                          시장가로 10주를 매수해보세요.
                         </p>
                         <div className="mt-5 rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-4">
-                          <h2 className="font-black text-[#5b45f2]">미션 1 — 매수</h2>
-                          <p className="mt-1 text-sm font-medium text-[#667085]">수량을 입력하고 매수하기를 눌러보세요.</p>
+                          <h2 className="font-black text-[#5b45f2]">미션 1 — 매수 10주</h2>
+                          <p className="mt-1 text-sm font-medium text-[#667085]">매수하기 버튼을 눌러보세요. 가격이 실시간으로 변합니다.</p>
                         </div>
                       </motion.div>
                     )}
                     {practicePhase === 'sell' && (
                       <motion.div key="sell-guide" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                         <p className="mt-4 text-sm font-medium leading-7 text-[#667085]">
-                          보유한 주식을 전부 매도해보세요.
+                          보유한 10주를 매도해보세요.
                         </p>
                         <div className="mt-5 rounded-xl border border-[#ffe3e7] bg-[#fff7f8] p-4">
-                          <h2 className="font-black text-[#ff3f55]">미션 2 — 매도</h2>
+                          <h2 className="font-black text-[#ff3f55]">미션 2 — 매도 10주</h2>
                           <p className="mt-1 text-sm font-medium text-[#667085]">
-                            현재 보유 수량: <strong className="text-[#111827]">{holdings}주</strong>
+                            현재 보유: <strong className="text-[#111827]">{PRACTICE_QTY}주</strong> · 매도하기 버튼을 눌러보세요.
                           </p>
-                          <p className="mt-1 text-sm font-medium text-[#667085]">보유 수량과 동일하게 입력하고 매도하기를 눌러보세요.</p>
                         </div>
                       </motion.div>
                     )}
@@ -279,65 +283,44 @@ export function TutorialPage() {
                   <div className="mb-6 flex items-center justify-between border-b border-[#edf0f6] pb-5">
                     <div>
                       <p className="text-sm font-bold text-[#667085]">KOSPI 지수</p>
-                      <p className="mt-1 text-3xl font-black text-[#ff3f55]">{currentPrice.toLocaleString('ko-KR')}</p>
+                      <motion.p
+                        key={livePrice}
+                        className="mt-1 text-3xl font-black text-[#ff3f55]"
+                        initial={{ scale: 1.06 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {livePrice.toLocaleString('ko-KR')}
+                      </motion.p>
                     </div>
                     <div className="text-right">
-                      <span className="font-extrabold text-[#16a34a]">+1.53%</span>
-                      {practicePhase !== 'buy' && (
-                        <p className="mt-1 text-xs font-extrabold text-[#667085]">보유 {holdings}주</p>
+                      <p className="text-xs font-extrabold text-[#8b95a7]">시장가</p>
+                      {practicePhase === 'sell' && (
+                        <p className="mt-1 text-xs font-extrabold text-[#5b45f2]">보유 {PRACTICE_QTY}주</p>
                       )}
                     </div>
                   </div>
                   {practicePhase !== 'done' ? (
                     <div className="space-y-5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#667085]">주문 유형</span>
-                        <span className="rounded-lg border border-[#dfe3ee] bg-[#f7f8fc] px-4 py-2 text-sm font-extrabold text-[#111827]">시장가</span>
-                      </div>
-                      <div>
-                        <label className="mb-3 block font-bold text-[#667085]" htmlFor="tutorial-qty">
-                          수량
-                        </label>
-                        <div className="flex overflow-hidden rounded-xl border border-[#dfe3ee]">
-                          <button
-                            type="button"
-                            className="w-14 bg-[#f7f8fc] text-xl font-black"
-                            onClick={() => setQty(Math.max(1, qty - 1))}
-                          >
-                            -
-                          </button>
-                          <input
-                            id="tutorial-qty"
-                            className="w-full border-x border-[#dfe3ee] px-4 py-3 text-center text-lg font-black text-[#111827] outline-none"
-                            type="number"
-                            min={1}
-                            value={qty}
-                            onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-                          />
-                          <button
-                            type="button"
-                            className="w-14 bg-[#f7f8fc] text-xl font-black"
-                            onClick={() => setQty(qty + 1)}
-                          >
-                            +
-                          </button>
-                        </div>
+                      <div className="flex items-center justify-between rounded-xl bg-[#f7f8fc] px-5 py-4">
+                        <span className="font-bold text-[#667085]">수량</span>
+                        <span className="text-lg font-black text-[#111827]">{PRACTICE_QTY}주</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-[#667085]">예상 금액</span>
-                        <strong className="text-[#5b45f2]">{formatKRW(qty * currentPrice)}</strong>
+                        <strong className="text-[#5b45f2]">{formatKRW(PRACTICE_QTY * livePrice)}</strong>
                       </div>
                       {practicePhase === 'buy' ? (
                         <Button variant="danger" className="w-full" onClick={submitBuy}>
-                          매수하기
+                          매수하기 ({PRACTICE_QTY}주)
                         </Button>
                       ) : (
                         <Button variant="ghost" className="w-full border border-[#5b45f2] text-[#5b45f2]" onClick={submitSell}>
-                          매도하기
+                          매도하기 ({PRACTICE_QTY}주)
                         </Button>
                       )}
                       {message && (
-                        <p className={`rounded-xl p-4 text-sm font-extrabold ${practicePhase === 'sell' && message.includes('체결') ? 'bg-[#edfff6] text-[#14a86b]' : practicePhase === 'buy' && message.includes('체결') ? 'bg-[#edfff6] text-[#14a86b]' : 'bg-[#fff7f8] text-[#ff3f55]'}`}>
+                        <p className="rounded-xl bg-[#edfff6] p-4 text-sm font-extrabold text-[#14a86b]">
                           {message}
                         </p>
                       )}
