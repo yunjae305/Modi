@@ -1,8 +1,8 @@
 import { requireUser } from './_lib/auth.ts';
-import { executions, listStocks, portfolio, rankings } from './_lib/trading.ts';
+import { executions, listStocks, portfolio, rankings, scenarioRankings } from './_lib/trading.ts';
 import { allowMethods, fail, handleError, ok } from './_lib/http.ts';
 
-const resources = new Set(['stocks', 'portfolio', 'executions', 'rankings']);
+const resources = new Set(['stocks', 'portfolio', 'executions', 'rankings', 'scenario-rankings']);
 
 export default async function handler(req: any, res: any) {
   const resource = Array.isArray(req.query?.resource) ? req.query.resource[0] : req.query?.resource;
@@ -21,6 +21,9 @@ export default async function handler(req: any, res: any) {
     }
     if (resource === 'rankings') {
       return ok(res, await rankings());
+    }
+    if (resource === 'scenario-rankings') {
+      return ok(res, await scenarioRankings());
     }
 
     const user = await requireUser(req);

@@ -60,3 +60,11 @@ export interface RankingItem {
   totalAsset: number;
   profitRate: number;
 }
+
+export interface ScenarioRankingItem {
+  rank: number;
+  nickname: string;
+  profitRate: number;
+  scenarioId: string;
+  scenarioTitle: string;
+}

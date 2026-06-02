@@ -149,6 +149,58 @@ export async function rankings() {
     .map((item, index) => ({ rank: index + 1, ...item }));
 }
 
+const scenarioTitles: Record<string, string> = {
+  corona: '2020년 코로나 폭락장',
+  subprime: '2008년 서브프라임 사태',
+  dotcom: '2000년 닷컴버블 붕괴',
+};
+
+interface ResultRecordRow {
+  id: string;
+  user_id: string;
+  scenario_id: string;
+  final_asset: number;
+  profit_rate: number;
+  max_drawdown: number;
+  trade_count: number;
+  investor_type: string;
+  created_at: string;
+}
+
+export async function saveResultRecord(user: UserRow, input: {
+  scenarioId: string;
+  finalAsset: number;
+  profitRate: number;
+  maxDrawdown: number;
+  tradeCount: number;
+  investorType: string;
+}) {
+  return insertRow('result_records', {
+    user_id: user.id,
+    scenario_id: input.scenarioId,
+    final_asset: Math.round(input.finalAsset),
+    profit_rate: input.profitRate,
+    max_drawdown: input.maxDrawdown,
+    trade_count: input.tradeCount,
+    investor_type: input.investorType,
+  });
+}
+
+export async function scenarioRankings() {
+  const [records, users] = await Promise.all([
+    selectRows<ResultRecordRow>('result_records', '?select=*&order=profit_rate.desc'),
+    selectRows<UserRow>('users', '?select=*'),
+  ]);
+  const userMap = new Map(users.map((u) => [u.id, u]));
+  return records.map((record, index) => ({
+    rank: index + 1,
+    nickname: userMap.get(record.user_id)?.nickname ?? '알 수 없음',
+    profitRate: Number(record.profit_rate),
+    scenarioId: record.scenario_id,
+    scenarioTitle: scenarioTitles[record.scenario_id] ?? record.scenario_id,
+  }));
+}
+
 export async function forceSyncPrices() {
   await ensureSeedRows();
   const stocks = await stockRows();
