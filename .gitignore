@@ -1,10 +1,14 @@
 node_modules
 dist
 .vercel
+.vscode
 .env
 .env.local
 *.log
+*.tsbuildinfo
 npm-debug.log*
+vite.config.js
+vite.config.d.ts
 server/.gradle
 server/build
 server/data
