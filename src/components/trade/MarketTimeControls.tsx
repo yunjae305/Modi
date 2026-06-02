@@ -3,9 +3,9 @@ import { useTradeStore } from '../../store/tradeStore';
 import type { MarketSpeed } from '../../types';
 
 const speeds: { value: MarketSpeed; label: string }[] = [
-  { value: 0.5, label: '0.5배속' },
   { value: 1, label: '1배속' },
   { value: 2, label: '2배속' },
+  { value: 3, label: '3배속' },
 ];
 
 export function MarketTimeControls() {

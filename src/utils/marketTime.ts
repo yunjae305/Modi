@@ -1,7 +1,7 @@
 import type { MarketSpeed, OHLCVBar, ScenarioStock } from '../types';
 
 export function getDayDurationMs(speed: MarketSpeed): number {
-  return 300000 / speed;
+  return 180000 / speed;
 }
 
 export function clampProgress(progress: number): number {

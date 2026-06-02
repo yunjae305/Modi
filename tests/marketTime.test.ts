@@ -9,9 +9,9 @@ import {
 import type { ScenarioStock } from '../src/types/index.ts';
 
 test('시장 속도별 하루 진행 시간을 계산한다', () => {
-  assert.equal(getDayDurationMs(0.5), 600000);
-  assert.equal(getDayDurationMs(1), 300000);
-  assert.equal(getDayDurationMs(2), 150000);
+  assert.equal(getDayDurationMs(1), 180000);
+  assert.equal(getDayDurationMs(2), 90000);
+  assert.equal(getDayDurationMs(3), 60000);
 });
 
 test('진행률을 0부터 1 사이로 제한한다', () => {
