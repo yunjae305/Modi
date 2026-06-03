@@ -40,7 +40,7 @@ export function LandingPage() {
                 </Button>
               </>
             ) : (
-              <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => navigate('/login?next=/mode-select')}>
+              <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => navigate('/login')}>
                 로그인
               </Button>
             )}
