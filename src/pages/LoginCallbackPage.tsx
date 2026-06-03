@@ -28,7 +28,7 @@ export function LoginCallbackPage() {
         </div>
         <p className="mt-5 text-xl font-black text-[#111827]">{error ? error : '로그인 상태를 확인하는 중입니다.'}</p>
         {error && (
-          <button className="mt-5 text-sm font-extrabold text-[#5b45f2]" onClick={() => navigate('/login?next=/select', { replace: true })}>
+          <button className="mt-5 text-sm font-extrabold text-[#5b45f2]" onClick={() => navigate('/login', { replace: true })}>
             로그인으로 돌아가기
           </button>
         )}

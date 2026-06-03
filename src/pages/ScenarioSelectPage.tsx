@@ -16,13 +16,9 @@ export function ScenarioSelectPage() {
 
   useEffect(() => {
     if (!user) {
-      refreshUser().then((resolved) => {
-        if (!resolved) {
-          navigate('/login?next=/select');
-        }
-      });
+      refreshUser();
     }
-  }, [refreshUser, user, navigate]);
+  }, [refreshUser, user]);
 
   return (
     <main className="min-h-screen px-5 py-5">
@@ -38,7 +34,7 @@ export function ScenarioSelectPage() {
                 </button>
               </>
             ) : (
-              <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/login?next=/select')}>
+              <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/login')}>
                 로그인
               </button>
             )}
