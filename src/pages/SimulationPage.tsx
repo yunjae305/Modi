@@ -124,13 +124,6 @@ export function SimulationPage() {
                     <span className="font-extrabold text-[#16a34a]">실시간형 시뮬레이션</span>
                   </div>
                 </div>
-                <div className="flex rounded-xl bg-[#f7f8fc] p-1 text-xs font-extrabold text-[#667085]">
-                  {['1D', '1W', '1M', '3M'].map((item, index) => (
-                    <span key={item} className={`rounded-lg px-3 py-2 ${index === 1 ? 'bg-white text-[#5b45f2] shadow-sm' : ''}`}>
-                      {item}
-                    </span>
-                  ))}
-                </div>
               </div>
               <CandleChart data={liveChartData} visibleCount={currentDay + 1} height={320} />
             </section>
