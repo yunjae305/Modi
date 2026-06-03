@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Scenario, ScenarioStock } from '../types';
 import { useTradeStore } from '../store/tradeStore';
+import { compressScenarioStocks } from '../utils/marketTime';
 
 interface ChartDataState {
   data: ScenarioStock[];
@@ -34,9 +35,13 @@ export function useChartData(scenario: Scenario | null): ChartDataState {
         if (!Array.isArray(raw)) {
           throw new Error('데이터 형식이 올바르지 않습니다.');
         }
-        const data = raw as ScenarioStock[];
-        if (data.length < 20) {
+        const rawData = raw as ScenarioStock[];
+        if (rawData.length < 20) {
           throw new Error('대표 종목 데이터가 부족합니다.');
+        }
+        const data = compressScenarioStocks(rawData);
+        if (data.some((stock) => stock.bars.length === 0)) {
+          throw new Error('종목별 차트 데이터가 부족합니다.');
         }
         if (!ignore) {
           initScenario(scenario, data);

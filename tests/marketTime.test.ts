@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   clampProgress,
+  compressScenarioStocks,
   getDayDurationMs,
   getStockPriceAtProgress,
   interpolateBarPrice,
@@ -9,9 +10,46 @@ import {
 import type { ScenarioStock } from '../src/types/index.ts';
 
 test('시장 속도별 하루 진행 시간을 계산한다', () => {
-  assert.equal(getDayDurationMs(1), 180000);
-  assert.equal(getDayDurationMs(2), 90000);
-  assert.equal(getDayDurationMs(3), 60000);
+  assert.equal(getDayDurationMs(1), 10000);
+  assert.equal(getDayDurationMs(2), 5000);
+  assert.equal(getDayDurationMs(4), 2500);
+});
+
+test('시나리오 종목 데이터를 5거래일 단위 구간으로 압축한다', () => {
+  const compressed = compressScenarioStocks([
+    {
+      id: 'TEST',
+      name: 'Test Stock',
+      market: 'TEST',
+      bars: [
+        { date: '2020-01-02', open: 100, high: 120, low: 95, close: 110, volume: 100 },
+        { date: '2020-01-03', open: 110, high: 125, low: 105, close: 115, volume: 200 },
+        { date: '2020-01-06', open: 115, high: 140, low: 112, close: 130, volume: 300 },
+        { date: '2020-01-07', open: 130, high: 135, low: 90, close: 100, volume: 400 },
+        { date: '2020-01-08', open: 100, high: 118, low: 98, close: 116, volume: 500 },
+        { date: '2020-01-09', open: 116, high: 122, low: 111, close: 119, volume: 600 },
+      ],
+    },
+  ]);
+
+  assert.deepEqual(compressed[0].bars, [
+    {
+      date: '2020-01-02 ~ 2020-01-08',
+      open: 100,
+      high: 140,
+      low: 90,
+      close: 116,
+      volume: 1500,
+    },
+    {
+      date: '2020-01-09',
+      open: 116,
+      high: 122,
+      low: 111,
+      close: 119,
+      volume: 600,
+    },
+  ]);
 });
 
 test('진행률을 0부터 1 사이로 제한한다', () => {

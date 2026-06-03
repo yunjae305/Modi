@@ -1,7 +1,39 @@
 import type { MarketSpeed, OHLCVBar, ScenarioStock } from '../types';
 
+export const SCENARIO_CHUNK_DAYS = 5;
+export const BASE_CHUNK_DURATION_MS = 10000;
+
 export function getDayDurationMs(speed: MarketSpeed): number {
-  return 180000 / speed;
+  return BASE_CHUNK_DURATION_MS / speed;
+}
+
+export function compressScenarioStocks(stocks: ScenarioStock[], intervalDays = SCENARIO_CHUNK_DAYS): ScenarioStock[] {
+  return stocks.map((stock) => ({
+    ...stock,
+    bars: compressBarsByInterval(stock.bars, intervalDays),
+  }));
+}
+
+export function compressBarsByInterval(bars: OHLCVBar[], intervalDays = SCENARIO_CHUNK_DAYS): OHLCVBar[] {
+  const size = Math.max(1, Math.floor(intervalDays));
+  const result: OHLCVBar[] = [];
+  for (let index = 0; index < bars.length; index += size) {
+    const chunk = bars.slice(index, index + size);
+    const first = chunk[0];
+    const last = chunk[chunk.length - 1];
+    if (!first || !last) {
+      continue;
+    }
+    result.push({
+      date: first.date === last.date ? first.date : `${first.date} ~ ${last.date}`,
+      open: first.open,
+      high: Math.max(...chunk.map((bar) => bar.high)),
+      low: Math.min(...chunk.map((bar) => bar.low)),
+      close: last.close,
+      volume: chunk.reduce((total, bar) => total + bar.volume, 0),
+    });
+  }
+  return result;
 }
 
 export function clampProgress(progress: number): number {

@@ -100,15 +100,15 @@ test('시장 시간 진행과 속도 변경은 진행률과 날짜를 갱신한�
   useTradeStore.getState().initScenario(scenario, stocks);
 
   useTradeStore.getState().setMarketSpeed(2);
-  useTradeStore.getState().tick(45000);
+  useTradeStore.getState().tick(2500);
   assert.equal(useTradeStore.getState().dayProgress, 0.5);
   assert.equal(useTradeStore.getState().currentDay, 0);
   assert.equal(useTradeStore.getState().currentPrice(), 110);
 
-  useTradeStore.getState().setMarketSpeed(3);
+  useTradeStore.getState().setMarketSpeed(4);
   assert.equal(useTradeStore.getState().dayProgress, 0.5);
 
-  useTradeStore.getState().tick(30000);
+  useTradeStore.getState().tick(1250);
   assert.equal(useTradeStore.getState().currentDay, 1);
   assert.equal(useTradeStore.getState().dayProgress, 0);
 });
@@ -119,18 +119,18 @@ test('scenario playback starts automatically and toggle controls pause and play'
 
   assert.equal(useTradeStore.getState().isPlaying, true);
 
-  useTradeStore.getState().tick(45000);
+  useTradeStore.getState().tick(2500);
   assert.equal(useTradeStore.getState().dayProgress, 0.25);
 
   useTradeStore.getState().togglePlaying();
   assert.equal(useTradeStore.getState().isPlaying, false);
 
-  useTradeStore.getState().tick(45000);
+  useTradeStore.getState().tick(2500);
   assert.equal(useTradeStore.getState().dayProgress, 0.25);
 
   useTradeStore.getState().togglePlaying();
   assert.equal(useTradeStore.getState().isPlaying, true);
 
-  useTradeStore.getState().tick(45000);
+  useTradeStore.getState().tick(2500);
   assert.equal(useTradeStore.getState().dayProgress, 0.5);
 });

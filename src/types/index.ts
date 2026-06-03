@@ -26,7 +26,7 @@ export interface ScenarioStock {
   bars: OHLCVBar[];
 }
 
-export type MarketSpeed = 1 | 2 | 3;
+export type MarketSpeed = 1 | 2 | 4;
 
 export interface Trade {
   day: number;

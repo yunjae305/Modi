@@ -5,7 +5,7 @@ import type { MarketSpeed } from '../../types';
 const speeds: { value: MarketSpeed; label: string }[] = [
   { value: 1, label: '1배속' },
   { value: 2, label: '2배속' },
-  { value: 3, label: '3배속' },
+  { value: 4, label: '4배속' },
 ];
 
 export function MarketTimeControls() {

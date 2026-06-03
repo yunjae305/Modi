@@ -94,7 +94,7 @@ export function SimulationPage() {
               <span className="h-2 w-28 rounded-full bg-[#edf0f6]">
                 <span className="block h-full rounded-full bg-[#5b45f2]" style={{ width: `${Math.max(4, ((currentDay + 1) / Math.max(chartData.length, 1)) * 100)}%` }} />
               </span>
-              <span>{currentDay + 1} / {chartData.length}일</span>
+              <span>{currentDay + 1} / {chartData.length}구간</span>
             </div>
             <Button variant="ghost" className="px-4 py-2 text-xs" onClick={() => navigate('/select')}>
               시나리오 변경
@@ -136,7 +136,7 @@ export function SimulationPage() {
             <NextDayButton />
             <section className="rounded-2xl border border-[#ded9ff] bg-[#f8f7ff] p-5">
               <h2 className="font-black text-[#5b45f2]">도움말</h2>
-              <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">다음 날로 이동하면 모든 주문이 체결되고 시장이 변합니다.</p>
+              <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">다음 구간으로 이동하면 모든 주문이 체결되고 시장이 변합니다.</p>
               <Mascot className="mt-4 h-20 w-20" />
             </section>
           </aside>

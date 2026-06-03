@@ -17,9 +17,9 @@ export function NextDayButton() {
       onClick={nextDay}
       disabled={isFinished}
     >
-      ▶ 다음 날로 가기
+      ▶ 다음 구간으로 가기
       <span className="mt-1 block text-xs font-bold text-white/90">
-        D+{currentDay} · {date} · {Math.round(dayProgress * 100)}%
+        구간 {currentDay + 1} · {date} · {Math.round(dayProgress * 100)}%
       </span>
     </motion.button>
   );
