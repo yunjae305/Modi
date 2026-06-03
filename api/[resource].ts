@@ -22,11 +22,10 @@ export default async function handler(req: any, res: any) {
     if (resource === 'rankings') {
       return ok(res, await rankings());
     }
-    if (resource === 'scenario-rankings') {
-      return ok(res, await scenarioRankings());
-    }
-
     const user = await requireUser(req);
+    if (resource === 'scenario-rankings') {
+      return ok(res, await scenarioRankings(user));
+    }
     if (resource === 'portfolio') {
       return ok(res, await portfolio(user));
     }

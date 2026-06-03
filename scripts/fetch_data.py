@@ -125,6 +125,18 @@ def _write_json(name: str, records: list[dict]) -> None:
     print(f"{name} 저장 완료: {len(records)}개")
 
 
+def _write_source_manifest() -> None:
+    sources = {}
+    for name, config in STOCK_SCENARIOS.items():
+        sources[name] = {
+            "source": "yfinance",
+            "start": config["start"],
+            "end": config["end"],
+            "symbols": [item[0] for item in config["stocks"]],
+        }
+    _write_json("scenario_sources.json", sources)
+
+
 def _download_yahoo(symbol: str, start: str, end: str) -> list[dict]:
     data = yf.download(symbol, start=start, end=end, auto_adjust=True, progress=False)
     return _normalize_df(data)
@@ -154,6 +166,7 @@ def main() -> None:
     _write_json("nasdaq_2000.json", _download_yahoo("^IXIC", "1999-01-01", "2002-12-31"))
     for name, config in STOCK_SCENARIOS.items():
         _write_json(name, _download_stock_bundle(config))
+    _write_source_manifest()
 
 
 if __name__ == "__main__":

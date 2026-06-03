@@ -46,10 +46,6 @@
       "destination": "/api/[resource]?resource=scenario-rankings"
     },
     {
-      "source": "/api/result-records",
-      "destination": "/api/result-records"
-    },
-    {
       "source": "/api/orders/buy",
       "destination": "/api/orders/[side]?side=buy"
     },

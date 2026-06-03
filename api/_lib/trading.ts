@@ -167,26 +167,7 @@ interface ResultRecordRow {
   created_at: string;
 }
 
-export async function saveResultRecord(user: UserRow, input: {
-  scenarioId: string;
-  finalAsset: number;
-  profitRate: number;
-  maxDrawdown: number;
-  tradeCount: number;
-  investorType: string;
-}) {
-  return insertRow('result_records', {
-    user_id: user.id,
-    scenario_id: input.scenarioId,
-    final_asset: Math.round(input.finalAsset),
-    profit_rate: input.profitRate,
-    max_drawdown: input.maxDrawdown,
-    trade_count: input.tradeCount,
-    investor_type: input.investorType,
-  });
-}
-
-export async function scenarioRankings() {
+export async function scenarioRankings(currentUser: UserRow) {
   const [records, users] = await Promise.all([
     selectRows<ResultRecordRow>('result_records', '?select=*&order=profit_rate.desc'),
     selectRows<UserRow>('users', '?select=*'),
@@ -194,10 +175,12 @@ export async function scenarioRankings() {
   const userMap = new Map(users.map((u) => [u.id, u]));
   return records.map((record, index) => ({
     rank: index + 1,
+    userId: record.user_id,
     nickname: userMap.get(record.user_id)?.nickname ?? '알 수 없음',
     profitRate: Number(record.profit_rate),
     scenarioId: record.scenario_id,
     scenarioTitle: scenarioTitles[record.scenario_id] ?? record.scenario_id,
+    isCurrentUser: currentUser?.id === record.user_id,
   }));
 }
 

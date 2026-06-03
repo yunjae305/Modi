@@ -39,24 +39,20 @@ test('로그인은 Kakao와 게스트 세션을 제공한다', () => {
   assert.match(authTypes, /'GUEST'/);
 });
 
-test('모의투자 대시보드는 5초마다 포트폴리오와 랭킹을 갱신한다', () => {
+test('순위 대시보드는 시나리오 랭킹을 갱신하고 본인 기록을 표시한다', () => {
   const tradePage = readFileSync('src/pages/TradeDashboardPage.tsx', 'utf8');
 
   for (const file of [
     'api/[resource].ts',
-    'api/orders/[side].ts',
-    'api/prices/sync.ts',
+    'src/types/trading.ts',
   ]) {
     assert.equal(existsSync(file), true, file);
   }
 
-  assert.match(tradePage, /apiGet<StockItem\[\]>\('\/stocks'\)/);
-  assert.match(tradePage, /apiGet<PortfolioSummary>\('\/portfolio'\)/);
-  assert.match(tradePage, /apiGet<RankingItem\[\]>\('\/rankings'\)/);
-  assert.match(tradePage, /apiGet<ExecutionItem\[\]>\('\/executions'\)/);
-  assert.match(tradePage, /apiPost<OrderResult>\('\/orders\/buy'/);
-  assert.match(tradePage, /apiPost<OrderResult>\('\/orders\/sell'/);
-  assert.match(tradePage, /setInterval\(loadDashboard, 5000\)/);
+  assert.match(tradePage, /apiGet<ScenarioRankingItem\[\]>\('\/scenario-rankings'\)/);
+  assert.match(tradePage, /setInterval\(loadRankings, 10000\)/);
+  assert.match(tradePage, /item\.isCurrentUser/);
+  assert.match(tradePage, /내 기록/);
 });
 
 test('TooT에서는 필요한 주식 용어 콘텐츠만 Modi 튜토리얼에 병합한다', () => {

@@ -5,7 +5,7 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 
 - 서비스 URL: https://modi-two.vercel.app/
 - 배포 플랫폼: Vercel
-- 핵심 키워드: 과거 데이터 시뮬레이션, 대표 종목 투자, Kakao 로그인, 게스트 세션, 포트폴리오 평가, 랭킹, 투자 성향 리포트
+- 핵심 키워드: 과거 데이터 시뮬레이션, 대표 종목 투자, Kakao 로그인, 게스트 세션, 포트폴리오 평가, 시나리오 랭킹
 
 ## 주요 기능
 
@@ -17,7 +17,7 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 - 다음 날 버튼으로 수동 진행 가능
 - 매수, 매도, 예수금, 종목별 보유 수량, 평균 단가, 자산 평가액 계산
 - 시뮬레이션 종료 후 실제 시장 구간 공개
-- 최종 수익률, 존버 수익률, 최대 낙폭, 총 매매 횟수, 투자 성향 리포트 제공
+- 최종 수익률, 존버 수익률, 최대 낙폭, 총 매매 횟수, 투자 성향 결과 제공
 
 현재 포함된 시나리오:
 
@@ -34,12 +34,12 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 - TooT에서 선별한 주식 용어 기반 퀴즈 제공
 - 초보자와 경험자를 분기하는 첫 진입 플로우 제공
 
-### 3. 모의투자 대시보드
+### 3. 순위 대시보드
 
-- seed 가격 또는 KIS 현재가 기반 국내 주식 조회
-- 사용자 포트폴리오, 매매 기록, 전체 랭킹 조회
-- 포트폴리오와 랭킹을 5초마다 갱신
-- KIS 키가 없을 때도 Supabase seed 가격으로 동작
+- 로그인 사용자의 시나리오 결과 랭킹 조회
+- 코로나, 서브프라임, 닷컴버블 시나리오별 필터 제공
+- 로그인한 사용자의 기록은 굵은 글씨와 내 기록 배지로 표시
+- 랭킹을 10초마다 갱신
 
 ### 4. 계정 로그인
 
@@ -52,9 +52,10 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 
 - 과거 시나리오 데이터는 `public/data/` 정적 JSON으로 제공
 - 데이터 재생성 스크립트는 `scripts/fetch_data.py`
+- `scripts/fetch_data.py`는 yfinance로 실제 과거 가격을 내려받고 `public/data/scenario_sources.json`에 출처와 심볼을 남김
 - 시나리오 거래 데이터는 런타임에 외부 API를 호출하지 않고 정적 JSON을 읽음
 - 로그인은 `/api/auth/guest`, `/api/auth/login`, `/api/auth/register`, `/api/auth/oauth/kakao/*`, `/api/auth/me`, `/api/auth/logout`을 사용
-- 모의투자 대시보드는 `/api/stocks`, `/api/portfolio`, `/api/executions`, `/api/rankings`, `/api/orders/*`, `/api/prices/sync`를 사용
+- 순위 대시보드는 `/api/scenario-rankings`를 사용
 - Vercel Serverless Functions와 Supabase 사용자 테이블을 기준으로 세션 쿠키를 발급
 
 ## 화면 흐름
@@ -68,8 +69,8 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 | `/login/callback` | Kakao 로그인 완료 후 세션 확인 |
 | `/select` | 과거 시나리오 선택 |
 | `/simulation` | 과거 데이터 기반 매매 시뮬레이션 |
-| `/result` | 시뮬레이션 결과 리포트 |
-| `/trade` | 현재가 기반 모의투자 대시보드와 전체 랭킹 |
+| `/result` | 시뮬레이션 결과 요약 |
+| `/trade` | 시나리오 결과 순위 대시보드 |
 
 ## 기술 스택
 
@@ -168,13 +169,14 @@ Vercel 배포에서는 `VITE_API_BASE_URL=/api`, `SUPABASE_URL`, `SUPABASE_SERVI
 | `GET` | `/api/portfolio` | 내 포트폴리오 조회 |
 | `GET` | `/api/executions` | 내 매매 기록 조회 |
 | `GET` | `/api/rankings` | 전체 랭킹 조회 |
+| `GET` | `/api/scenario-rankings` | 시나리오 결과 랭킹 조회 |
 | `POST` | `/api/orders/buy` | 현재가 매수 |
 | `POST` | `/api/orders/sell` | 현재가 매도 |
 | `POST` | `/api/prices/sync` | KIS 현재가 동기화 |
 
 ## 데이터 갱신
 
-과거 시나리오 데이터는 런타임에 외부 API를 호출하지 않고 정적 JSON을 읽습니다. 데이터를 다시 생성하려면 Python 패키지를 설치한 뒤 스크립트를 실행합니다.
+과거 시나리오 데이터는 런타임에 외부 API를 호출하지 않고 정적 JSON을 읽습니다. 데이터를 다시 생성하려면 Python 패키지를 설치한 뒤 스크립트를 실행합니다. 세 시나리오의 대표 종목 데이터는 yfinance로 내려받고, 출처 정보는 `public/data/scenario_sources.json`에 저장됩니다.
 
 ```bash
 pip install pandas yfinance pykrx
@@ -194,7 +196,7 @@ npm run build
 
 ### 단기 개선
 
-- 결과 리포트에 시장 배경 카드 추가
+- 시나리오 배경 카드 추가
 - 투자 습관 분석 규칙 고도화
 - 결과 공유 카드 생성
 - 파산 조건, 원인 분석, 재도전 플로우 추가

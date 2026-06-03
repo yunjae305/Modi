@@ -1,0 +1,83 @@
+{
+  "corona_stocks_2020.json": {
+    "source": "yfinance",
+    "start": "2020-01-01",
+    "end": "2020-12-31",
+    "symbols": [
+      "005930.KS",
+      "000660.KS",
+      "035420.KS",
+      "035720.KS",
+      "005380.KS",
+      "000270.KS",
+      "051910.KS",
+      "006400.KS",
+      "207940.KS",
+      "068270.KS",
+      "012330.KS",
+      "005490.KS",
+      "105560.KS",
+      "055550.KS",
+      "066570.KS",
+      "096770.KS",
+      "017670.KS",
+      "028260.KS",
+      "032830.KS",
+      "086790.KS"
+    ]
+  },
+  "sp500_stocks_2008.json": {
+    "source": "yfinance",
+    "start": "2007-01-01",
+    "end": "2009-12-31",
+    "symbols": [
+      "AAPL",
+      "MSFT",
+      "XOM",
+      "GE",
+      "JNJ",
+      "PG",
+      "JPM",
+      "WMT",
+      "BAC",
+      "C",
+      "IBM",
+      "CVX",
+      "KO",
+      "PFE",
+      "INTC",
+      "CSCO",
+      "ORCL",
+      "T",
+      "VZ",
+      "WFC"
+    ]
+  },
+  "nasdaq_stocks_2000.json": {
+    "source": "yfinance",
+    "start": "1999-01-01",
+    "end": "2002-12-31",
+    "symbols": [
+      "MSFT",
+      "CSCO",
+      "INTC",
+      "ORCL",
+      "QCOM",
+      "AMGN",
+      "AAPL",
+      "AMAT",
+      "ADBE",
+      "CMCSA",
+      "KLAC",
+      "ADI",
+      "TXN",
+      "MU",
+      "AMZN",
+      "EBAY",
+      "SBUX",
+      "COST",
+      "NVDA",
+      "PAYX"
+    ]
+  }
+}

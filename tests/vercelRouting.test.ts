@@ -53,6 +53,10 @@ test('Vercel serves the Vite SPA for direct client routes', () => {
       destination: '/api/[resource]?resource=rankings',
     },
     {
+      source: '/api/scenario-rankings',
+      destination: '/api/[resource]?resource=scenario-rankings',
+    },
+    {
       source: '/api/orders/buy',
       destination: '/api/orders/[side]?side=buy',
     },

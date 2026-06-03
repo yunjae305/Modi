@@ -63,8 +63,10 @@ export interface RankingItem {
 
 export interface ScenarioRankingItem {
   rank: number;
+  userId: string;
   nickname: string;
   profitRate: number;
   scenarioId: string;
   scenarioTitle: string;
+  isCurrentUser: boolean;
 }

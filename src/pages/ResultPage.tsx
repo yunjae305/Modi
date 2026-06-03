@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InvestorBadge } from '../components/result/InvestorBadge';
 import { ProfitChart } from '../components/result/ProfitChart';
@@ -6,25 +6,19 @@ import { TradeHistory } from '../components/result/TradeHistory';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { Mascot } from '../components/ui/Mascot';
-import { apiPost } from '../services/api';
-import { useAuthStore } from '../store/authStore';
 import { useTradeStore } from '../store/tradeStore';
 import { calcHoldReturn, calcHoldReturnFromStocks, calcPortfolioTimeSeries, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
 import { formatRate } from '../utils/format';
-import { getInvestorType } from '../utils/getInvestorType';
 
 export function ResultPage() {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
   const scenario = useTradeStore((state) => state.scenario);
   const scenarioStocks = useTradeStore((state) => state.scenarioStocks);
   const chartData = useTradeStore((state) => state.chartData);
   const tradeHistory = useTradeStore((state) => state.tradeHistory);
   const maxDrawdown = useTradeStore((state) => state.maxDrawdown);
   const profitRate = useTradeStore((state) => state.profitRate());
-  const finalAsset = useTradeStore((state) => state.portfolioValue());
   const reset = useTradeStore((state) => state.reset);
-  const savedRef = useRef(false);
   const holdReturn = scenario ? (scenarioStocks.length ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : calcHoldReturn(chartData, scenario.initialCash)) : 0;
   const series = useMemo(
     () => (scenario ? (scenarioStocks.length ? calcPortfolioTimeSeriesFromStocks(scenarioStocks, tradeHistory, scenario.initialCash) : calcPortfolioTimeSeries(chartData, tradeHistory, scenario.initialCash)) : []),
@@ -36,19 +30,6 @@ export function ResultPage() {
       navigate('/select');
     }
   }, [navigate, scenario]);
-
-  useEffect(() => {
-    if (!user || user.provider === 'GUEST' || !scenario || savedRef.current) return;
-    savedRef.current = true;
-    apiPost('/result-records', {
-      scenarioId: scenario.id,
-      finalAsset,
-      profitRate,
-      maxDrawdown,
-      tradeCount: tradeHistory.length,
-      investorType: getInvestorType(profitRate).type,
-    }).catch(() => null);
-  }, [user, scenario, finalAsset, profitRate, maxDrawdown, tradeHistory.length]);
 
   if (!scenario) {
     return null;

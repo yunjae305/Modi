@@ -39,12 +39,15 @@ export function TradeDashboardPage() {
   }, []);
 
   useEffect(() => {
+    if (!user) {
+      return undefined;
+    }
     loadRankings().catch((error) =>
       setMessage(error instanceof Error ? error.message : '랭킹을 불러오지 못했습니다.'),
     );
     const timer = setInterval(loadRankings, 10000);
     return () => clearInterval(timer);
-  }, [loadRankings]);
+  }, [loadRankings, user]);
 
   const filtered = activeFilter ? rankings.filter((item) => item.scenarioId === activeFilter) : rankings;
   const renumbered = filtered.map((item, index) => ({ ...item, rank: index + 1 }));
@@ -112,12 +115,17 @@ export function TradeDashboardPage() {
                   </tr>
                 ) : (
                   renumbered.map((item) => (
-                    <tr key={`${item.rank}-${item.nickname}-${item.scenarioId}`} className="border-t border-[#edf0f6] hover:bg-[#fafbff]">
+                    <tr key={`${item.userId}-${item.rank}-${item.scenarioId}`} className={`border-t border-[#edf0f6] hover:bg-[#fafbff] ${item.isCurrentUser ? 'bg-[#f8f7ff] font-black' : ''}`}>
                       <td className="px-5 py-4">
                         <RankBadge rank={item.rank} />
                       </td>
-                      <td className="px-5 py-4 font-black text-[#111827]">{item.nickname}</td>
-                      <td className="px-5 py-4 font-bold text-[#4b5563]">{item.scenarioTitle}</td>
+                      <td className={`px-5 py-4 text-[#111827] ${item.isCurrentUser ? 'font-black' : 'font-bold'}`}>
+                        <span>{item.nickname}</span>
+                        {item.isCurrentUser && (
+                          <span className="ml-2 rounded-full bg-[#5b45f2] px-2 py-1 text-[10px] font-black text-white">내 기록</span>
+                        )}
+                      </td>
+                      <td className={`px-5 py-4 text-[#4b5563] ${item.isCurrentUser ? 'font-black' : 'font-bold'}`}>{item.scenarioTitle}</td>
                       <td className={`px-5 py-4 text-right font-black ${item.profitRate >= 0 ? 'text-[#14a86b]' : 'text-[#ff3f55]'}`}>
                         {formatRate(item.profitRate)}
                       </td>
