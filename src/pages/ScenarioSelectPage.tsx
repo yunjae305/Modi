@@ -1,5 +1,6 @@
 // Modi 시나리오 선택 페이지
 import { useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BrandLogo } from '../components/ui/BrandLogo';
@@ -92,8 +93,8 @@ export function ScenarioSelectPage() {
                   <Button
                     className="w-full"
                     onClick={() => {
-                      // scenario store 저장 후 이동
-                      selectScenario(scenario);
+                      // flushSync로 store 업데이트 완료 후 이동 (React 18 배치 처리 방지)
+                      flushSync(() => selectScenario(scenario));
                       navigate('/simulation');
                     }}
                   >
