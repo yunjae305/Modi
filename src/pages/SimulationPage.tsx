@@ -1,3 +1,4 @@
+// Modi 시나리오 투자 실행 페이지
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CandleChart } from '../components/chart/CandleChart';
@@ -14,6 +15,7 @@ import { useChartData } from '../hooks/useChartData';
 import { useSimulation } from '../hooks/useSimulation';
 import { useTradeStore } from '../store/tradeStore';
 
+// 시나리오 투자 화면 컴포넌트
 export function SimulationPage() {
   const navigate = useNavigate();
   const scenario = useTradeStore((state) => state.scenario);
@@ -26,6 +28,7 @@ export function SimulationPage() {
   const { loading, error } = useChartData(scenario);
   useSimulation();
   const liveChartData = useMemo(
+    // 진행 중 가격 반영 차트 데이터
     () => chartData.map((bar, index) => (
       index === currentDay
         ? {
@@ -40,6 +43,7 @@ export function SimulationPage() {
   );
 
   useEffect(() => {
+    // scenario 없음 fallback
     if (!scenario) {
       navigate('/select');
     }
@@ -53,6 +57,7 @@ export function SimulationPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6">
         <div className="rounded-2xl border border-[#dfe3ee] bg-white p-8 text-center shadow-card">
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-[#5b45f2] border-t-transparent" />
           <p className="text-xl font-black text-[#111827]">차트 데이터를 불러오는 중입니다.</p>
           <p className="mt-2 font-medium text-[#667085]">{scenario.subtitle}</p>
         </div>

@@ -1,3 +1,4 @@
+// Modi 시나리오 선택 페이지
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,6 +8,7 @@ import { useAuthStore } from '../store/authStore';
 import { useTradeStore } from '../store/tradeStore';
 import { Button } from '../components/ui/Button';
 
+// 과거 시장 시나리오 선택 컴포넌트
 export function ScenarioSelectPage() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
@@ -15,10 +17,16 @@ export function ScenarioSelectPage() {
   const selectScenario = useTradeStore((state) => state.selectScenario);
 
   useEffect(() => {
+    // 헤더 사용자 표시용 세션 복구
     if (!user) {
       refreshUser();
     }
   }, [refreshUser, user]);
+
+  useEffect(() => {
+    // 시나리오 데이터 미리 다운로드 (선택 전 캐시 확보)
+    scenarios.forEach((s) => fetch(s.dataFile));
+  }, []);
 
   return (
     <main className="min-h-screen px-5 py-5">
@@ -84,6 +92,7 @@ export function ScenarioSelectPage() {
                   <Button
                     className="w-full"
                     onClick={() => {
+                      // scenario store 저장 후 이동
                       selectScenario(scenario);
                       navigate('/simulation');
                     }}
@@ -100,7 +109,9 @@ export function ScenarioSelectPage() {
   );
 }
 
+// 시나리오 썸네일 컴포넌트
 function ScenarioThumb({ id }: { id: string }) {
+  // 시나리오별 색상 톤
   const tone = id === 'corona' ? 'from-[#172554] to-[#334155]' : id === 'subprime' ? 'from-[#383838] to-[#b7bbc6]' : 'from-[#475569] to-[#cbd5e1]';
 
   return (
