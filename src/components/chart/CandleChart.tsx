@@ -1,3 +1,4 @@
+// Modi 캔들 차트 컴포넌트
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CrosshairMode, createChart, type CandlestickData, type Time } from 'lightweight-charts';
 import type { OHLCVBar } from '../../types';
@@ -10,6 +11,7 @@ interface CandleChartProps {
   height?: number;
 }
 
+// 캔들 차트 렌더링 컴포넌트
 export function CandleChart({ data, visibleCount, isTutorial = false, height = 420 }: CandleChartProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [tooltip, setTooltip] = useState<{ bar: OHLCVBar | null; x: number; y: number }>({
@@ -17,6 +19,7 @@ export function CandleChart({ data, visibleCount, isTutorial = false, height = 4
     x: 0,
     y: 0,
   });
+  // 현재 진행 구간 데이터
   const visibleData = useMemo(() => data.slice(0, Math.max(1, visibleCount)), [data, visibleCount]);
 
   useEffect(() => {
@@ -64,6 +67,7 @@ export function CandleChart({ data, visibleCount, isTutorial = false, height = 4
     series.setData(chartData);
     chart.timeScale().fitContent();
     if (isTutorial) {
+      // 튜토리얼 tooltip 활성화
       chart.subscribeCrosshairMove((param) => {
         if (!param.point || !param.time || param.point.x < 0 || param.point.y < 0) {
           setTooltip({ bar: null, x: 0, y: 0 });
@@ -81,6 +85,7 @@ export function CandleChart({ data, visibleCount, isTutorial = false, height = 4
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry) {
+        // 차트 캔버스 폭 보정
         chart.applyOptions({ width: Math.round(entry.contentRect.width) });
       }
     });

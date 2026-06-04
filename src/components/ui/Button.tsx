@@ -1,3 +1,4 @@
+// Modi 공통 버튼 컴포넌트
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type ButtonVariant = 'primary' | 'danger' | 'ghost' | 'soft';
@@ -14,6 +15,7 @@ const variants: Record<ButtonVariant, string> = {
   soft: 'border border-[#ded9ff] bg-[#f4f2ff] text-[#5b45f2] hover:bg-[#eeeaff]',
 };
 
+// variant 기반 버튼 컴포넌트
 export function Button({ variant = 'primary', className = '', children, ...props }: ButtonProps) {
   return (
     <button

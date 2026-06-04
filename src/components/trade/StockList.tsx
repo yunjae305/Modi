@@ -1,13 +1,11 @@
-import { useTradeStore } from '../../store/tradeStore';
+// Modi 종목 목록 컴포넌트
+import { useTradeContext } from '../../context/TradeContext';
+import { getStockPriceAtProgress } from '../../utils/marketTime';
 import { formatCount, formatKRW, formatRate } from '../../utils/format';
 
+// 시나리오 대표 종목 리스트 컴포넌트
 export function StockList() {
-  const scenarioStocks = useTradeStore((state) => state.scenarioStocks);
-  const selectedStockId = useTradeStore((state) => state.selectedStockId);
-  const selectStock = useTradeStore((state) => state.selectStock);
-  const currentDay = useTradeStore((state) => state.currentDay);
-  const positions = useTradeStore((state) => state.positions);
-  const currentPrice = useTradeStore((state) => state.currentPrice);
+  const { scenarioStocks, selectedStockId, selectStock, currentDay, dayProgress, positions } = useTradeContext();
 
   return (
     <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
@@ -17,9 +15,11 @@ export function StockList() {
       </div>
       <div className="grid max-h-[720px] gap-3 overflow-auto pr-1">
         {scenarioStocks.map((stock) => {
-          const price = currentPrice(stock.id);
+          // 종목별 현재가 계산
+          const price = getStockPriceAtProgress(stock, currentDay, dayProgress);
           const bar = stock.bars[currentDay];
           const previousClose = currentDay > 0 ? stock.bars[currentDay - 1]?.close : bar?.open;
+          // 리스트 등락률 계산
           const changeRate = previousClose && previousClose > 0 ? (price - previousClose) / previousClose : 0;
           const quantity = positions[stock.id]?.quantity ?? 0;
           const isSelected = stock.id === selectedStockId;

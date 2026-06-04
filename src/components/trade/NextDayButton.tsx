@@ -1,12 +1,11 @@
+// Modi 다음 구간 버튼 컴포넌트
 import { motion } from 'framer-motion';
-import { useTradeStore } from '../../store/tradeStore';
+import { useTradeContext } from '../../context/TradeContext';
 
+// 수동 구간 이동 버튼 컴포넌트
 export function NextDayButton() {
-  const nextDay = useTradeStore((state) => state.nextDay);
-  const currentDay = useTradeStore((state) => state.currentDay);
-  const dayProgress = useTradeStore((state) => state.dayProgress);
-  const chartData = useTradeStore((state) => state.chartData);
-  const isFinished = useTradeStore((state) => state.isFinished);
+  const { nextDay, currentDay, dayProgress, chartData, isFinished } = useTradeContext();
+  // 버튼 보조 날짜 표시
   const date = chartData[currentDay]?.date ?? '-';
 
   return (

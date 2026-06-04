@@ -1,7 +1,9 @@
+// Modi 모드 선택 페이지
 import { useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 
+// 튜토리얼과 시나리오 모드 선택 컴포넌트
 export function ModeSelectPage() {
   const navigate = useNavigate();
 

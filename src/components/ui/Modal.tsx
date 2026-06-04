@@ -1,3 +1,4 @@
+// Modi 공통 모달 컴포넌트
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -7,6 +8,7 @@ interface ModalProps {
   children: ReactNode;
 }
 
+// overlay 닫기 모달 컴포넌트
 export function Modal({ isOpen, onClose, children }: ModalProps) {
   return (
     <AnimatePresence>
@@ -18,6 +20,7 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
+          {/* 내부 클릭 전파 차단 */}
           <motion.div
             className="w-full max-w-md rounded-2xl border border-[#dfe3ee] bg-white p-7 shadow-card"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}

@@ -1,12 +1,12 @@
-import { useTradeStore } from '../../store/tradeStore';
+// Modi 자산 현황 컴포넌트
+import { useTradeContext } from '../../context/TradeContext';
 import { formatKRW } from '../../utils/format';
 
+// 시나리오 자산 현황 패널 컴포넌트
 export function AssetStatus() {
-  const positionCount = useTradeStore((state) => state.positionList().length);
-  const totalPurchaseAmount = useTradeStore((state) => state.totalPurchaseAmount());
-  const totalEvaluationAmount = useTradeStore((state) => state.totalEvaluationAmount());
-  const estimatedAssets = useTradeStore((state) => state.estimatedAssets());
-  const realizedProfit = useTradeStore((state) => state.realizedProfit);
+  const { positionList, totalPurchaseAmount, totalEvaluationAmount, estimatedAssets, realizedProfit } = useTradeContext();
+  const positionCount = positionList.length;
+  // 실현손익 색상 클래스
   const realizedProfitColor = realizedProfit >= 0 ? 'text-[#16a34a]' : 'text-[#ff3f55]';
 
   return (

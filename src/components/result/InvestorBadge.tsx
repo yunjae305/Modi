@@ -1,3 +1,4 @@
+// Modi 투자 성향 결과 컴포넌트
 import { motion } from 'framer-motion';
 import { getInvestorType } from '../../utils/getInvestorType';
 
@@ -5,6 +6,7 @@ interface InvestorBadgeProps {
   rate: number;
 }
 
+// 투자 성향 배지 컴포넌트
 export function InvestorBadge({ rate }: InvestorBadgeProps) {
   const result = getInvestorType(rate);
 

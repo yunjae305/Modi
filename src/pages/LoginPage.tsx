@@ -1,19 +1,17 @@
+// Modi 로그인 페이지
 import { type FormEvent, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { apiGet } from '../services/api';
-import { normalizeNextPath, useAuthStore } from '../store/authStore';
+import { normalizeNextPath, useAuthContext } from '../context/AuthContext';
 import type { ProviderStatus } from '../types/auth';
 
+// 이메일, Kakao, 게스트 로그인 컴포넌트
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const loginEmail = useAuthStore((state) => state.loginEmail);
-  const registerEmail = useAuthStore((state) => state.registerEmail);
-  const loginKakao = useAuthStore((state) => state.loginKakao);
-  const loginGuest = useAuthStore((state) => state.loginGuest);
-  const loading = useAuthStore((state) => state.loading);
+  const { loginEmail, registerEmail, loginKakao, loginGuest, loading } = useAuthContext();
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,6 +21,7 @@ export function LoginPage() {
   const next = normalizeNextPath(new URLSearchParams(location.search).get('next'));
 
   useEffect(() => {
+    // provider 상태 조회
     let active = true;
     apiGet<ProviderStatus>('/auth/providers')
       .then((status) => {
@@ -32,6 +31,7 @@ export function LoginPage() {
       })
       .catch(() => {
         if (active) {
+          // provider 조회 실패 fallback
           setProviders({ providers: { email: true, kakao: false, guest: true } });
         }
       });
@@ -40,10 +40,12 @@ export function LoginPage() {
     };
   }, []);
 
+  // 이메일 인증 submit 함수
   const submitCredentials = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
     try {
+      // authMode 기반 login/register 분기
       if (authMode === 'login') {
         await loginEmail(email, password);
       } else {
@@ -55,11 +57,14 @@ export function LoginPage() {
     }
   };
 
+  // Kakao 로그인 시작 함수
   const startKakao = () => {
     setError('');
+    // 외부 OAuth 페이지 이동
     loginKakao(next);
   };
 
+  // 게스트 로그인 시작 함수
   const startGuest = async () => {
     setError('');
     try {

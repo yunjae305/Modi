@@ -1,31 +1,33 @@
+// Modi 주문 패널 컴포넌트
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useTradeStore } from '../../store/tradeStore';
+import { useTradeContext } from '../../context/TradeContext';
 import { formatCount } from '../../utils/format';
 import { Button } from '../ui/Button';
 
+// 시나리오 매수매도 주문 컴포넌트
 export function TradePanel() {
-  const buy = useTradeStore((state) => state.buy);
-  const sell = useTradeStore((state) => state.sell);
-  const cash = useTradeStore((state) => state.cash);
-  const holdings = useTradeStore((state) => state.holdings);
-  const selectedStock = useTradeStore((state) => state.selectedStock());
-  const currentPrice = useTradeStore((state) => state.currentPrice());
+  const { buy, sell, cash, holdings, selectedStock, currentPrice } = useTradeContext();
   const [buyQty, setBuyQty] = useState(10);
   const [sellQty, setSellQty] = useState(10);
   const [flash, setFlash] = useState<'buy' | 'sell' | null>(null);
+  // 최대 매수 수량 계산값
   const maxBuyQty = currentPrice > 0 ? Math.floor(cash / currentPrice) : 0;
 
+  // 주문 flash 표시 함수
   const showFlash = (type: 'buy' | 'sell') => {
+    // store와 분리된 UI 효과
     setFlash(type);
     window.setTimeout(() => setFlash(null), 320);
   };
 
+  // 매수 버튼 처리 함수
   const handleBuy = () => {
     buy(buyQty);
     showFlash('buy');
   };
 
+  // 매도 버튼 처리 함수
   const handleSell = () => {
     sell(sellQty);
     showFlash('sell');

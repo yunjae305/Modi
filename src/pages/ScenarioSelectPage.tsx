@@ -5,17 +5,15 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { scenarios } from '../data/scenarios';
-import { useAuthStore } from '../store/authStore';
-import { useTradeStore } from '../store/tradeStore';
+import { useAuthContext } from '../context/AuthContext';
+import { useTradeContext } from '../context/TradeContext';
 import { Button } from '../components/ui/Button';
 
 // 과거 시장 시나리오 선택 컴포넌트
 export function ScenarioSelectPage() {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const refreshUser = useAuthStore((state) => state.refreshUser);
-  const logout = useAuthStore((state) => state.logout);
-  const selectScenario = useTradeStore((state) => state.selectScenario);
+  const { user, refreshUser, logout } = useAuthContext();
+  const { selectScenario } = useTradeContext();
 
   useEffect(() => {
     // 헤더 사용자 표시용 세션 복구

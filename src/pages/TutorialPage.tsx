@@ -1,3 +1,4 @@
+// Modi 튜토리얼 페이지
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -30,7 +31,9 @@ interface QuizQuestion {
   options: LearningTerm[];
 }
 
+// 퀴즈 문제 생성 함수
 function makeQuizQuestions(): QuizQuestion[] {
+  // 3문제 랜덤 추출
   const shuffled = [...learningTerms].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 3).map((term) => {
     const wrong = shuffled.filter((t) => t.word !== term.word).slice(0, 3);
@@ -41,26 +44,28 @@ function makeQuizQuestions(): QuizQuestion[] {
 
 type PracticePhase = 'buy' | 'sell' | 'done';
 
+// 초보자 튜토리얼 컴포넌트
 export function TutorialPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
-  // Quiz state
+  // 용어 퀴즈 상태
   const [quizQuestions] = useState<QuizQuestion[]>(() => makeQuizQuestions());
   const [quizIndex, setQuizIndex] = useState(0);
   const [answered, setAnswered] = useState<{ word: string; correct: boolean } | null>(null);
 
-  // Practice state
+  // 매수매도 실습 상태
   const [practicePhase, setPracticePhase] = useState<PracticePhase>('buy');
   const [message, setMessage] = useState('');
 
-  // Fluctuating live price
+  // 실습용 변동 현재가 상태
   const basePrice = tutorialData[tutorialData.length - 1].close;
   const [livePrice, setLivePrice] = useState(basePrice);
   const livePriceRef = useRef(basePrice);
 
   useEffect(() => {
     if (step !== 3 || practicePhase === 'done') return;
+    // 최신 가격 ref 유지
     const timer = setInterval(() => {
       const change = (Math.random() - 0.5) * 0.012;
       const next = Math.round(livePriceRef.current * (1 + change));
@@ -72,11 +77,13 @@ export function TutorialPage() {
 
   const currentQuestion = quizQuestions[quizIndex];
 
+  // 퀴즈 답변 처리 함수
   const handleAnswer = (word: string) => {
     if (answered) return;
     const correct = word === currentQuestion.term.word;
     setAnswered({ word, correct });
     if (correct) {
+      // 정답 후 다음 단계 이동
       setTimeout(() => {
         if (quizIndex < quizQuestions.length - 1) {
           setQuizIndex((i) => i + 1);
@@ -90,6 +97,7 @@ export function TutorialPage() {
     }
   };
 
+  // 실습 매수 처리 함수
   const submitBuy = () => {
     setMessage(`${PRACTICE_QTY}주 매수 체결! 이제 보유 중인 주식을 매도해보세요.`);
     setTimeout(() => {
@@ -98,12 +106,15 @@ export function TutorialPage() {
     }, 1200);
   };
 
+  // 실습 매도 처리 함수
   const submitSell = () => {
     setMessage(`${PRACTICE_QTY}주 매도 체결! 수익 실현 완료!`);
     setTimeout(() => setPracticePhase('done'), 1000);
   };
 
+  // 상단 단계 라벨 렌더 함수
   const stepLabel = (target: number, label: string) => {
+    // 현재/완료/대기 상태 계산
     const active = step === target;
     const done = step > target;
     return (
@@ -344,6 +355,7 @@ export function TutorialPage() {
   );
 }
 
+// 퀴즈 선택지 버튼 컴포넌트
 function QuizButton({
   word,
   correct,

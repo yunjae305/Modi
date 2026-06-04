@@ -1,3 +1,5 @@
+// Modi 랜딩 히어로 일러스트 컴포넌트
+// 랜딩 히어로 이미지 컴포넌트
 export function HeroIllustration() {
   const candles = [
     { x: 52, y: 98, h: 26, up: true },

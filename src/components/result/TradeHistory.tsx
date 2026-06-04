@@ -1,3 +1,4 @@
+// Modi 매매 기록 컴포넌트
 import type { Trade } from '../../types';
 import { formatKRW } from '../../utils/format';
 
@@ -5,6 +6,7 @@ interface TradeHistoryProps {
   trades: Trade[];
 }
 
+// 매매 기록 테이블 컴포넌트
 export function TradeHistory({ trades }: TradeHistoryProps) {
   return (
     <section className="min-w-0 overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
@@ -17,6 +19,7 @@ export function TradeHistory({ trades }: TradeHistoryProps) {
           아직 체결된 주문이 없습니다.
         </div>
       ) : (
+        // 모바일 가로 스크롤 테이블
         <div className="max-h-72 overflow-auto">
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead className="sticky top-0 bg-white text-xs uppercase text-[#8b95a7]">

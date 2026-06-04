@@ -1,3 +1,4 @@
+// Modi 시나리오 결과 페이지
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InvestorBadge } from '../components/result/InvestorBadge';
@@ -6,26 +7,23 @@ import { TradeHistory } from '../components/result/TradeHistory';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { Mascot } from '../components/ui/Mascot';
-import { useTradeStore } from '../store/tradeStore';
-import { calcHoldReturn, calcHoldReturnFromStocks, calcPortfolioTimeSeries, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
+import { useTradeContext } from '../context/TradeContext';
+import { calcHoldReturnFromStocks, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
 import { formatRate } from '../utils/format';
 
+// 시나리오 투자 결과 컴포넌트
 export function ResultPage() {
   const navigate = useNavigate();
-  const scenario = useTradeStore((state) => state.scenario);
-  const scenarioStocks = useTradeStore((state) => state.scenarioStocks);
-  const chartData = useTradeStore((state) => state.chartData);
-  const tradeHistory = useTradeStore((state) => state.tradeHistory);
-  const maxDrawdown = useTradeStore((state) => state.maxDrawdown);
-  const profitRate = useTradeStore((state) => state.profitRate());
-  const reset = useTradeStore((state) => state.reset);
-  const holdReturn = scenario ? (scenarioStocks.length ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : calcHoldReturn(chartData, scenario.initialCash)) : 0;
+  const { scenario, scenarioStocks, tradeHistory, maxDrawdown, profitRate, reset } = useTradeContext();
+  const holdReturn = scenario ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : 0;
   const series = useMemo(
-    () => (scenario ? (scenarioStocks.length ? calcPortfolioTimeSeriesFromStocks(scenarioStocks, tradeHistory, scenario.initialCash) : calcPortfolioTimeSeries(chartData, tradeHistory, scenario.initialCash)) : []),
-    [chartData, scenario, scenarioStocks, tradeHistory],
+    // 결과 차트 시계열 계산
+    () => (scenario ? calcPortfolioTimeSeriesFromStocks(scenarioStocks, tradeHistory, scenario.initialCash) : []),
+    [scenario, scenarioStocks, tradeHistory],
   );
 
   useEffect(() => {
+    // 시나리오 없음 fallback
     if (!scenario) {
       navigate('/select');
     }
@@ -84,6 +82,7 @@ export function ResultPage() {
   );
 }
 
+// 결과 지표 카드 컴포넌트
 function MetricCard({ title, value, tone }: { title: string; value: string; tone: 'good' | 'bad' | 'neutral' }) {
   const toneClass = {
     good: 'text-[#16a34a]',

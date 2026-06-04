@@ -1,7 +1,9 @@
+// Modi 브랜드 로고 컴포넌트
 interface BrandLogoProps {
   muted?: boolean;
 }
 
+// 브랜드 로고 표시 컴포넌트
 export function BrandLogo({ muted = false }: BrandLogoProps) {
   return (
     <div className={`flex items-center gap-2 text-sm font-black ${muted ? 'text-[#b6bcc9]' : 'text-[#111827]'}`}>

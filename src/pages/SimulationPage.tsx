@@ -13,18 +13,12 @@ import { Button } from '../components/ui/Button';
 import { Mascot } from '../components/ui/Mascot';
 import { useChartData } from '../hooks/useChartData';
 import { useSimulation } from '../hooks/useSimulation';
-import { useTradeStore } from '../store/tradeStore';
+import { useTradeContext } from '../context/TradeContext';
 
 // 시나리오 투자 화면 컴포넌트
 export function SimulationPage() {
   const navigate = useNavigate();
-  const scenario = useTradeStore((state) => state.scenario);
-  const chartData = useTradeStore((state) => state.chartData);
-  const currentDay = useTradeStore((state) => state.currentDay);
-  const currentPrice = useTradeStore((state) => state.currentPrice());
-  const selectedStock = useTradeStore((state) => state.selectedStock());
-  const tradeHistory = useTradeStore((state) => state.tradeHistory);
-  const reset = useTradeStore((state) => state.reset);
+  const { scenario, chartData, currentDay, currentPrice, selectedStock, tradeHistory, reset } = useTradeContext();
   const { loading, error } = useChartData(scenario);
   useSimulation();
   const liveChartData = useMemo(

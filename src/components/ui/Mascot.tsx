@@ -1,7 +1,9 @@
+// Modi 마스코트 컴포넌트
 interface MascotProps {
   className?: string;
 }
 
+// 마스코트 표시 컴포넌트
 export function Mascot({ className = '' }: MascotProps) {
   return (
     <div className={`relative h-24 w-24 ${className}`}>

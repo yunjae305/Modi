@@ -1,9 +1,10 @@
+// Modi 시나리오 랭킹 페이지
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { apiGet } from '../services/api';
-import { useAuthStore } from '../store/authStore';
+import { useAuthContext } from '../context/AuthContext';
 import type { ScenarioRankingItem } from '../types/trading';
 import { formatRate } from '../utils/format';
 
@@ -14,18 +15,18 @@ const SCENARIO_FILTERS = [
   { id: 'dotcom', label: '닷컴버블 붕괴' },
 ];
 
+// 시나리오 랭킹 대시보드 컴포넌트
 export function TradeDashboardPage() {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const refreshUser = useAuthStore((state) => state.refreshUser);
-  const logout = useAuthStore((state) => state.logout);
+  const { user, refreshUser, logout } = useAuthContext();
   const [rankings, setRankings] = useState<ScenarioRankingItem[]>([]);
   const [activeFilter, setActiveFilter] = useState('');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    // 랭킹 사용자 세션 복구
     if (!user) {
-      refreshUser().then((resolved) => {
+      void refreshUser().then((resolved) => {
         if (!resolved) {
           navigate('/login?next=/trade');
         }
@@ -33,7 +34,9 @@ export function TradeDashboardPage() {
     }
   }, [refreshUser, user, navigate]);
 
+  // 시나리오 랭킹 로드 함수
   const loadRankings = useCallback(async () => {
+    // 서버 정렬 결과 조회
     const items = await apiGet<ScenarioRankingItem[]>('/scenario-rankings');
     setRankings(items);
   }, []);
@@ -45,11 +48,13 @@ export function TradeDashboardPage() {
     loadRankings().catch((error) =>
       setMessage(error instanceof Error ? error.message : '랭킹을 불러오지 못했습니다.'),
     );
+    // 주기적 랭킹 갱신
     const timer = setInterval(loadRankings, 10000);
     return () => clearInterval(timer);
   }, [loadRankings, user]);
 
   const filtered = activeFilter ? rankings.filter((item) => item.scenarioId === activeFilter) : rankings;
+  // 필터 후 화면 순위 재계산
   const renumbered = filtered.map((item, index) => ({ ...item, rank: index + 1 }));
 
   if (!user) {
@@ -141,6 +146,7 @@ export function TradeDashboardPage() {
   );
 }
 
+// 순위 배지 컴포넌트
 function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) {
     return <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#fbbf24] text-xs font-black text-white">{rank}</span>;

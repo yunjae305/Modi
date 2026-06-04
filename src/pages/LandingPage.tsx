@@ -1,3 +1,4 @@
+// Modi 랜딩 페이지
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -5,16 +6,16 @@ import { Button } from '../components/ui/Button';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { HeroIllustration } from '../components/ui/HeroIllustration';
 import { Modal } from '../components/ui/Modal';
-import { useAuthStore } from '../store/authStore';
+import { useAuthContext } from '../context/AuthContext';
 
+// 서비스 첫 화면 컴포넌트
 export function LandingPage() {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const refreshUser = useAuthStore((state) => state.refreshUser);
-  const logout = useAuthStore((state) => state.logout);
+  const { user, refreshUser, logout } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    // 랜딩 세션 복구
     if (!user) {
       refreshUser();
     }
@@ -32,6 +33,7 @@ export function LandingPage() {
             <button onClick={() => navigate('/trade')}>순위 대시보드</button>
           </nav>
           <div className="flex items-center gap-3">
+            {/* 로그인별 헤더 액션 */}
             {user ? (
               <>
                 <span className="hidden text-xs font-extrabold text-[#111827] sm:block">{user.nickname}님</span>

@@ -1,3 +1,4 @@
+// Modi 수익 비교 차트 컴포넌트
 import { useEffect, useRef } from 'react';
 import { createChart, LineStyle, type LineData, type Time } from 'lightweight-charts';
 import { formatKRW } from '../../utils/format';
@@ -6,6 +7,7 @@ interface ProfitChartProps {
   series: { date: string; myValue: number; holdValue: number }[];
 }
 
+// 포트폴리오 수익 비교 차트 컴포넌트
 export function ProfitChart({ series }: ProfitChartProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -52,12 +54,14 @@ export function ProfitChart({ series }: ProfitChartProps) {
       time: point.date as Time,
       value: point.holdValue,
     }));
+    // 내 포트폴리오와 존버 기준선
     mySeries.setData(myData);
     holdSeries.setData(holdData);
     chart.timeScale().fitContent();
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];
       if (entry) {
+        // 차트 캔버스 폭 보정
         chart.applyOptions({ width: Math.round(entry.contentRect.width) });
       }
     });

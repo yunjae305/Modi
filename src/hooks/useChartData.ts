@@ -1,6 +1,7 @@
+// Modi 시나리오 차트 데이터 훅
 import { useEffect, useState } from 'react';
 import type { Scenario, ScenarioStock } from '../types';
-import { useTradeStore } from '../store/tradeStore';
+import { useTradeContext } from '../context/TradeContext';
 import { compressScenarioStocks } from '../utils/marketTime';
 
 interface ChartDataState {
@@ -9,8 +10,9 @@ interface ChartDataState {
   error: string | null;
 }
 
+// 시나리오 JSON 로딩 훅
 export function useChartData(scenario: Scenario | null): ChartDataState {
-  const initScenario = useTradeStore((state) => state.initScenario);
+  const { initScenario } = useTradeContext();
   const [state, setState] = useState<ChartDataState>({
     data: [],
     loading: Boolean(scenario),
@@ -18,12 +20,14 @@ export function useChartData(scenario: Scenario | null): ChartDataState {
   });
 
   useEffect(() => {
+    // 시나리오 없음 상태 초기화
     if (!scenario) {
       setState({ data: [], loading: false, error: null });
       return;
     }
     let ignore = false;
     setState({ data: [], loading: true, error: null });
+    // public/data 정적 JSON 로드
     fetch(scenario.dataFile)
       .then((response) => {
         if (!response.ok) {
@@ -39,6 +43,7 @@ export function useChartData(scenario: Scenario | null): ChartDataState {
         if (rawData.length < 20) {
           throw new Error('대표 종목 데이터가 부족합니다.');
         }
+        // 과거 데이터 압축
         const data = compressScenarioStocks(rawData);
         if (data.some((stock) => stock.bars.length === 0)) {
           throw new Error('종목별 차트 데이터가 부족합니다.');
@@ -54,6 +59,7 @@ export function useChartData(scenario: Scenario | null): ChartDataState {
         }
       });
     return () => {
+      // 늦게 도착한 fetch 결과 차단
       ignore = true;
     };
   }, [initScenario, scenario]);

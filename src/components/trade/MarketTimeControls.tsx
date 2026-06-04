@@ -1,5 +1,6 @@
+// Modi 시장 시간 제어 컴포넌트
 import { useEffect } from 'react';
-import { useTradeStore } from '../../store/tradeStore';
+import { useTradeContext } from '../../context/TradeContext';
 import type { MarketSpeed } from '../../types';
 
 const speeds: { value: MarketSpeed; label: string }[] = [
@@ -8,16 +9,12 @@ const speeds: { value: MarketSpeed; label: string }[] = [
   { value: 4, label: '4배속' },
 ];
 
+// 시장 재생과 배속 제어 컴포넌트
 export function MarketTimeControls() {
-  const isPlaying = useTradeStore((state) => state.isPlaying);
-  const isFinished = useTradeStore((state) => state.isFinished);
-  const marketSpeed = useTradeStore((state) => state.marketSpeed);
-  const dayProgress = useTradeStore((state) => state.dayProgress);
-  const togglePlaying = useTradeStore((state) => state.togglePlaying);
-  const setMarketSpeed = useTradeStore((state) => state.setMarketSpeed);
-  const tick = useTradeStore((state) => state.tick);
+  const { isPlaying, isFinished, marketSpeed, dayProgress, togglePlaying, setMarketSpeed, tick } = useTradeContext();
 
   useEffect(() => {
+    // 재생 중 interval tick
     if (!isPlaying || isFinished) {
       return;
     }

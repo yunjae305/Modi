@@ -1,3 +1,4 @@
+// Modi 캔들 tooltip 컴포넌트
 import type { OHLCVBar } from '../../types';
 import { formatKRW } from '../../utils/format';
 
@@ -7,6 +8,7 @@ interface ChartTooltipProps {
   y: number;
 }
 
+// 캔들 가격 tooltip 컴포넌트
 export function ChartTooltip({ bar, x, y }: ChartTooltipProps) {
   if (!bar) {
     return null;
