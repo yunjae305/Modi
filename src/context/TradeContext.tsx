@@ -2,27 +2,25 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState } fro
 import type { MarketSpeed, OHLCVBar, Scenario, ScenarioPosition, ScenarioStock, Trade } from '../types';
 import { getDayDurationMs, getStockPriceAtProgress } from '../utils/marketTime';
 
-const initialState = {
-  scenario: null as Scenario | null,
-  scenarioStocks: [] as ScenarioStock[],
-  selectedStockId: '',
-  chartData: [] as OHLCVBar[],
-  currentDay: 0,
-  dayProgress: 0,
-  marketSpeed: 1 as MarketSpeed,
-  isPlaying: false,
-  isFinished: false,
-  cash: 0,
-  holdings: 0,
-  avgPrice: 0,
-  positions: {} as Record<string, ScenarioPosition>,
-  peakPortfolio: 0,
-  maxDrawdown: 0,
-  realizedProfit: 0,
-  tradeHistory: [] as Trade[],
-};
-
-type TradeState = typeof initialState;
+interface TradeState {
+  scenario: Scenario | null;
+  scenarioStocks: ScenarioStock[];
+  selectedStockId: string;
+  chartData: OHLCVBar[];
+  currentDay: number;
+  dayProgress: number;
+  marketSpeed: MarketSpeed;
+  isPlaying: boolean;
+  isFinished: boolean;
+  cash: number;
+  holdings: number;
+  avgPrice: number;
+  positions: Record<string, ScenarioPosition>;
+  peakPortfolio: number;
+  maxDrawdown: number;
+  realizedProfit: number;
+  tradeHistory: Trade[];
+}
 
 interface TradeContextValue extends TradeState {
   selectedStock: ScenarioStock | null;
@@ -46,6 +44,39 @@ interface TradeContextValue extends TradeState {
   reset: () => void;
 }
 
+const SCENARIO_KEY = 'modi-scenario';
+
+const blankState: TradeState = {
+  scenario: null,
+  scenarioStocks: [],
+  selectedStockId: '',
+  chartData: [],
+  currentDay: 0,
+  dayProgress: 0,
+  marketSpeed: 1,
+  isPlaying: false,
+  isFinished: false,
+  cash: 0,
+  holdings: 0,
+  avgPrice: 0,
+  positions: {},
+  peakPortfolio: 0,
+  maxDrawdown: 0,
+  realizedProfit: 0,
+  tradeHistory: [],
+};
+
+function getInitialState(): TradeState {
+  try {
+    const saved = sessionStorage.getItem(SCENARIO_KEY);
+    if (saved) {
+      const scenario = JSON.parse(saved) as Scenario;
+      return { ...blankState, scenario, cash: scenario.initialCash, peakPortfolio: scenario.initialCash };
+    }
+  } catch {}
+  return blankState;
+}
+
 const TradeContext = createContext<TradeContextValue | null>(null);
 
 function getLastDayIndex(stocks: ScenarioStock[]): number {
@@ -67,7 +98,7 @@ function getPortfolioValueAt(
 }
 
 export function TradeProvider({ children }: { children: React.ReactNode }) {
-  const [state, setStateRaw] = useState<TradeState>(initialState);
+  const [state, setStateRaw] = useState<TradeState>(getInitialState);
   const stateRef = useRef(state);
   stateRef.current = state;
 
@@ -122,7 +153,8 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
 
   const selectScenario = useCallback(
     (scenario: Scenario) => {
-      setState({ ...initialState, scenario, cash: scenario.initialCash, peakPortfolio: scenario.initialCash });
+      try { sessionStorage.setItem(SCENARIO_KEY, JSON.stringify(scenario)); } catch {}
+      setState({ ...blankState, scenario, cash: scenario.initialCash, peakPortfolio: scenario.initialCash });
     },
     [setState],
   );
@@ -131,7 +163,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     (scenario: Scenario, data: ScenarioStock[]) => {
       const firstStock = data[0] ?? null;
       setState({
-        ...initialState,
+        ...blankState,
         scenario,
         scenarioStocks: data,
         selectedStockId: firstStock?.id ?? '',
@@ -239,7 +271,10 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     [setState],
   );
 
-  const reset = useCallback(() => setState(initialState), [setState]);
+  const reset = useCallback(() => {
+    try { sessionStorage.removeItem(SCENARIO_KEY); } catch {}
+    setState(blankState);
+  }, [setState]);
 
   const value: TradeContextValue = {
     ...state,

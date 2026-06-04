@@ -44,7 +44,11 @@ export function SimulationPage() {
   }, [navigate, scenario]);
 
   if (!scenario) {
-    return null;
+    return (
+      <main className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#5b45f2] border-t-transparent" />
+      </main>
+    );
   }
 
   if (loading) {
