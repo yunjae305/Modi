@@ -28,7 +28,7 @@ export function LandingPage() {
           <BrandLogo />
           <nav className="hidden items-center gap-10 text-sm font-extrabold text-[#111827] md:flex">
             <a href="#service">서비스 소개</a>
-            <button onClick={() => navigate('/mode-select')}>모드 선택</button>
+            <button onClick={() => navigate('/select')}>시나리오 투자</button>
             <button onClick={() => navigate('/tutorial')}>학습 가이드</button>
             <button onClick={() => navigate('/trade')}>순위 대시보드</button>
           </nav>
@@ -46,7 +46,7 @@ export function LandingPage() {
                 로그인
               </Button>
             )}
-            <Button className="px-4 py-2 text-xs" onClick={() => navigate('/mode-select')}>
+            <Button className="px-4 py-2 text-xs" onClick={() => navigate('/select')}>
               시나리오 시작
             </Button>
           </div>
@@ -122,7 +122,7 @@ export function LandingPage() {
             </button>
             <button
               className="rounded-2xl bg-[#f7f6ff] p-6 text-left transition hover:bg-[#f0edff]"
-              onClick={() => navigate('/mode-select')}
+              onClick={() => navigate('/select')}
             >
               <div className="mb-5 grid h-12 w-12 place-items-center rounded-xl bg-white text-[#5b45f2] shadow-card">
                 <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" aria-hidden="true">

@@ -6,14 +6,14 @@ test('랜딩은 시나리오 투자와 로그인으로 진입한다', () => {
   const app = readFileSync('src/App.tsx', 'utf8');
   const landing = readFileSync('src/pages/LandingPage.tsx', 'utf8');
 
-  assert.match(app, /path="\/mode-select"/);
   assert.match(app, /path="\/select"/);
   assert.match(app, /path="\/login"/);
   assert.match(app, /path="\/trade"/);
-  assert.match(landing, /navigate\('\/mode-select'\)/);
+  assert.match(landing, /navigate\('\/select'\)/);
+  assert.equal(landing.includes("navigate('/mode-select')"), false);
   assert.match(landing, /navigate\('\/login'\)/);
   assert.match(landing, /로그인/);
-  assert.match(landing, /useAuthStore/);
+  assert.match(landing, /useAuthContext/);
   assert.match(landing, /refreshUser/);
   assert.match(landing, /user\.nickname/);
   assert.match(landing, /로그아웃/);

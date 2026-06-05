@@ -21,20 +21,21 @@ test('PDF 계획서 기준 라우트와 화면을 제공한다', () => {
     assert.match(app, new RegExp(`path="${route.replace('/', '\\/')}"`));
   }
 
-  assert.match(landing, /모드 선택/);
-  assert.match(landing, /navigate\('\/mode-select'\)/);
+  assert.match(landing, /시나리오 투자/);
+  assert.match(landing, /navigate\('\/select'\)/);
+  assert.equal(landing.includes("navigate('/mode-select')"), false);
 });
 
 test('로그인은 Kakao와 게스트 세션을 제공한다', () => {
   const loginPage = readFileSync('src/pages/LoginPage.tsx', 'utf8');
-  const authStore = readFileSync('src/store/authStore.ts', 'utf8');
+  const authContext = readFileSync('src/context/AuthContext.tsx', 'utf8');
   const providers = readFileSync('api/auth/providers.ts', 'utf8');
   const authTypes = readFileSync('src/types/auth.ts', 'utf8');
 
   assert.equal(existsSync('api/auth/guest.ts'), true);
   assert.match(loginPage, /Kakao로 시작하기/);
   assert.match(loginPage, /게스트로 시작하기/);
-  assert.match(authStore, /loginGuest/);
+  assert.match(authContext, /loginGuest/);
   assert.match(providers, /guest: hasProvider\('GUEST'\)/);
   assert.match(authTypes, /'GUEST'/);
 });
