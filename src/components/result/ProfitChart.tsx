@@ -1,6 +1,7 @@
 // Modi 수익 비교 차트 컴포넌트
 import { useEffect, useRef } from 'react';
 import { createChart, LineStyle, type LineData, type Time } from 'lightweight-charts';
+import { getChartDate } from '../../utils/chartTime';
 import { formatKRW } from '../../utils/format';
 
 interface ProfitChartProps {
@@ -47,11 +48,11 @@ export function ProfitChart({ series }: ProfitChartProps) {
       lineStyle: LineStyle.Dotted,
     });
     const myData: LineData<Time>[] = series.map((point) => ({
-      time: point.date as Time,
+      time: getChartDate(point.date) as Time,
       value: point.myValue,
     }));
     const holdData: LineData<Time>[] = series.map((point) => ({
-      time: point.date as Time,
+      time: getChartDate(point.date) as Time,
       value: point.holdValue,
     }));
     // 내 포트폴리오와 존버 기준선

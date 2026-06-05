@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CrosshairMode, createChart, type CandlestickData, type Time } from 'lightweight-charts';
 import type { OHLCVBar } from '../../types';
+import { getChartDate } from '../../utils/chartTime';
 import { ChartTooltip } from './ChartTooltip';
 
 interface CandleChartProps {
@@ -58,7 +59,7 @@ export function CandleChart({ data, visibleCount, isTutorial = false, height = 4
       wickDownColor: '#ff3f55',
     });
     const chartData: CandlestickData<Time>[] = visibleData.map((bar) => ({
-      time: bar.date as Time,
+      time: getChartDate(bar.date) as Time,
       open: bar.open,
       high: bar.high,
       low: bar.low,
@@ -74,7 +75,7 @@ export function CandleChart({ data, visibleCount, isTutorial = false, height = 4
           return;
         }
         const rect = container.getBoundingClientRect();
-        const bar = visibleData.find((item) => item.date === String(param.time)) ?? null;
+        const bar = visibleData.find((item) => getChartDate(item.date) === String(param.time)) ?? null;
         setTooltip({
           bar,
           x: rect.left + param.point.x + 16,
