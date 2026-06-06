@@ -151,7 +151,7 @@ export function LoginPage() {
                 <Button
                   type="button"
                   variant="soft"
-                  className="w-full bg-[#fee500] text-[#111827] hover:bg-[#f4da00] flex items-center justify-center gap-2 font-extrabold"
+                  className="w-full bg-[#fee500] text-[#000000] hover:bg-[#f4da00] flex items-center justify-center gap-2 font-extrabold"
                   disabled={loading}
                   onClick={startKakao}
                 >
@@ -167,7 +167,7 @@ export function LoginPage() {
               <Button
                 type="button"
                 variant="soft"
-                className="mt-3 w-full flex items-center justify-center gap-2 font-extrabold"
+                className="mt-3 w-full text-[#000000] flex items-center justify-center gap-2 font-extrabold"
                 disabled={loading}
                 onClick={startGuest}
               >
