@@ -22,52 +22,57 @@ export function LandingPage() {
   }, [refreshUser, user]);
 
   return (
-    <main className="min-h-screen px-5 py-5">
-      <section className="mx-auto min-h-[calc(100vh-2.5rem)] max-w-7xl rounded-2xl border border-[#dfe3ee] bg-white px-6 py-5 shadow-card sm:px-8">
-        <header className="flex items-center justify-between">
+    <>
+        {/* 헤더 영역 */}
+        <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto">
           <BrandLogo />
-          <nav className="hidden items-center gap-10 text-sm font-extrabold text-[#111827] md:flex">
-            <a href="#service">서비스 소개</a>
-            <button onClick={() => navigate('/select')}>시나리오 투자</button>
-            <button onClick={() => navigate('/tutorial')}>학습 가이드</button>
-            <button onClick={() => navigate('/trade')}>순위 대시보드</button>
+          <nav className="hidden items-center gap-[60px] text-[15px] font-bold text-[#111827] md:flex">
+            <a className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" href="#service">서비스 소개</a>
+            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
+              시나리오 투자
+            </button>
+            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/tutorial')}>
+              학습 가이드
+            </button>
+            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/trade')}>
+              순위 대시보드
+            </button>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {/* 로그인별 헤더 액션 */}
             {user ? (
               <>
-                <span className="hidden text-xs font-extrabold text-[#111827] sm:block">{user.nickname}님</span>
-                <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
+                <span className="hidden text-xs font-bold text-[#111827] sm:block">{user.nickname}님</span>
+                <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
                   로그아웃
                 </Button>
               </>
             ) : (
-              <Button variant="ghost" className="hidden px-4 py-2 text-xs sm:block" onClick={() => navigate('/login')}>
+              <Button variant="ghost" className="hidden px-7 py-2  sm:block" onClick={() => navigate('/login')}>
                 로그인
               </Button>
             )}
-            <Button className="px-4 py-2 text-xs" onClick={() => navigate('/select')}>
-              시나리오 시작
-            </Button>
           </div>
         </header>
-        <div className="grid min-h-[620px] items-center gap-10 lg:grid-cols-[1fr_1.1fr]">
+
+        {/* Body 콘텐츠 영역 */}
+        <div className="grid min-h-[585px] mx-auto max-w-[90rem] items-center justify-between lg:grid-cols-[1fr_1.1fr]">
           <motion.section
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
           >
-            <h1 className="text-4xl font-black leading-tight tracking-[-0.04em] text-[#111827] sm:text-6xl">
+            <h1 className="text-4xl font-black leading-[1.25] tracking-[-0.04em] text-[#111827] sm:text-6xl sm:leading-[1.15]">
               과거의 시장에서 배우는
-              <br />
-              더 나은 <span className="text-[#5b45f2]">투자</span>의 선택
+              <br className="hidden sm:inline" />
+              <span className="block sm:inline"> 더 나은 <span className="text-[#5b45f2]">투자</span>의 선택</span>
             </h1>
             <p className="mt-6 max-w-xl text-base font-medium leading-8 text-[#667085]">
               실제 시장 데이터를 기반으로 한 시나리오 투자로 위기 속에서 기회를 찾는 능력을 키워보세요.
             </p>
             <div className="mt-8">
-              <Button className="px-8" onClick={() => setIsOpen(true)}>
-                지금 체험해보기 →
+              <Button className="px-8 text-[15px]" onClick={() => setIsOpen(true)}>
+                지금 체험해보기
               </Button>
             </div>
           </motion.section>
@@ -79,14 +84,16 @@ export function LandingPage() {
             <HeroIllustration />
           </motion.div>
         </div>
-        <div id="service" className="grid gap-5 border-t border-[#edf0f6] pt-10 md:grid-cols-3">
+
+        {/* Footer 영역 - 서비스 소개 */}
+        <div id="service" className="grid gap-5 border-t border-[#edf0f6] pt-10 md:grid-cols-3 max-w-[90rem] mx-auto">
           {[
             ['실제 과거 데이터 기반', '공포와 회복 데이터로 현실감 있는 경험'],
             ['리스크 없는 학습', '가상 자금으로 매매하며 투자 연습'],
             ['실전 감각 향상', '위기 대응 능력과 판단력 강화'],
           ].map(([title, desc]) => (
-            <article key={title} className="rounded-2xl bg-[#fbfbfe] p-6 text-center">
-              <div className="mx-auto mb-4 grid h-10 w-10 place-items-center rounded-xl bg-[#f0edff] text-[#5b45f2]">
+            <article key={title} className="rounded-2xl bg-[#fbfbfe] p-6 text-center transition-all hover:shadow-[0_12px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1 duration-200">
+              <div className="mx-auto mb-4 grid h-10 w-10 place-items-center rounded-xl bg-[#f0edff] text-[#5b45f2] ">
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden="true">
                   <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -96,7 +103,7 @@ export function LandingPage() {
             </article>
           ))}
         </div>
-      </section>
+
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <div className="text-center">
           <div className="mb-5 flex justify-end">
@@ -136,6 +143,6 @@ export function LandingPage() {
           </div>
         </div>
       </Modal>
-    </main>
+    </>
   );
 }
