@@ -26,8 +26,7 @@ export function LandingPage() {
         {/* 헤더 영역 */}
         <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto">
           <BrandLogo />
-          <nav className="hidden items-center gap-[60px] text-[15px] font-bold text-[#111827] md:flex">
-            <a className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" href="#service">서비스 소개</a>
+          <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
             <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
               시나리오 투자
             </button>
@@ -42,7 +41,7 @@ export function LandingPage() {
             {/* 로그인별 헤더 액션 */}
             {user ? (
               <>
-                <span className="hidden text-xs font-bold text-[#111827] sm:block">{user.nickname}님</span>
+                <span className="hidden text-[15px] font-bold text-[#111827] sm:block">{user.nickname}님</span>
                 <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
                   로그아웃
                 </Button>
@@ -111,7 +110,7 @@ export function LandingPage() {
               ×
             </button>
           </div>
-          <h2 className="text-2xl font-black text-[#111827]">주식이 처음이신가요? 🤔</h2>
+          <h2 className="text-2xl font-black text-[#111827]">주식이 처음이신가요? </h2>
           <p className="mt-3 text-sm font-medium leading-6 text-[#667085]">맞춤형 경험을 위해 선택해주세요.</p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2">
             <button
@@ -137,7 +136,7 @@ export function LandingPage() {
                   <path d="M12 7v5l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </div>
-              <strong className="text-lg text-[#111827]">아니오, 바로 시나리오!</strong>
+              <strong className="text-lg text-[#111827]">경험이 있어요!</strong>
               <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">과거 시장 시나리오를 선택해 바로 투자해요</p>
             </button>
           </div>
