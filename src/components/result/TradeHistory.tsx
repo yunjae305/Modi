@@ -20,7 +20,7 @@ export function TradeHistory({ trades }: TradeHistoryProps) {
         </div>
       ) : (
         // 모바일 가로 스크롤 테이블
-        <div className="max-h-72 overflow-auto">
+        <div className="max-h-[326px] overflow-auto">
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead className="sticky top-0 bg-white text-xs uppercase text-[#8b95a7]">
               <tr>

@@ -13,7 +13,7 @@ export function StockList() {
         <h2 className="text-lg font-black text-[#111827]">대표 종목 20</h2>
         <span className="text-sm font-extrabold text-[#667085]">{scenarioStocks.length}개</span>
       </div>
-      <div className="grid max-h-[720px] gap-3 overflow-auto pr-1">
+      <div className="grid max-h-[704px] gap-3 overflow-auto ">
         {scenarioStocks.map((stock) => {
           // 종목별 현재가 계산
           const price = getStockPriceAtProgress(stock, currentDay, dayProgress);
