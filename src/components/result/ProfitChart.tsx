@@ -18,7 +18,7 @@ export function ProfitChart({ series }: ProfitChartProps) {
       return;
     }
     const chart = createChart(container, {
-      height: 320,
+      height: 400,
       width: container.clientWidth,
       layout: {
         background: { color: '#ffffff' },
