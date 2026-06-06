@@ -74,7 +74,7 @@ export function ProfitChart({ series }: ProfitChartProps) {
   }, [series]);
 
   return (
-    <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
+    <section className="rounded-3xl border border-[#dfe3ee] bg-white p-5 shadow-card">
       <div className="mb-4 flex flex-wrap items-center gap-4">
         <h2 className="text-lg font-black text-[#111827]">수익률 비교</h2>
         <span className="flex items-center gap-2 text-xs font-bold text-[#5b45f2]">
@@ -86,7 +86,7 @@ export function ProfitChart({ series }: ProfitChartProps) {
           존버 전략
         </span>
       </div>
-      <div ref={containerRef} className="h-[320px] w-full" />
+      <div ref={containerRef} className="h-[430px] w-full" />
     </section>
   );
 }

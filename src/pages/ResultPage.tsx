@@ -1,4 +1,4 @@
-// Modi 시나리오 결과 페이지
+// Modi 시나리오 투자 결과 페이지
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { InvestorBadge } from '../components/result/InvestorBadge';
@@ -11,19 +11,17 @@ import { useTradeContext } from '../context/TradeContext';
 import { calcHoldReturnFromStocks, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
 import { formatRate } from '../utils/format';
 
-// 시나리오 투자 결과 컴포넌트
 export function ResultPage() {
   const navigate = useNavigate();
   const { scenario, scenarioStocks, tradeHistory, maxDrawdown, profitRate, reset } = useTradeContext();
+  
   const holdReturn = scenario ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : 0;
   const series = useMemo(
-    // 결과 차트 시계열 계산
     () => (scenario ? calcPortfolioTimeSeriesFromStocks(scenarioStocks, tradeHistory, scenario.initialCash) : []),
     [scenario, scenarioStocks, tradeHistory],
   );
 
   useEffect(() => {
-    // 시나리오 없음 fallback
     if (!scenario) {
       navigate('/select');
     }
@@ -34,55 +32,95 @@ export function ResultPage() {
   }
 
   return (
-    <main className="min-h-screen px-5 py-5">
-      <section className="mx-auto grid max-w-6xl gap-6 rounded-2xl border border-[#dfe3ee] bg-white p-3 shadow-card sm:p-5">
-        <header className="flex items-center justify-between">
-          <BrandLogo />
-          <Button variant="ghost" className="px-4 py-2 text-xs" onClick={() => navigate('/')}>
-            홈으로
-          </Button>
+    <main className="min-h-screen bg-[#f8f9fa] px-0 py-6">
+      <div className="w-full">
+        
+        {/* Header 영역 */}
+        <header className="flex flex-col gap-4 border-b border-[#edf0f6] pb-4 px-6 lg:flex-row lg:items-center lg:justify-between shrink-0 bg-[#f8f9fa]">
+          <div className="flex items-center gap-5 shrink-0">
+            <BrandLogo />
+            <div className="hidden h-8 w-px bg-[#edf0f6] sm:block" />
+            <div>
+              <h1 className="text-sm font-black text-[#111827]">투자 결과 리포트</h1>
+              <p className="mt-0.5 text-xs font-bold text-[#667085]">
+                {scenario.title} · 시뮬레이션 최종 스코어
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3 shrink-0">
+            <Button
+              className="px-4 py-1.5 text-xs font-bold shadow-sm rounded-full"
+              onClick={() => {
+                reset();
+                navigate('/select');
+              }}
+            >
+              다른 시나리오 도전하기
+            </Button>
+            
+            {/* 서브 내비게이션 버튼 */}
+            <Button 
+              variant="ghost" 
+              className="px-4 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" 
+              onClick={() => navigate('/')}
+            >
+              홈으로 가기
+            </Button>
+          </div>
         </header>
-        <div className="relative overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white p-8 text-center shadow-card">
-          <div className="absolute bottom-2 right-6 hidden sm:block">
-            <Mascot className="h-24 w-24" />
+
+        {/* Body 영역: 2열 대시보드 구조 */}
+        <div className="w-full px-6 mt-6 grid gap-6 grid-cols-1 md:grid-cols-2 items-start">
+          
+          {/* 1열: 완료 배너, 탭 바, 자산 차트 */}
+          <div className="flex flex-col gap-5 min-w-0">
+            
+            {/* 완료 배너 */}
+            <div className="relative overflow-hidden rounded-3xl border border-[#dfe3ee] bg-white p-6 shadow-sm">
+              <div className="absolute bottom-2 right-6 hidden sm:block">
+                <Mascot className="h-16 w-16" />
+              </div>
+              <p className="text-xs font-extrabold text-[#5b45f2] uppercase tracking-wider">시뮬레이션 완료</p>
+              <h2 className="mt-1 text-xl font-black tracking-tight text-[#111827] sm:text-2xl">시뮬레이션이 완료되었습니다!</h2>
+              <p className="mt-2 text-[14px] font-semibold leading-5 text-[#667085]">{scenario.revealText}</p>
+            </div>
+
+            {/* 투자 자산 추이 차트판 */}
+            <div className="rounded-3xl border border-[#dfe3ee] bg-white p-5 shadow-sm">
+              <h3 className="text-sm font-black text-[#111827] mb-4">투자 자산 추이 차트</h3>
+              <ProfitChart series={series} />
+            </div>
+
           </div>
-          <p className="text-sm font-extrabold text-[#5b45f2]">시뮬레이션 완료</p>
-          <h1 className="mt-3 text-3xl font-black tracking-[-0.03em] text-[#111827] sm:text-5xl">시뮬레이션이 완료되었습니다! 🎉</h1>
-          <p className="mx-auto mt-4 max-w-3xl font-medium leading-7 text-[#667085]">{scenario.revealText}</p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-4">
-          <MetricCard title="내 최종 수익률" value={formatRate(profitRate)} tone={profitRate >= 0 ? 'good' : 'bad'} />
-          <MetricCard title="존버 수익률" value={formatRate(holdReturn)} tone={holdReturn >= 0 ? 'good' : 'bad'} />
-          <MetricCard title="최대 낙폭 MDD" value={formatRate(maxDrawdown)} tone="bad" />
-          <MetricCard title="총 매매 횟수" value={`${tradeHistory.length}회`} tone="neutral" />
-        </div>
-        <div className="rounded-2xl border border-[#dfe3ee] bg-white p-2 shadow-card">
-          <div className="grid gap-1 rounded-xl bg-[#f7f8fc] p-1 text-center text-sm font-extrabold sm:grid-cols-3">
-            <span className="rounded-lg bg-white px-4 py-3 text-[#5b45f2] shadow-sm">성과 요약</span>
-            <span className="px-4 py-3 text-[#667085]">자산 흐름</span>
-            <span className="px-4 py-3 text-[#667085]">거래 내역</span>
+          
+          {/* 2열: 상하 해상도 노이즈가 제거된 3행 스택 구조 */}
+          <div className="flex flex-col gap-5 min-w-0">
+            
+            <InvestorBadge rate={profitRate} />
+
+            <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
+              <MetricCard title="내 최종 수익률" value={formatRate(profitRate)} tone={profitRate >= 0 ? 'good' : 'bad'} />
+              <MetricCard title="존버 수익률" value={formatRate(holdReturn)} tone={holdReturn >= 0 ? 'good' : 'bad'} />
+              <MetricCard title="최대 낙폭 MDD" value={formatRate(maxDrawdown)} tone="bad" />
+              <MetricCard title="총 매매 횟수" value={`${tradeHistory.length}회`} tone="neutral" />
+            </div>
+ 
+
+            <TradeHistory trades={tradeHistory} />
+            
           </div>
+
         </div>
-        <ProfitChart series={series} />
-        <InvestorBadge rate={profitRate} />
-        <TradeHistory trades={tradeHistory} />
-        <div className="flex justify-center">
-          <Button
-            className="px-8"
-            onClick={() => {
-              reset();
-              navigate('/select');
-            }}
-          >
-            다른 시나리오 도전하기
-          </Button>
-        </div>
-      </section>
+
+        <div className="pt-4 pb-4" />
+
+      </div>
     </main>
   );
 }
 
-// 결과 지표 카드 컴포넌트
+// 지표 개별 카드 서브 컴포넌트
 function MetricCard({ title, value, tone }: { title: string; value: string; tone: 'good' | 'bad' | 'neutral' }) {
   const toneClass = {
     good: 'text-[#16a34a]',
@@ -91,9 +129,9 @@ function MetricCard({ title, value, tone }: { title: string; value: string; tone
   }[tone];
 
   return (
-    <div className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
-      <p className="text-sm font-extrabold text-[#667085]">{title}</p>
-      <p className={`mt-3 text-3xl font-black ${toneClass}`}>{value}</p>
+    <div className="rounded-3xl border border-[#dfe3ee] bg-white p-4 shadow-sm flex flex-col justify-between min-h-[96px]">
+      <p className="text-[11px] font-extrabold text-[#667085] uppercase tracking-wider leading-tight">{title}</p>
+      <p className={`mt-2 text-xl font-black tracking-tight ${toneClass}`}>{value}</p>
     </div>
   );
 }

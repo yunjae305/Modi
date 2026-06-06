@@ -9,18 +9,18 @@ interface TradeHistoryProps {
 // 매매 기록 테이블 컴포넌트
 export function TradeHistory({ trades }: TradeHistoryProps) {
   return (
-    <section className="min-w-0 overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card">
+    <section className="min-w-0 overflow-hidden rounded-3xl border border-[#dfe3ee] bg-white p-5 shadow-card">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-black text-[#111827]">매매 기록</h2>
         <span className="text-sm font-extrabold text-[#7b8496]">{trades.length}회</span>
       </div>
       {trades.length === 0 ? (
-        <div className="rounded-xl bg-[#f7f8fc] p-6 text-center text-sm font-bold text-[#7b8496]">
+        <div className="rounded-3xl bg-[#f7f8fc] p-6 text-center text-sm font-bold text-[#7b8496]">
           아직 체결된 주문이 없습니다.
         </div>
       ) : (
         // 모바일 가로 스크롤 테이블
-        <div className="max-h-[326px] overflow-auto">
+        <div className="max-h-[390px] overflow-auto">
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead className="sticky top-0 bg-white text-xs uppercase text-[#8b95a7]">
               <tr>
