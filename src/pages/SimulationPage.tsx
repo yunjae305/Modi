@@ -21,7 +21,6 @@ export function SimulationPage() {
   const { loading, error } = useChartData(scenario);
   useSimulation();
 
-  // 모달 팝업 상태 관리 (change - 시나리오 변경 / giveup - 포기하기)
   const [activeModal, setActiveModal] = useState<'change' | 'giveup' | null>(null);
   
   const liveChartData = useMemo(
@@ -80,17 +79,17 @@ export function SimulationPage() {
 
   const handleModalConfirm = () => {
     if (activeModal === 'change') {
-      reset(); // 데이터 초기화 진행
+      reset();
       navigate('/select');
     } else if (activeModal === 'giveup') {
-      reset(); // 데이터 초기화 진행
+      reset();
       navigate('/');
     }
     setActiveModal(null);
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#f8f9fa] overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#f8f9fa]">
       
       {/* Header 영역 */}
       <header className="flex flex-col gap-4 border-b border-[#edf0f6] pb-4 pt-5 px-6 lg:flex-row lg:items-center lg:justify-between shrink-0 bg-[#f8f9fa]">
@@ -109,6 +108,7 @@ export function SimulationPage() {
           <Button variant="ghost" className="px-3 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" onClick={() => setActiveModal('change')}>
             시나리오 변경
           </Button>
+
           <Button
             className="variant=ghost rounded-full bg-[#8B0000] px-3 py-1.5 text-xs font-bold text-[#ffffff] hover:bg-[#FF0000] shadow-sm transition-colors"
             onClick={() => setActiveModal('giveup')}
@@ -118,8 +118,8 @@ export function SimulationPage() {
         </div>
       </header>
 
-      {/* 4열 레이아웃 바디 */}
-      <div className="flex-1 min-h-0 pt-5 pb-6 px-6 w-full grid gap-5 xl:grid-cols-[290px_minmax(0,1fr)_310px_340px] lg:grid-cols-[260px_minmax(0,1fr)_280px_280px] md:grid-cols-2 grid-cols-1 overflow-hidden">
+      {/* 4열 레이아웃 바디 (전체 스크롤 오픈) */}
+      <div className="pt-5 pb-6 px-6 w-full grid gap-5 xl:grid-cols-[290px_minmax(0,1fr)_310px_340px] lg:grid-cols-[260px_minmax(0,1fr)_280px_280px] md:grid-cols-2 grid-cols-1">
         
         {/* 1열: 종목 리스트 */}
         <div className="min-w-0">
@@ -127,8 +127,8 @@ export function SimulationPage() {
         </div>
         
         {/* 2열: 차트, 매매 기록 */}
-        <div className="flex flex-col h-full min-h-0 gap-5 min-w-0">
-          <section className="shrink-0 rounded-2xl border border-[#dfe3ee] bg-white p-4 shadow-sm">
+        <div className="flex flex-col gap-5 min-w-0">
+          <section className="rounded-2xl border border-[#dfe3ee] bg-white p-4 shadow-sm">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-[11px] font-extrabold text-[#8b95a7] uppercase tracking-wider">{selectedStock ? `${selectedStock.market} · ${selectedStock.id}` : scenario.market}</p>
@@ -141,7 +141,7 @@ export function SimulationPage() {
             <CandleChart data={liveChartData} visibleCount={currentDay + 1} height={260} />
           </section>
           
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <div className="min-w-0">
             <TradeHistory trades={tradeHistory} />
           </div>
         </div>
@@ -161,7 +161,7 @@ export function SimulationPage() {
           </section>
         </div>
 
-        {/* 4열: 시나리오 진행, 내 자산 현황, 시장 시간*/}
+        {/* 4열: 시나리오 진행, 내 자산 현황, 시장 시간 */}
         <aside className="grid content-start gap-5 min-w-0">
           
           <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card space-y-4">
@@ -180,14 +180,13 @@ export function SimulationPage() {
             <NextDayButton />
           </section>
 
-          {/* 하단 자산 현황 및 세부 시간 제어 장치 */}
           <AssetStatus />
           <MarketTimeControls />
         </aside>
 
       </div>
 
-      {/* 모달 컴포넌트 사용 */}
+      {/* 모달 컴포넌트 */}
       <Modal isOpen={!!activeModal} onClose={() => setActiveModal(null)}>
         <h3 className="text-lg font-black text-[#111827]">
           {activeModal === 'change' ? '시나리오를 변경하시겠어요?' : '시뮬레이션을 포기하시겠어요?'}
