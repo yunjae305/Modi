@@ -63,7 +63,7 @@ export function LoginPage() {
     <div className="flex min-h-screen flex-col justify-between bg-[#f8f9fa] p-6 sm:p-10">
 
       {/* Header 영역 */}
-      <header className="flex w-full max-w-[105rem] justify-between items-center mx-auto">
+      <header className="flex w-full max-w-[95rem] justify-between items-center mx-auto">
         <BrandLogo />
         <button 
           className="text-[17px] font-bold text-[#667085] hover:text-[#111827] transition-colors" 
