@@ -61,15 +61,8 @@ export function TradeDashboardPage() {
   }
 
   return (
-    /* 🌟 빈 프래그먼트(<>) 대신 전체 그라데이션 배경을 가진 motion.div로 랩핑하여 스르륵 페이드인 효과 연출 */
-    <motion.div 
-      className="min-h-screen flex flex-col bg-gradient-to-b from-[#eef1ff] via-[#f5f7ff] to-[#f8f9fa] px-8 pb-20"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
-    >
-      
-      {/* 헤더 영역 */}
+      <>
+      {/* Header 영역 */}
       <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto w-full">
         <BrandLogo />
         <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
@@ -100,7 +93,7 @@ export function TradeDashboardPage() {
         </div>
       </header>
 
-      {/* 🌟 Main 메인 콘텐츠 영역을 motion.main으로 격상하여 아래에서 위로 스르륵 부드럽게 안착되도록 리프팅 효과 구현 */}
+      {/* Main 영역 */}
       <motion.main 
         className="max-w-[90rem] mx-auto mt-24 w-full"
         initial={{ opacity: 0, y: 24 }}
@@ -121,7 +114,6 @@ export function TradeDashboardPage() {
             )}
           </div>
 
-          {/* 형이 세련되게 커스텀해둔 상남자 타원형 rounded-full 버튼 유지 */}
           <div className="shrink-0 mt-2">
             <Button 
               variant="ghost" 
@@ -154,7 +146,6 @@ export function TradeDashboardPage() {
           ))}
         </div>
         
-        {/* 🌟 랭킹 테이블 — 형이 시원하게 잡아놓은 세부 커스텀 규격(rounded-3xl, py-5 text-base 헤더) 정밀 박제 완료 */}
         <div className="overflow-hidden rounded-3xl border border-[#edf0f6] bg-white shadow-card">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-[#f8f9fa] border-b border-[#edf0f6]">
@@ -203,7 +194,7 @@ export function TradeDashboardPage() {
       </motion.main>
 
       <ModeSelectModal isOpen={isModeModalOpen} onClose={() => setIsModeModalOpen(false)} />
-    </motion.div>
+      </>
   );
 }
 
