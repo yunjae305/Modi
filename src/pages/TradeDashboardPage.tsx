@@ -60,8 +60,7 @@ export function TradeDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#eef1ff] via-[#f5f7ff] to-[#f8f9fa] px-8 pb-20">
-      
+      <>
       {/* 헤더 영역 */}
         <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto">
           <BrandLogo />
@@ -190,7 +189,7 @@ export function TradeDashboardPage() {
       </main>
 
       <ModeSelectModal isOpen={isModeModalOpen} onClose={() => setIsModeModalOpen(false)} />
-    </div>
+      </>
   );
 }
 
