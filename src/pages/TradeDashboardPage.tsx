@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
-import { ModeSelectModal } from '../components/ui/ModeSelectModal'; // 🌟 분리한 공통 모드선택 모달 도입
+import { ModeSelectModal } from '../components/ui/ModeSelectModal'; // 공통 모드선택 모달
 import { apiGet } from '../services/api';
 import { useAuthContext } from '../context/AuthContext';
 import type { ScenarioRankingItem } from '../types/trading';
@@ -23,7 +23,7 @@ export function TradeDashboardPage() {
   const [activeFilter, setActiveFilter] = useState('');
   const [message, setMessage] = useState('');
   
-  // 🌟 모달 트리거 스위치 상태 관리
+  // 모달 트리거 스위치 상태 관리
   const [isModeModalOpen, setIsModeModalOpen] = useState(false);
 
   useEffect(() => {
@@ -60,9 +60,9 @@ export function TradeDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] px-6 pb-12">
+    <div className="min-h-screen bg-[#f8f9fa] px-8 pb-16">
       
-      {/* 🌟 1. LandingPage 순정 헤더(GNB) 프레임 이식 완료[cite: 9] */}
+      {/* Header 영역 - LandingPage와 좌우 정렬 선 완벽 대칭[cite: 9] */}
       <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto border-b border-[#edf0f6] pb-5">
         <BrandLogo />
         
@@ -79,12 +79,11 @@ export function TradeDashboardPage() {
           </button>
         </nav>
 
-        {/* 우측 사용자 프로필 액션 파트[cite: 9, 10] */}
+        {/* 우측 사용자 프로필 및 제어 단추[cite: 9, 10] */}
         <div className="flex items-center gap-4">
           <span className="hidden text-[15px] font-bold text-[#111827] sm:block">
             <span className="text-[#5b45f2] font-black">{user.nickname}</span>님
           </span>
-          {/* 🌟 기존 버튼 유지 ➡️ 누르면 라우터 이동 대신 모달 팝업 가동 */}
           <Button variant="ghost" className="px-4 py-2 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" onClick={() => setIsModeModalOpen(true)}>
             모드 선택
           </Button>
@@ -94,33 +93,29 @@ export function TradeDashboardPage() {
         </div>
       </header>
 
-      {/* 🌟 2. Body 영역: 전체 레이아웃 정렬을 위해 max-w-5xl 확장 개편[cite: 8] */}
-      <section className="mx-auto max-w-5xl mt-10 rounded-2xl border border-[#dfe3ee] bg-white shadow-card overflow-hidden">
+      {/* 🌟 Body 영역 - 답답한 이중 감옥 박스를 파괴하고 max-w-[90rem]로 시원하게 정렬 라인 일치[cite: 8, 9] */}
+      <main className="max-w-[90rem] mx-auto mt-12">
         
-        {/* 내부 서브 타이틀 바 영역[cite: 8] */}
-        <div className="border-b border-[#edf0f6] px-6 py-5 bg-[#fafbff]">
-          <h2 className="text-xl font-black text-[#111827]">시뮬레이션 전체 랭킹</h2>
-          <p className="mt-1 text-xs font-bold text-[#667085]">유저들의 시나리오별 실시간 모의투자 순위 리포트입니다.</p>
-          {user.provider === 'GUEST' && (
-            <p className="mt-1.5 text-xs font-black text-[#ff3f55]">⚠️ 게스트 로그인은 랭킹 기록이 보존되지 않습니다.</p>
-          )}
-        </div>
+        {/* 상단 타이틀 코너 및 필터 버튼 수평 배치 조율[cite: 8] */}
+        <div className="mb-8 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+          <div>
+            <h1 className="text-3xl font-black text-[#111827] tracking-tight">시뮬레이션 전체 랭킹</h1>
+            <p className="mt-2 text-sm font-bold text-[#667085]">전체 유저들의 시나리오별 모의투자 결과 순위 리포트입니다.</p>
+            {user.provider === 'GUEST' && (
+              <p className="mt-1.5 text-xs font-black text-[#ff3f55]">⚠️ 게스트 로그인은 랭킹 기록이 반영되지 않습니다.</p>
+            )}
+          </div>
 
-        <div className="p-6">
-          {message && (
-            <p className="mb-4 rounded-xl bg-[#fff0f2] p-3 text-sm font-bold text-[#ff3f55]">{message}</p>
-          )}
-          
-          {/* 시나리오 필터링 단추 그룹[cite: 8] */}
-          <div className="mb-5 flex flex-wrap gap-2">
+          {/* 시나리오 필터링 버튼 캡슐 - 탁 트인 공간으로 재배치[cite: 8] */}
+          <div className="flex flex-wrap gap-2 shrink-0">
             {SCENARIO_FILTERS.map((filter) => (
               <button
                 key={filter.id}
                 type="button"
-                className={`rounded-full px-4 py-2 text-xs font-extrabold transition ${
+                className={`rounded-full px-5 py-2.5 text-xs font-extrabold transition shadow-sm border ${
                   activeFilter === filter.id
-                    ? 'bg-[#5b45f2] text-white'
-                    : 'bg-[#f7f8fc] text-[#667085] hover:bg-[#edf0f6]'
+                    ? 'bg-[#5b45f2] border-[#5b45f2] text-white'
+                    : 'bg-white border-[#dfe3ee] text-[#667085] hover:bg-[#edf0f6]'
                 }`}
                 onClick={() => setActiveFilter(filter.id)}
               >
@@ -128,54 +123,58 @@ export function TradeDashboardPage() {
               </button>
             ))}
           </div>
+        </div>
 
-          {/* 메인 데이터 테이블 보드[cite: 8] */}
-          <div className="overflow-hidden rounded-2xl border border-[#dfe3ee]">
-            <table className="w-full text-sm">
-              <thead className="bg-[#f7f8fc]">
+        {message && (
+          <p className="mb-6 rounded-xl bg-[#fff0f2] p-4 text-sm font-bold text-[#ff3f55]">{message}</p>
+        )}
+
+        {/* 🌟 랭킹 테이블 보드판만 깔끔하게 단독 화이트 카드로 디자인하여 프리미엄 대시보드 핏 완성[cite: 8] */}
+        <div className="overflow-hidden rounded-2xl border border-[#dfe3ee] bg-white shadow-card">
+          <table className="w-full text-sm">
+            <thead className="bg-[#f7f8fc] border-b border-[#edf0f6]">
+              <tr>
+                <th className="px-6 py-4.5 text-left text-xs font-extrabold text-[#8b95a7] uppercase tracking-wider">순위</th>
+                <th className="px-6 py-4.5 text-left text-xs font-extrabold text-[#8b95a7] uppercase tracking-wider">이름</th>
+                <th className="px-6 py-4.5 text-left text-xs font-extrabold text-[#8b95a7] uppercase tracking-wider">시나리오명</th>
+                <th className="px-6 py-4.5 text-right text-xs font-extrabold text-[#8b95a7] uppercase tracking-wider">수익률</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#edf0f6]">
+              {renumbered.length === 0 ? (
                 <tr>
-                  <th className="px-5 py-4 text-left text-xs font-extrabold text-[#8b95a7]">순위</th>
-                  <th className="px-5 py-4 text-left text-xs font-extrabold text-[#8b95a7]">이름</th>
-                  <th className="px-5 py-4 text-left text-xs font-extrabold text-[#8b95a7]">시나리오명</th>
-                  <th className="px-5 py-4 text-right text-xs font-extrabold text-[#8b95a7]">수익률</th>
+                  <td colSpan={4} className="px-6 py-12 text-center text-sm font-bold text-[#667085]">
+                    아직 등록된 시뮬레이션 결과 데이터가 존재하지 않습니다.
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {renumbered.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-5 py-10 text-center text-sm font-bold text-[#667085]">
-                      아직 등록된 시뮬레이션 결과가 존재하지 않습니다.
+              ) : (
+                renumbered.map((item) => (
+                  <tr 
+                    key={`${item.userId}-${item.rank}-${item.scenarioId}`} 
+                    className={`hover:bg-[#fafbff] transition-colors ${item.isCurrentUser ? 'bg-[#f8f7ff] font-black' : ''}`}
+                  >
+                    <td className="px-6 py-4.5">
+                      <RankBadge rank={item.rank} />
+                    </td>
+                    <td className={`px-6 py-4.5 text-[#111827] ${item.isCurrentUser ? 'font-black' : 'font-bold'}`}>
+                      <span>{item.nickname}</span>
+                      {item.isCurrentUser && (
+                        <span className="ml-2 rounded-full bg-[#5b45f2] px-2 py-0.5 text-[10px] font-black text-white">내 기록</span>
+                      )}
+                    </td>
+                    <td className={`px-6 py-4.5 text-[#4b5563] ${item.isCurrentUser ? 'font-black' : 'font-bold'}`}>{item.scenarioTitle}</td>
+                    <td className={`px-6 py-4.5 text-right font-black ${item.profitRate >= 0 ? 'text-[#14a86b]' : 'text-[#ff3f55]'}`}>
+                      {formatRate(item.profitRate)}
                     </td>
                   </tr>
-                ) : (
-                  renumbered.map((item) => (
-                    <tr 
-                      key={`${item.userId}-${item.rank}-${item.scenarioId}`} 
-                      className={`border-t border-[#edf0f6] hover:bg-[#fafbff] transition-colors ${item.isCurrentUser ? 'bg-[#f8f7ff] font-black' : ''}`}
-                    >
-                      <td className="px-5 py-4">
-                        <RankBadge rank={item.rank} />
-                      </td>
-                      <td className={`px-5 py-4 text-[#111827] ${item.isCurrentUser ? 'font-black' : 'font-bold'}`}>
-                        <span>{item.nickname}</span>
-                        {item.isCurrentUser && (
-                          <span className="ml-2 rounded-full bg-[#5b45f2] px-2 py-0.5 text-[10px] font-black text-white">내 기록</span>
-                        )}
-                      </td>
-                      <td className={`px-5 py-4 text-[#4b5563] ${item.isCurrentUser ? 'font-black' : 'font-bold'}`}>{item.scenarioTitle}</td>
-                      <td className={`px-5 py-4 text-right font-black ${item.profitRate >= 0 ? 'text-[#14a86b]' : 'text-[#ff3f55]'}`}>
-                        {formatRate(item.profitRate)}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      </section>
+      </main>
 
-      {/* 🌟 3. 분리 격리해둔 공통 모드 선택 컴포넌트 결합 완료 */}
+      {/* 공통 모드 선택 컴포넌트 부품 결합 */}
       <ModeSelectModal isOpen={isModeModalOpen} onClose={() => setIsModeModalOpen(false)} />
     </div>
   );
