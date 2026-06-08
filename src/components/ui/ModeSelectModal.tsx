@@ -14,7 +14,7 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
       <div className="text-center">
         
         <h2 className="text-2xl font-black text-[#111827]">모드 선택</h2>
-        <p className="mt-3 text-sm font-medium leading-6 text-[#667085]">경험해보고 싶은 모드를 선택해주세요</p>
+        <p className="mt-1 text-sm font-medium leading-6 text-[#667085]">경험해보고 싶은 모드를 선택해주세요</p>
         
         <div className="mt-7 grid gap-4 sm:grid-cols-2">
           

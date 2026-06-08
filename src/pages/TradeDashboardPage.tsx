@@ -1,6 +1,7 @@
 // Modi 시나리오 랭킹 페이지
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion'; // 🌟 부드러운 애니메이션을 위한 framer-motion 도입
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { ModeSelectModal } from '../components/ui/ModeSelectModal'; // 공통 모드선택 모달
@@ -60,40 +61,52 @@ export function TradeDashboardPage() {
   }
 
   return (
-      <>
+    /* 🌟 빈 프래그먼트(<>) 대신 전체 그라데이션 배경을 가진 motion.div로 랩핑하여 스르륵 페이드인 효과 연출 */
+    <motion.div 
+      className="min-h-screen flex flex-col bg-gradient-to-b from-[#eef1ff] via-[#f5f7ff] to-[#f8f9fa] px-8 pb-20"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      
       {/* 헤더 영역 */}
-        <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto">
-          <BrandLogo />
-          <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
-            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
-              시나리오 투자
-            </button>
-            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/tutorial')}>
-              학습 가이드
-            </button>
-            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/trade')}>
-              순위 대시보드
-            </button>
-          </nav>
-          <div className="flex items-center gap-4">
-            {/* 로그인별 헤더 액션 */}
-            {user ? (
-              <>
-                <span className="hidden text-[15px] font-bold text-[#111827] sm:block">{user.nickname}님</span>
-                <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
-                  로그아웃
-                </Button>
-              </>
-            ) : (
-              <Button variant="ghost" className="hidden px-7 py-2  sm:block" onClick={() => navigate('/login')}>
-                로그인
+      <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto w-full">
+        <BrandLogo />
+        <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
+          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
+            시나리오 투자
+          </button>
+          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/tutorial')}>
+            학습 가이드
+          </button>
+          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/trade')}>
+            순위 대시보드
+          </button>
+        </nav>
+        <div className="flex items-center gap-4">
+          {/* 로그인별 헤더 액션 */}
+          {user ? (
+            <>
+              <span className="hidden text-[15px] font-bold text-[#111827] sm:block">{user.nickname}님</span>
+              <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
+                로그아웃
               </Button>
-            )}
-          </div>
-        </header>
+            </>
+          ) : (
+            <Button variant="ghost" className="hidden px-7 py-2  sm:block" onClick={() => navigate('/login')}>
+              로그인
+            </Button>
+          )}
+        </div>
+      </header>
 
-      {/* Main 영역 */}
-      <main className="max-w-[90rem] mx-auto mt-24 w-full">
+      {/* 🌟 Main 메인 콘텐츠 영역을 motion.main으로 격상하여 아래에서 위로 스르륵 부드럽게 안착되도록 리프팅 효과 구현 */}
+      <motion.main 
+        className="max-w-[90rem] mx-auto mt-24 w-full"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.5, ease: 'easeOut' }}
+      >
 
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start border-b border-[#edf0f6] pb-8">
           <div>
@@ -108,6 +121,7 @@ export function TradeDashboardPage() {
             )}
           </div>
 
+          {/* 형이 세련되게 커스텀해둔 상남자 타원형 rounded-full 버튼 유지 */}
           <div className="shrink-0 mt-2">
             <Button 
               variant="ghost" 
@@ -140,7 +154,7 @@ export function TradeDashboardPage() {
           ))}
         </div>
         
-        {/* 랭킹 테이블 */}
+        {/* 🌟 랭킹 테이블 — 형이 시원하게 잡아놓은 세부 커스텀 규격(rounded-3xl, py-5 text-base 헤더) 정밀 박제 완료 */}
         <div className="overflow-hidden rounded-3xl border border-[#edf0f6] bg-white shadow-card">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-[#f8f9fa] border-b border-[#edf0f6]">
@@ -186,10 +200,10 @@ export function TradeDashboardPage() {
             </tbody>
           </table>
         </div>
-      </main>
+      </motion.main>
 
       <ModeSelectModal isOpen={isModeModalOpen} onClose={() => setIsModeModalOpen(false)} />
-      </>
+    </motion.div>
   );
 }
 
