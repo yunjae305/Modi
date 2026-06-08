@@ -12,12 +12,6 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="text-center">
-
-        <div className="mb-5 flex justify-end">
-          <button type="button" className="text-xl text-[#7b8496] hover:text-[#111827] transition-colors" onClick={onClose}>
-            ×
-          </button>
-        </div>
         
         <h2 className="text-2xl font-black text-[#111827]">오늘의 투자 훈련 선택</h2>
         <p className="mt-3 text-sm font-medium leading-6 text-[#667085]">훈련 목적에 맞는 시뮬레이션 모드를 선택해주세요.</p>
@@ -67,6 +61,17 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
           </button>
           
         </div>
+        
+        <div className="mt-8 pt-4 border-t border-[#edf0f6]">
+          <button
+            type="button"
+            className="w-full rounded-xl bg-[#f3f4f8] py-3.5 text-sm font-extrabold text-[#667085] hover:bg-[#eaf0f6] transition-colors"
+            onClick={onClose}
+          >
+            대시보드로 돌아가기
+          </button>
+        </div>
+        
       </div>
     </Modal>
   );

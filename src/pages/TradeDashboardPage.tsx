@@ -107,7 +107,7 @@ export function TradeDashboardPage() {
           <div className="shrink-0 mt-2">
             <Button 
               variant="ghost" 
-              className="px-5 py-3 text-sm bg-white border border-[#dfe3ee] shadow-sm font-black text-[#5b45f2] rounded-xl hover:bg-[#f8f7ff] hover:border-[#5b45f2] transition-all" 
+              className="px-5 py-3 text-sm bg-white border border-[#dfe3ee] shadow-sm font-black text-[#5b45f2] rounded-full hover:bg-[#f8f7ff] hover:border-[#5b45f2] transition-all" 
               onClick={() => setIsModeModalOpen(true)}
             >
               모드 선택
