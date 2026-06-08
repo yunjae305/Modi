@@ -1,5 +1,5 @@
 // Modi 주문 패널 컴포넌트
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTradeContext } from '../../context/TradeContext';
 import { formatCount } from '../../utils/format';
@@ -11,6 +11,8 @@ export function TradePanel() {
   const [buyQty, setBuyQty] = useState(10);
   const [sellQty, setSellQty] = useState(10);
   const [flash, setFlash] = useState<'buy' | 'sell' | null>(null);
+  const buyInputId = useId();
+  const sellInputId = useId();
   // 최대 매수 수량 계산값
   const maxBuyQty = currentPrice > 0 ? Math.floor(cash / currentPrice) : 0;
 
@@ -65,7 +67,9 @@ export function TradePanel() {
                 최대 {formatCount(maxBuyQty)}
               </button>
             </div>
+            <label htmlFor={buyInputId} className="sr-only">매수 수량</label>
             <input
+              id={buyInputId}
               className="mb-3 w-full rounded-xl border border-[#dfe3ee] bg-white px-4 py-3 text-center font-extrabold text-[#111827] outline-none focus:border-[#5b45f2]"
               type="number"
               min={1}
@@ -83,7 +87,9 @@ export function TradePanel() {
                 전량 {formatCount(holdings)}
               </button>
             </div>
+            <label htmlFor={sellInputId} className="sr-only">매도 수량</label>
             <input
+              id={sellInputId}
               className="mb-3 w-full rounded-xl border border-[#dfe3ee] bg-white px-4 py-3 text-center font-extrabold text-[#111827] outline-none focus:border-[#ff3f55] disabled:opacity-50"
               type="number"
               min={1}

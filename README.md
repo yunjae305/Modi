@@ -78,12 +78,12 @@ Modi는 과거 시장 데이터를 블라인드로 체험하는 시나리오 투
 
 | 영역 | 사용 기술 |
 |---|---|
-| Frontend | React, TypeScript, Vite, React Router, Zustand |
+| Frontend | React, TypeScript, Vite, React Router, Context API |
 | UI | Tailwind CSS, Framer Motion, lightweight-charts |
 | API | Vercel Serverless Functions |
 | Database | Supabase PostgreSQL |
 | Auth | Email password auth, Kakao OAuth, guest session, cookie session |
-| Market Data | 정적 OHLCV JSON, yfinance, pykrx, KIS Open API fallback |
+| Market Data | 정적 OHLCV JSON, yfinance, pykrx |
 | Test | Node test runner, TypeScript strip types |
 
 ## 프로젝트 구조
@@ -94,10 +94,9 @@ Project-modi/
 ├── src/
 │   ├── components/ : 공통 UI, 차트, 거래, 결과 컴포넌트
 │   ├── pages/ : 라우트 단위 페이지
-│   ├── store/ : 인증 및 시뮬레이션 상태
+│   ├── context/ : 인증 및 시뮬레이션 상태
 │   ├── hooks/ : 차트 데이터 및 시뮬레이션 훅
 │   └── services/ : 프론트 API 클라이언트
-├── server/ : 로컬 개발용 Spring Boot API 서버
 ├── supabase/ : Supabase 스키마 및 seed 데이터
 └── public/
     └── data/ : 과거 지수 시나리오 JSON (정적 데이터)
@@ -167,14 +166,7 @@ Vercel 배포에서는 `VITE_API_BASE_URL=/api`, `SUPABASE_URL`, `SUPABASE_SERVI
 | `GET` | `/api/auth/oauth/kakao/callback` | Kakao 로그인 콜백 |
 | `GET` | `/api/auth/me` | 현재 사용자 조회 |
 | `POST` | `/api/auth/logout` | 로그아웃 |
-| `GET` | `/api/stocks` | seed 또는 KIS 현재가 종목 목록 |
-| `GET` | `/api/portfolio` | 내 포트폴리오 조회 |
-| `GET` | `/api/executions` | 내 매매 기록 조회 |
-| `GET` | `/api/rankings` | 전체 랭킹 조회 |
 | `GET` | `/api/scenario-rankings` | 시나리오 결과 랭킹 조회 |
-| `POST` | `/api/orders/buy` | 현재가 매수 |
-| `POST` | `/api/orders/sell` | 현재가 매도 |
-| `POST` | `/api/prices/sync` | KIS 현재가 동기화 |
 
 ## 데이터 갱신
 
