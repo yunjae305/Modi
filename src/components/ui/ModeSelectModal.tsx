@@ -13,12 +13,12 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="text-center">
         
-        <h2 className="text-2xl font-black text-[#111827]">오늘의 투자 훈련 선택</h2>
-        <p className="mt-3 text-sm font-medium leading-6 text-[#667085]">훈련 목적에 맞는 시뮬레이션 모드를 선택해주세요.</p>
+        <h2 className="text-2xl font-black text-[#111827]">모드 선택</h2>
+        <p className="mt-3 text-sm font-medium leading-6 text-[#667085]">경험해보고 싶은 모드를 선택해주세요</p>
         
         <div className="mt-7 grid gap-4 sm:grid-cols-2">
           
-          {/* 🟢 왼쪽: 초보자 튜토리얼 카드[cite: 10] */}
+          {/* 왼쪽: 초보자 튜토리얼 카드 */}
           <button
             type="button"
             className="rounded-2xl bg-[#f7f6ff] p-6 text-left transition hover:bg-[#f0edff]"
@@ -39,7 +39,7 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
             <p className="mt-2 text-sm font-medium leading-6 text-[#667085]">캔들 차트와 주문 방법 등 주식의 기본 개념을 익힙니다.</p>
           </button>
 
-          {/* 🔵 오른쪽: 실전 시나리오 카드[cite: 10] */}
+          {/* 오른쪽: 실전 시나리오 카드 */}
           <button
             type="button"
             className="rounded-2xl bg-[#f7f6ff] p-6 text-left transition hover:bg-[#f0edff]"
@@ -62,7 +62,7 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
           
         </div>
         
-        <div className="mt-8 pt-4 border-t border-[#edf0f6]">
+        <div className="mt-8 pt-4 border-[#edf0f6]">
           <button
             type="button"
             className="w-full rounded-xl bg-[#f3f4f8] py-3.5 text-sm font-extrabold text-[#667085] hover:bg-[#eaf0f6] transition-colors"
@@ -71,7 +71,7 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
             대시보드로 돌아가기
           </button>
         </div>
-        
+
       </div>
     </Modal>
   );
