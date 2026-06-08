@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../components/ui/Button';
 import { BrandLogo } from '../components/ui/BrandLogo';
 import { HeroIllustration } from '../components/ui/HeroIllustration';
-import { ModeSelectModal } from '../components/ui/ModeSelectModal'; // 🌟 아까 만든 공통 모드선택 모달 부품 임포트
+import { ModeSelectModal } from '../components/ui/ModeSelectModal';
 import { useAuthContext } from '../context/AuthContext';
 
 export function LandingPage() {
