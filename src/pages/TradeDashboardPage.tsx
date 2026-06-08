@@ -60,10 +60,10 @@ export function TradeDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] px-8 pb-20">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#eef1ff] via-[#f5f7ff] to-[#f8f9fa] px-8 pb-20">
       
-      {/* Header 영역 (깔끔한 무선 오픈형) */}
-      <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto">
+      {/* Header 영역 */}
+      <header className="flex w-full max-w-[90rem] justify-between items-center mx-auto pt-8">
         <BrandLogo />
         
         <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
@@ -82,39 +82,35 @@ export function TradeDashboardPage() {
           <span className="hidden text-[15px] font-bold text-[#111827] sm:block">
             <span className="text-[#5b45f2] font-black">{user.nickname}</span>님
           </span>
-          <Button variant="primary" className="px-5 py-2 text-xs font-bold rounded-xl shadow-sm" onClick={() => logout()}>
+          <Button variant="primary" className="px-5 py-2 text-xs font-bold rounded-full shadow-sm" onClick={() => logout()}>
             로그아웃
           </Button>
         </div>
       </header>
 
-      {/* Main 콘텐츠 영역 (공백 mt-24로 넉넉하게 확장) */}
-      <main className="max-w-[90rem] mx-auto mt-24">
-        
-        {/* 🌟 1. 타이틀 & 부제목 크기를 ScenarioSelectPage 스펙과 100% 동일하게 통일 완료 */}
+      {/* Main 영역 */}
+      <main className="max-w-[90rem] mx-auto mt-24 w-full">
+
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start border-b border-[#edf0f6] pb-8">
           <div>
-            {/* 시나리오 선택 페이지 h1 크기 이식 (text-3xl sm:text-4xl font-black tracking-[-0.03em]) */}
             <h1 className="text-3xl font-black tracking-[-0.03em] text-[#111827] sm:text-4xl">
               시뮬레이션 전체 랭킹
             </h1>
-            {/* 시나리오 선택 페이지 p 크기 이식 (text-[20px] font-medium) */}
             <p className="mt-3 text-[20px] font-medium text-[#667085]">
               전체 유저들의 시나리오별 모의투자 결과 순위 리포트입니다.
             </p>
             {user.provider === 'GUEST' && (
-              <p className="mt-2 text-xs font-black text-[#ff3f55]">⚠️ 게스트 로그인은 랭킹 기록이 반영되지 않습니다.</p>
+              <p className="mt-3 text-xs font-black text-[#ff3f55]">⚠️ 게스트 로그인은 랭킹 기록이 반영되지 않습니다.</p>
             )}
           </div>
 
-          {/* 모드 선택 버튼 메인 영역 배치 유지 */}
           <div className="shrink-0 mt-2">
             <Button 
               variant="ghost" 
               className="px-5 py-3 text-sm bg-white border border-[#dfe3ee] shadow-sm font-black text-[#5b45f2] rounded-xl hover:bg-[#f8f7ff] hover:border-[#5b45f2] transition-all" 
               onClick={() => setIsModeModalOpen(true)}
             >
-              🎯 다른 훈련 모드 선택하기
+              모드 선택
             </Button>
           </div>
         </div>
@@ -123,7 +119,6 @@ export function TradeDashboardPage() {
           <p className="mt-6 rounded-xl bg-[#fff0f2] p-4 text-sm font-bold text-[#ff3f55]">{message}</p>
         )}
 
-        {/* 필터 캡슐 대형 여백 라인 */}
         <div className="mt-10 mb-8 flex flex-wrap gap-2">
           {SCENARIO_FILTERS.map((filter) => (
             <button
@@ -141,21 +136,18 @@ export function TradeDashboardPage() {
           ))}
         </div>
 
-        {/* 🌟 2. 표 UI 대수선 — th와 td의 py-6 지정으로 엄청 얇고 답답했던 높이를 시원하게 확장 및 공백 사수 */}
-        <div className="overflow-hidden rounded-2xl border border-[#edf0f6] bg-white shadow-card">
+        <div className="overflow-hidden rounded-3xl border border-[#edf0f6] bg-white shadow-card">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-[#f8f9fa] border-b border-[#edf0f6]">
               <tr>
-                {/* 얇고 답답하던 헤더 행에 py-6 여백 주입으로 두께감 대폭 상승 */}
-                <th scope="col" className="px-8 py-6 text-xs font-black uppercase tracking-wider text-[#7b8496]">순위</th>
-                <th scope="col" className="px-8 py-6 text-xs font-black uppercase tracking-wider text-[#7b8496]">이름</th>
-                <th scope="col" className="px-8 py-6 text-xs font-black uppercase tracking-wider text-[#7b8496]">시나리오명</th>
-                <th scope="col" className="px-8 py-6 text-right text-xs font-black uppercase tracking-wider text-[#7b8496]">수익률</th>
+                <th scope="col" className="px-8 py-6 text-base font-black uppercase tracking-wider text-[#7b8496]">순위</th>
+                <th scope="col" className="px-8 py-6 text-base font-black uppercase tracking-wider text-[#7b8496]">이름</th>
+                <th scope="col" className="px-8 py-6 text-base font-black uppercase tracking-wider text-[#7b8496]">시나리오명</th>
+                <th scope="col" className="px-8 py-6 text-right text-base font-black uppercase tracking-wider text-[#7b8496]">수익률</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f1f3f7]">
               {renumbered.length === 0 ? (
-                /* 데이터 공백 상태창도 넓은 세로 패딩으로 시원하게 정렬 */
                 <tr>
                   <td colSpan={4} className="px-6 py-24 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
@@ -170,7 +162,6 @@ export function TradeDashboardPage() {
                     key={`${item.userId}-${item.rank}-${item.scenarioId}`} 
                     className={`hover:bg-[#fafbff] transition-colors ${item.isCurrentUser ? 'bg-[#f8f7ff]' : ''}`}
                   >
-                    {/* 일반 데이터 행도 똑같이 py-6 스페이싱을 주어 균형감 정렬 */}
                     <td className="px-8 py-6 font-bold">
                       <RankBadge rank={item.rank} />
                     </td>
@@ -192,7 +183,6 @@ export function TradeDashboardPage() {
         </div>
       </main>
 
-      {/* 공통 모드 선택 컴포넌트 부품 결합 */}
       <ModeSelectModal isOpen={isModeModalOpen} onClose={() => setIsModeModalOpen(false)} />
     </div>
   );
