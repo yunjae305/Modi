@@ -135,15 +135,16 @@ export function TradeDashboardPage() {
             </button>
           ))}
         </div>
-
+        
+        {/* 랭킹 테이블 */}
         <div className="overflow-hidden rounded-3xl border border-[#edf0f6] bg-white shadow-card">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-[#f8f9fa] border-b border-[#edf0f6]">
               <tr>
-                <th scope="col" className="px-8 py-6 text-base font-black uppercase tracking-wider text-[#7b8496]">순위</th>
-                <th scope="col" className="px-8 py-6 text-base font-black uppercase tracking-wider text-[#7b8496]">이름</th>
-                <th scope="col" className="px-8 py-6 text-base font-black uppercase tracking-wider text-[#7b8496]">시나리오명</th>
-                <th scope="col" className="px-8 py-6 text-right text-base font-black uppercase tracking-wider text-[#7b8496]">수익률</th>
+                <th scope="col" className="px-8 py-5 text-base font-black uppercase tracking-wider text-[#7b8496]">순위</th>
+                <th scope="col" className="px-8 py-5 text-base font-black uppercase tracking-wider text-[#7b8496]">이름</th>
+                <th scope="col" className="px-8 py-5 text-base font-black uppercase tracking-wider text-[#7b8496]">시나리오명</th>
+                <th scope="col" className="px-8 py-5 text-right text-base font-black uppercase tracking-wider text-[#7b8496]">수익률</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f1f3f7]">
