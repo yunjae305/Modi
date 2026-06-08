@@ -62,31 +62,36 @@ export function TradeDashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#eef1ff] via-[#f5f7ff] to-[#f8f9fa] px-8 pb-20">
       
-      {/* Header 영역 */}
-      <header className="flex w-full max-w-[90rem] justify-between items-center mx-auto pt-8">
-        <BrandLogo />
-        
-        <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
-          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
-            시나리오 투자
-          </button>
-          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/tutorial')}>
-            학습 가이드
-          </button>
-          <button className="text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/trade')}>
-            순위 대시보드
-          </button>
-        </nav>
-
-        <div className="flex items-center gap-5">
-          <span className="hidden text-[15px] font-bold text-[#111827] sm:block">
-            <span className="text-[#5b45f2] font-black">{user.nickname}</span>님
-          </span>
-          <Button variant="primary" className="px-5 py-2 text-xs font-bold rounded-full shadow-sm" onClick={() => logout()}>
-            로그아웃
-          </Button>
-        </div>
-      </header>
+      {/* 헤더 영역 */}
+        <header className="flex items-center justify-between pt-8 max-w-[90rem] mx-auto">
+          <BrandLogo />
+          <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
+            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
+              시나리오 투자
+            </button>
+            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/tutorial')}>
+              학습 가이드
+            </button>
+            <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/trade')}>
+              순위 대시보드
+            </button>
+          </nav>
+          <div className="flex items-center gap-4">
+            {/* 로그인별 헤더 액션 */}
+            {user ? (
+              <>
+                <span className="hidden text-[15px] font-bold text-[#111827] sm:block">{user.nickname}님</span>
+                <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block" onClick={() => logout()}>
+                  로그아웃
+                </Button>
+              </>
+            ) : (
+              <Button variant="ghost" className="hidden px-7 py-2  sm:block" onClick={() => navigate('/login')}>
+                로그인
+              </Button>
+            )}
+          </div>
+        </header>
 
       {/* Main 영역 */}
       <main className="max-w-[90rem] mx-auto mt-24 w-full">

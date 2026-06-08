@@ -62,7 +62,7 @@ export function ModeSelectModal({ isOpen, onClose }: ModeSelectModalProps) {
           
         </div>
         
-        <div className="mt-8 pt-4 border-[#edf0f6]">
+        <div className="mt-4 border-[#edf0f6]">
           <button
             type="button"
             className="w-full rounded-xl bg-[#f3f4f8] py-3.5 text-sm font-extrabold text-[#667085] hover:bg-[#eaf0f6] transition-colors"
