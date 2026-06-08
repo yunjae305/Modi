@@ -13,8 +13,6 @@ interface TradeState {
   isPlaying: boolean;
   isFinished: boolean;
   cash: number;
-  holdings: number;
-  avgPrice: number;
   positions: Record<string, ScenarioPosition>;
   peakPortfolio: number;
   maxDrawdown: number;
@@ -26,6 +24,8 @@ interface TradeContextValue extends TradeState {
   selectedStock: ScenarioStock | null;
   selectedPosition: ScenarioPosition | null;
   positionList: ScenarioPosition[];
+  holdings: number;
+  avgPrice: number;
   currentPrice: number;
   totalPurchaseAmount: number;
   totalEvaluationAmount: number;
@@ -57,8 +57,6 @@ const blankState: TradeState = {
   isPlaying: false,
   isFinished: false,
   cash: 0,
-  holdings: 0,
-  avgPrice: 0,
   positions: {},
   peakPortfolio: 0,
   maxDrawdown: 0,
@@ -178,11 +176,10 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
 
   const selectStock = useCallback(
     (stockId: string) => {
-      const { scenarioStocks, positions } = stateRef.current;
+      const { scenarioStocks } = stateRef.current;
       const stock = scenarioStocks.find((s) => s.id === stockId);
       if (!stock) return;
-      const position = positions[stock.id];
-      setState({ selectedStockId: stock.id, chartData: stock.bars, holdings: position?.quantity ?? 0, avgPrice: position?.averagePrice ?? 0 });
+      setState({ selectedStockId: stock.id, chartData: stock.bars });
     },
     [setState],
   );
@@ -246,7 +243,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       const avgPr = ((prev?.averagePrice ?? 0) * (prev?.quantity ?? 0) + totalAmount) / newQty;
       const position: ScenarioPosition = { stockId: stock.id, stockName: stock.name, quantity: newQty, averagePrice: avgPr };
       const trade: Trade = { day: currentDay, date: stock.bars[currentDay]?.date ?? '', stockId: stock.id, stockName: stock.name, type: 'buy', qty: adjustedQty, price, totalAmount };
-      setState({ cash: cash - totalAmount, holdings: position.quantity, avgPrice: position.averagePrice, positions: { ...positions, [stock.id]: position }, tradeHistory: [...tradeHistory, trade] });
+      setState({ cash: cash - totalAmount, positions: { ...positions, [stock.id]: position }, tradeHistory: [...tradeHistory, trade] });
     },
     [setState],
   );
@@ -266,7 +263,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       if (newQty === 0) delete newPositions[stock.id];
       else newPositions[stock.id] = { ...prevPos, quantity: newQty };
       const trade: Trade = { day: currentDay, date: stock.bars[currentDay]?.date ?? '', stockId: stock.id, stockName: stock.name, type: 'sell', qty: adjustedQty, price, totalAmount };
-      setState({ cash: cash + totalAmount, holdings: newQty, avgPrice: newQty === 0 ? 0 : prevPos.averagePrice, positions: newPositions, realizedProfit: realizedProfit + (price - prevPos.averagePrice) * adjustedQty, tradeHistory: [...tradeHistory, trade] });
+      setState({ cash: cash + totalAmount, positions: newPositions, realizedProfit: realizedProfit + (price - prevPos.averagePrice) * adjustedQty, tradeHistory: [...tradeHistory, trade] });
     },
     [setState],
   );
@@ -276,11 +273,16 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     setState(blankState);
   }, [setState]);
 
+  const holdings = selectedPosition?.quantity ?? 0;
+  const avgPrice = selectedPosition?.averagePrice ?? 0;
+
   const value: TradeContextValue = {
     ...state,
     selectedStock,
     selectedPosition,
     positionList,
+    holdings,
+    avgPrice,
     currentPrice,
     totalPurchaseAmount,
     totalEvaluationAmount,
