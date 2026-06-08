@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion'; 
-import { BrandLogo } from '../components/ui/BrandLogo';
-import { scenarios } from '../data/scenarios'; // 시나리오 데이터
+import { Header } from '../components/ui/Header'; // 🌟 조립
+import { scenarios } from '../data/scenarios'; 
 import { useAuthContext } from '../context/AuthContext';
 import { useTradeContext } from '../context/TradeContext';
 import { Button } from '../components/ui/Button';
@@ -12,7 +12,7 @@ import { Modal } from '../components/ui/Modal';
 
 export function ScenarioSelectPage() {
   const navigate = useNavigate();
-  const { user, refreshUser, logout } = useAuthContext();
+  const { user, refreshUser } = useAuthContext();
   const { selectScenario } = useTradeContext();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState('');
@@ -30,34 +30,7 @@ export function ScenarioSelectPage() {
   return (
     <>
       {/* Header 영역 */}
-      <header className="flex w-full max-w-[90rem] justify-between items-center mx-auto pt-8">
-        <BrandLogo />
-        <nav className="hidden items-center gap-[6rem] text-[15px] font-bold text-[#111827] md:flex">
-          <button className="text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/select')}>
-            시나리오 투자
-          </button>
-          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/tutorial')}>
-            학습 가이드
-          </button>
-          <button className="hover:text-[#5b45f2] transition-colors duration-500 ease-in-out" onClick={() => navigate('/trade')}>
-            순위 대시보드
-          </button>
-        </nav>
-        <div className="flex items-center gap-4">
-          {user ? (
-            <>
-              <span className="hidden text-[15px] font-bold text-[#111827] sm:block">{user.nickname}님</span>
-              <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block font-bold rounded-xl shadow-sm" onClick={() => logout()}>
-                로그아웃
-              </Button>
-            </>
-          ) : (
-            <Button variant="ghost" className="hidden px-7 py-2 sm:block" onClick={() => navigate('/login')}>
-              로그인
-            </Button>
-          )}
-        </div>
-      </header>
+      <Header />
 
       {/* Main 영역 */}
       <motion.main 
@@ -66,7 +39,6 @@ export function ScenarioSelectPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05, duration: 0.4, ease: 'easeOut' }}
       >
-        
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start border-b border-[#edf0f6] pb-8">
           <div>
             <h1 className="text-3xl font-black tracking-[-0.03em] text-[#111827] sm:text-4xl">
@@ -78,7 +50,7 @@ export function ScenarioSelectPage() {
           </div>
         </div>
 
-        {/* 시나리오 카드 격자 그리드 배치 코너 */}
+        {/* 시나리오 카드 그리드 */}
         <div className="grid gap-10 md:grid-cols-3 w-full mt-10">
           {scenarios.map((scenario) => (
             <article
@@ -108,9 +80,7 @@ export function ScenarioSelectPage() {
                     onClick={() => {
                       setSelectedTitle(scenario.title);
                       setIsLoading(true);
-
                       flushSync(() => selectScenario(scenario));
-                      
                       setTimeout(() => {
                         navigate('/simulation');
                       }, 1200);
@@ -119,7 +89,7 @@ export function ScenarioSelectPage() {
                     이 시나리오 선택
                   </Button>
                   
-                  {/* 시뮬레이션 환경 구축 로딩 모달 */}
+                  {/* 시나리오 선택 후 로딩 모달 */}
                   <Modal isOpen={isLoading} onClose={() => {}}>
                     <div className="flex flex-col items-center justify-center py-3 text-center">
                       <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#5b45f2] mb-4"></div>
@@ -141,10 +111,9 @@ export function ScenarioSelectPage() {
   );
 }
 
-// 시나리오 썸네일 컴포넌트
+{/* 시나리오 카드 썸네일 컴포넌트 */}
 function ScenarioThumb({ id }: { id: string }) {
   const tone = id === 'corona' ? 'from-[#172554] to-[#334155]' : id === 'subprime' ? 'from-[#383838] to-[#b7bbc6]' : 'from-[#475569] to-[#cbd5e1]';
-
   return (
     <div className={`relative h-36 overflow-hidden bg-gradient-to-br ${tone}`}>
       <svg viewBox="0 0 320 140" className="absolute inset-0 h-full w-full" aria-hidden="true">

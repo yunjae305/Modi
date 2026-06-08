@@ -1,6 +1,7 @@
 // Modi 시나리오 투자 결과 페이지
 import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SubHeader } from '../components/ui/SubHeader';
 import { InvestorBadge } from '../components/result/InvestorBadge';
 import { ProfitChart } from '../components/result/ProfitChart';
 import { TradeHistory } from '../components/result/TradeHistory';
@@ -32,43 +33,29 @@ export function ResultPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f9fa] px-0 py-6">
+    <main className="min-h-screen bg-[#f8f9fa] px-0">
       <div className="w-full">
         
         {/* Header 영역 */}
-        <header className="flex flex-col gap-4 border-b border-[#edf0f6] pb-4 px-6 lg:flex-row lg:items-center lg:justify-between shrink-0 bg-[#f8f9fa]">
-          <div className="flex items-center gap-5 shrink-0">
-            <BrandLogo />
-            <div className="hidden h-8 w-px bg-[#edf0f6] sm:block" />
-            <div>
-              <h1 className="text-sm font-black text-[#111827]">투자 결과 리포트</h1>
-              <p className="mt-0.5 text-xs font-bold text-[#667085]">
-                {scenario.title} · 시뮬레이션 최종 스코어
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 shrink-0">
-            <Button
-              className="px-4 py-1.5 text-xs font-bold shadow-sm rounded-full"
-              onClick={() => {
-                reset();
-                navigate('/select');
-              }}
-            >
-              다른 시나리오 도전하기
-            </Button>
-            
-            {/* 서브 내비게이션 버튼 */}
-            <Button 
-              variant="ghost" 
-              className="px-4 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" 
-              onClick={() => navigate('/')}
-            >
-              홈으로 가기
-            </Button>
-          </div>
-        </header>
+        <SubHeader title="투자 결과 리포트" description={`${scenario.title} · 시뮬레이션 최종 스코어`}>
+      
+          <Button className="px-4 py-1.5 text-xs font-bold shadow-sm rounded-full"
+            onClick={() => {
+              reset();
+              navigate('/select');
+            }}
+          >
+            다른 시나리오 도전하기
+          </Button>
+  
+          <Button 
+            variant="ghost" 
+            className="px-4 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" 
+            onClick={() => navigate('/')}
+          >
+            홈으로 가기
+          </Button>
+        </SubHeader>
 
         {/* Body 영역: 2열 대시보드 구조 */}
         <div className="w-full px-6 mt-6 grid gap-6 grid-cols-1 md:grid-cols-2 items-start">

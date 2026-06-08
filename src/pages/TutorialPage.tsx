@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { SubHeader } from '../components/ui/SubHeader';
 import { CandleChart } from '../components/chart/CandleChart';
 import { Button } from '../components/ui/Button';
 import { BrandLogo } from '../components/ui/BrandLogo';
@@ -115,26 +116,16 @@ export function TutorialPage() {
     <div className="min-h-screen bg-[#f8f9fa] px-0 pb-6 overflow-hidden flex flex-col">
       
       {/* Header 영역 */}
-      <header className="flex items-center justify-between border-b border-[#edf0f6] pb-4 pt-5 px-6 shrink-0 bg-[#f8f9fa]">
-        <div className="flex items-center gap-5 shrink-0">
-          <BrandLogo />
-          <div className="hidden h-8 w-px bg-[#edf0f6] sm:block" />
-          <div>
-            <h1 className="font-black text-[#111827]">초보자 가이드</h1>
-            <p className="mt-0.5 text-xs font-bold text-[#667085]">주식에 대한 기본 개념을 학습해보자</p>
-          </div>
-        </div>
+      <SubHeader title="초보자 가이드" description="주식에 대한 기본 개념을 학습해보자">
 
-        <div className="flex items-center gap-3 shrink-0">
-          <Button 
-            variant="ghost" 
-            className="px-4 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" 
-            onClick={() => navigate('/')}
-          >
-            처음으로 가기
-          </Button>
-        </div>
-      </header>
+        <Button 
+          variant="ghost" 
+          className="px-4 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" 
+          onClick={() => navigate('/')}
+        >
+          처음으로 가기
+        </Button>
+      </SubHeader>
 
       {/* Main 영역 */}
       <div className="w-full max-w-7xl mx-auto px-6 mt-5 flex-1 min-h-0">

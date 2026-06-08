@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SubHeader } from '../components/ui/SubHeader';
 import { CandleChart } from '../components/chart/CandleChart';
 import { TradeHistory } from '../components/result/TradeHistory';
 import { AssetStatus } from '../components/trade/AssetStatus';
@@ -92,33 +93,23 @@ export function SimulationPage() {
     <div className="min-h-screen flex flex-col bg-[#f8f9fa]">
       
       {/* Header 영역 */}
-      <header className="flex flex-col gap-4 border-b border-[#edf0f6] pb-4 pt-5 px-6 lg:flex-row lg:items-center lg:justify-between shrink-0 bg-[#f8f9fa]">
-        <div className="flex items-center gap-5 shrink-0">
-          <BrandLogo />
-          <div className="hidden h-8 w-px bg-[#edf0f6] sm:block" />
-          <div>
-            <h1 className="text-sm font-black text-[#111827]">{scenario.title} ({scenario.subtitle})</h1>
-            <p className="mt-0.5 text-xs font-bold text-[#667085]">
-              {selectedStock ? `${selectedStock.name} · ${selectedStock.id}` : scenario.market} · {scenario.lesson}
-            </p>
-          </div>
-        </div>
+      <SubHeader title={`${scenario.title} (${scenario.subtitle})`}
+        description={selectedStock ? `${selectedStock.name} · ${selectedStock.id}` : `${scenario.market} · ${scenario.lesson}`}
+      >
 
-        <div className="flex items-center gap-3 shrink-0">
-          <Button variant="ghost" className="px-3 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" onClick={() => setActiveModal('change')}>
-            시나리오 변경
-          </Button>
+      <Button variant="ghost" className="px-3 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" onClick={() => setActiveModal('change')}>
+        시나리오 변경
+      </Button>
 
-          <Button
-            className="variant=ghost rounded-full bg-[#8B0000] px-3 py-1.5 text-xs font-bold text-[#ffffff] hover:bg-[#FF0000] shadow-sm transition-colors"
-            onClick={() => setActiveModal('giveup')}
-          >
-            포기하기
-          </Button>
-        </div>
-      </header>
+      <Button
+        className="rounded-full bg-[#8B0000] px-3 py-1.5 text-xs font-bold text-[#ffffff] hover:bg-[#FF0000] shadow-sm transition-colors"
+        onClick={() => setActiveModal('giveup')}
+      >
+        포기하기
+      </Button>
+    </SubHeader>
 
-      {/* 4열 레이아웃 바디 (전체 스크롤 오픈) */}
+      {/* 4열 레이아웃 바디 */}
       <div className="pt-5 pb-6 px-6 w-full grid gap-5 xl:grid-cols-[290px_minmax(0,1fr)_310px_340px] lg:grid-cols-[260px_minmax(0,1fr)_280px_280px] md:grid-cols-2 grid-cols-1">
         
         {/* 1열: 종목 리스트 */}
