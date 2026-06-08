@@ -31,9 +31,7 @@ interface QuizQuestion {
   options: LearningTerm[];
 }
 
-// 퀴즈 문제 생성 함수
 function makeQuizQuestions(): QuizQuestion[] {
-  // 3문제 랜덤 추출
   const shuffled = [...learningTerms].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 3).map((term) => {
     const wrong = shuffled.filter((t) => t.word !== term.word).slice(0, 3);
@@ -44,28 +42,23 @@ function makeQuizQuestions(): QuizQuestion[] {
 
 type PracticePhase = 'buy' | 'sell' | 'done';
 
-// 초보자 튜토리얼 컴포넌트
 export function TutorialPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
-  // 용어 퀴즈 상태
   const [quizQuestions] = useState<QuizQuestion[]>(() => makeQuizQuestions());
   const [quizIndex, setQuizIndex] = useState(0);
   const [answered, setAnswered] = useState<{ word: string; correct: boolean } | null>(null);
 
-  // 매수매도 실습 상태
   const [practicePhase, setPracticePhase] = useState<PracticePhase>('buy');
   const [message, setMessage] = useState('');
 
-  // 실습용 변동 현재가 상태
   const basePrice = tutorialData[tutorialData.length - 1].close;
   const [livePrice, setLivePrice] = useState(basePrice);
   const livePriceRef = useRef(basePrice);
 
   useEffect(() => {
     if (step !== 3 || practicePhase === 'done') return;
-    // 최신 가격 ref 유지
     const timer = setInterval(() => {
       const change = (Math.random() - 0.5) * 0.012;
       const next = Math.round(livePriceRef.current * (1 + change));
@@ -77,13 +70,11 @@ export function TutorialPage() {
 
   const currentQuestion = quizQuestions[quizIndex];
 
-  // 퀴즈 답변 처리 함수
   const handleAnswer = (word: string) => {
     if (answered) return;
     const correct = word === currentQuestion.term.word;
     setAnswered({ word, correct });
     if (correct) {
-      // 정답 후 다음 단계 이동
       setTimeout(() => {
         if (quizIndex < quizQuestions.length - 1) {
           setQuizIndex((i) => i + 1);
@@ -97,7 +88,6 @@ export function TutorialPage() {
     }
   };
 
-  // 실습 매수 처리 함수
   const submitBuy = () => {
     setMessage(`${PRACTICE_QTY}주 매수 체결! 이제 보유 중인 주식을 매도해보세요.`);
     setTimeout(() => {
@@ -106,198 +96,220 @@ export function TutorialPage() {
     }, 1200);
   };
 
-  // 실습 매도 처리 함수
   const submitSell = () => {
     setMessage(`${PRACTICE_QTY}주 매도 체결! 수익 실현 완료!`);
     setTimeout(() => setPracticePhase('done'), 1000);
   };
 
-  // 상단 단계 라벨 렌더 함수
   const stepLabel = (target: number, label: string) => {
-    // 현재/완료/대기 상태 계산
     const active = step === target;
     const done = step > target;
     return (
-      <span className={active ? 'text-[#5b45f2]' : done ? 'text-[#14a86b]' : 'text-[#a3aab8]'}>
-        {done ? '✓' : target} {label}
+      <span className={`text-xs font-black transition-colors ${active ? 'text-[#5b45f2]' : done ? 'text-[#14a86b]' : 'text-[#a3aab8]'}`}>
+        {done ? '✓' : `0${target}`} {label}
       </span>
     );
   };
 
   return (
-    <main className="min-h-screen px-5 py-5">
-      <section className="mx-auto max-w-7xl rounded-2xl border border-[#dfe3ee] bg-white shadow-card">
-        <header className="flex items-center justify-between border-b border-[#edf0f6] px-6 py-5">
+    <div className="min-h-screen bg-[#f8f9fa] px-0 pb-6 overflow-hidden flex flex-col">
+      
+      {/* Header 영역 */}
+      <header className="flex items-center justify-between border-b border-[#edf0f6] pb-4 pt-5 px-6 shrink-0 bg-[#f8f9fa]">
+        <div className="flex items-center gap-5 shrink-0">
           <BrandLogo />
-          <div className="hidden items-center gap-10 text-sm font-extrabold md:flex">
-            {stepLabel(1, '차트의 언어 배우기')}
-            {stepLabel(2, '용어 퀴즈')}
-            {stepLabel(3, '최종 훈련')}
+          <div className="hidden h-8 w-px bg-[#edf0f6] sm:block" />
+          <div>
+            <h1 className="font-black text-[#111827]">초보자 가이드</h1>
+            <p className="mt-0.5 text-xs font-bold text-[#667085]">주식에 대한 기본 개념을 학습해보자</p>
           </div>
-          <button className="text-sm font-extrabold text-[#667085] hover:text-[#111827]" onClick={() => navigate('/')}>
-            처음으로
-          </button>
-        </header>
-        <div className="px-6 py-7">
-          <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div
-                key="learn"
-                className="grid gap-7 lg:grid-cols-[1fr_1.4fr]"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-              >
-                <aside className="flex flex-col">
-                  <p className="text-lg font-black text-[#5b45f2]">1단계.</p>
-                  <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">차트의 언어 배우기</h1>
-                  <p className="mt-4 text-sm font-medium leading-7 text-[#667085]">
-                    캔들 위에 마우스를 올려보세요. 각 부분의 의미를 알려드릴게요.
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <Button 
+            variant="ghost" 
+            className="px-4 py-1.5 text-xs bg-white border border-[#dfe3ee] shadow-sm font-bold" 
+            onClick={() => navigate('/')}
+          >
+            처음으로 가기
+          </Button>
+        </div>
+      </header>
+
+      {/* Main 영역 */}
+      <div className="w-full max-w-7xl mx-auto px-6 mt-5 flex-1 min-h-0">
+        <div className="mb-5 flex items-center justify-between rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-sm">
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-black text-[#111827] uppercase tracking-wider">진행 단계</span>
+            <div className="flex items-center gap-1.5">
+              {[1, 2, 3].map((s) => (
+                <div
+                  key={s}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    step === s ? 'w-12 bg-[#5b45f2]' : step > s ? 'w-6 bg-[#14a86b]' : 'w-2.5 bg-[#edf0f6]'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-8 text-xs font-black tracking-tight text-[#a3aab8]">
+            <span className={step === 1 ? 'text-[#5b45f2]' : step > 1 ? 'text-[#14a86b]' : ''}>01. 차트의 언어</span>
+            <span className={step === 2 ? 'text-[#5b45f2]' : step > 2 ? 'text-[#14a86b]' : ''}>02. 개념 용어 퀴즈</span>
+            <span className={step === 3 ? 'text-[#5b45f2]' : step > 3 ? 'text-[#14a86b]' : ''}>03. 모의 체결 훈련</span>
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          
+          {/* [1단계] */}
+          {step === 1 && (
+            <motion.div
+              key="learn"
+              className="grid gap-6 grid-cols-1 lg:grid-cols-[340px_1fr] items-stretch"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+            >
+              <aside className="rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-sm flex flex-col justify-between min-h-[520px]">
+                <div>
+                  <p className="text-xs font-black text-[#5b45f2] uppercase tracking-wider">STEP 01</p>
+                  <h2 className="mt-1.5 text-2xl font-black text-[#111827] tracking-tight">차트의 언어 배우기</h2>
+                  <p className="mt-3.5 text-sm font-bold leading-6 text-[#667085]">
+                    오른쪽 차트의 캔들 위에 마우스를 올려보세요. 각 부분의 의미를 알려드릴게요.
                   </p>
-                  <div className="mt-8 grid gap-3">
-                    <div className="rounded-xl border border-[#ffe3e7] bg-[#fff7f8] p-4">
-                      <h2 className="font-black text-[#ff3f55]">양봉(빨간색)</h2>
-                      <p className="mt-1 text-sm font-medium text-[#667085]">종가가 시가보다 높아 주가가 오른 날</p>
+                  
+                  <div className="mt-6 space-y-3">
+                    <div className="rounded-xl border border-[#ffe3e7] bg-[#fff7f8] p-5">
+                      <h3 className="font-black text-[#ff3f55] text-sm">양봉(빨간색)</h3>
+                      <p className="mt-1.5 text-xs font-semibold text-[#667085] leading-relaxed">종가가 시가보다 높아 주가가 오른 날</p>
                     </div>
-                    <div className="rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-4">
-                      <h2 className="font-black text-[#5b45f2]">음봉(파란색)</h2>
-                      <p className="mt-1 text-sm font-medium text-[#667085]">종가가 시가보다 낮아 주가가 내린 날</p>
-                    </div>
-                    <div className="rounded-xl border border-[#dfe3ee] bg-[#f7f8fc] p-4">
-                      <h2 className="font-black text-[#111827]">캔들의 구성 요소</h2>
-                      <p className="mt-1 text-sm font-medium text-[#667085]">시가, 고가, 저가, 종가를 한 번에 보여줘요.</p>
+                    <div className="rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-5">
+                      <h3 className="font-black text-[#5b45f2] text-sm">음봉(파란색)</h3>
+                      <p className="mt-1.5 text-xs font-semibold text-[#667085] leading-relaxed">종가가 시가보다 낮아 주가가 내린 날</p>
                     </div>
                   </div>
-                  <div className="mt-auto pt-7">
-                    <Button className="w-full" onClick={() => setStep(2)}>
-                      다음 단계 →
-                    </Button>
-                  </div>
-                </aside>
-                <CandleChart data={tutorialData} visibleCount={tutorialData.length} isTutorial />
-              </motion.div>
-            )}
+                </div>
+                <div className="pt-6">
+                  <Button className="w-full py-4 text-base font-black rounded-xl shadow-sm" onClick={() => setStep(2)}>
+                    다음 단계 퀴즈 풀기 →
+                  </Button>
+                </div>
+              </aside>
 
-            {step === 2 && (
-              <motion.div
-                key="quiz"
-                className="mx-auto max-w-xl"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-              >
-                <p className="text-lg font-black text-[#5b45f2]">2단계.</p>
-                <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">용어 퀴즈</h1>
-                <p className="mt-4 text-sm font-medium text-[#667085]">설명을 읽고 알맞은 용어를 고르세요.</p>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={quizIndex}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -16 }}
-                    className="mt-8"
-                  >
-                    <div className="mb-3 flex items-center gap-2">
-                      {quizQuestions.map((_, i) => (
-                        <div
-                          key={i}
-                          className={`h-2 flex-1 rounded-full transition-colors ${i < quizIndex ? 'bg-[#14a86b]' : i === quizIndex ? 'bg-[#5b45f2]' : 'bg-[#edf0f6]'}`}
+              <div className="rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-sm flex flex-col justify-between">
+                <h3 className="text-xs font-black uppercase tracking-wider text-[#8b95a7] mb-2">튜토리얼 예시 차트 보드</h3>
+                <div className="w-full flex-1 min-h-0 flex items-center justify-center">
+                  <CandleChart data={tutorialData} visibleCount={tutorialData.length} height={450} isTutorial />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* [2단계] */}
+          {step === 2 && (
+            <motion.div
+              key="quiz"
+              className="mx-auto max-w-3xl rounded-2xl border border-[#dfe3ee] bg-white p-8 shadow-sm mt-4 w-full"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+            >
+              <p className="text-xs font-black text-[#5b45f2] uppercase tracking-wider">STEP 02</p>
+              <h2 className="mt-1 text-2xl font-black text-[#111827] tracking-tight">개념 용어 퀴즈</h2>
+              <p className="mt-2 text-sm font-bold text-[#667085]">설명을 보고 가장 알맞은 답을 골라주세요</p>
+              
+              <AnimatePresence mode="wait">
+                <motion.div key={quizIndex} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="mt-6">
+                  <div className="rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-8 min-h-[140px] flex items-center justify-center shadow-inner">
+                    <p className="text-lg font-black text-center leading-8 text-[#111827]">{currentQuestion.term.meaning}</p>
+                  </div>
+                  
+                  <div className="mt-6 grid grid-cols-2 gap-4">
+                    {currentQuestion.options.map((opt) => {
+                      const isSelected = answered?.word === opt.word;
+                      const isCorrect = isSelected && answered?.correct;
+                      const isWrong = isSelected && !answered?.correct;
+                      return (
+                        <QuizButton
+                          key={opt.word}
+                          word={opt.word}
+                          correct={isCorrect ?? false}
+                          wrong={isWrong ?? false}
+                          disabled={!!answered}
+                          onClick={() => handleAnswer(opt.word)}
                         />
-                      ))}
-                    </div>
-                    <p className="mb-1 text-right text-xs font-extrabold text-[#8b95a7]">
-                      {quizIndex + 1} / {quizQuestions.length}
-                    </p>
-                    <div className="rounded-2xl border border-[#ded9ff] bg-[#f8f7ff] p-6">
-                      <p className="text-base font-bold leading-7 text-[#111827]">{currentQuestion.term.meaning}</p>
-                    </div>
-                    <div className="mt-5 grid grid-cols-2 gap-3">
-                      {currentQuestion.options.map((opt) => {
-                        const isSelected = answered?.word === opt.word;
-                        const isCorrect = isSelected && answered?.correct;
-                        const isWrong = isSelected && !answered?.correct;
-                        return (
-                          <QuizButton
-                            key={opt.word}
-                            word={opt.word}
-                            correct={isCorrect ?? false}
-                            wrong={isWrong ?? false}
-                            disabled={!!answered}
-                            onClick={() => handleAnswer(opt.word)}
-                          />
-                        );
-                      })}
-                    </div>
-                    {answered && !answered.correct && (
-                      <p className="mt-4 text-center text-sm font-extrabold text-[#ff3f55]">틀렸습니다. 다시 도전해보세요!</p>
-                    )}
-                    {answered && answered.correct && (
-                      <p className="mt-4 text-center text-sm font-extrabold text-[#14a86b]">정답입니다! 🎉</p>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-              </motion.div>
-            )}
+                      );
+                    })}
+                  </div>
+                  {answered && !answered.correct && (
+                    <p className="mt-4 text-center text-sm font-black text-[#ff3f55]">틀렸습니다. 다시 도전해보세요!</p>
+                  )}
+                  {answered && answered.correct && (
+                    <p className="mt-4 text-center text-sm font-black text-[#14a86b]">정답입니다! 🎉</p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          )}
 
-            {step === 3 && (
-              <motion.div
-                key="practice"
-                className="grid gap-7 lg:grid-cols-[1fr_1.2fr]"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -30 }}
-              >
-                <aside>
-                  <p className="text-lg font-black text-[#5b45f2]">3단계.</p>
-                  <h1 className="mt-2 text-3xl font-black tracking-[-0.03em] text-[#111827]">최종 훈련</h1>
+          {/* [3단계] */}
+          {step === 3 && (
+            <motion.div
+              key="practice"
+              className="grid gap-6 grid-cols-1 lg:grid-cols-[340px_1fr] items-stretch"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+            >
+              <aside className="rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-sm flex flex-col justify-between min-h-[520px]">
+                <div>
+                  <p className="text-xs font-black text-[#5b45f2] uppercase tracking-wider">FINAL STEP</p>
+                  <h2 className="mt-1.5 text-2xl font-black text-[#111827] tracking-tight">최종 훈련</h2>
                   <AnimatePresence mode="wait">
+                    
                     {practicePhase === 'buy' && (
                       <motion.div key="buy-guide" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <p className="mt-4 text-sm font-medium leading-7 text-[#667085]">
-                          시장가로 10주를 매수해보세요.
-                        </p>
-                        <div className="mt-5 rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-4">
-                          <h2 className="font-black text-[#5b45f2]">미션 1 — 매수 10주</h2>
-                          <p className="mt-1 text-sm font-medium text-[#667085]">매수하기 버튼을 눌러보세요. 가격이 실시간으로 변합니다.</p>
+                        <p className="mt-3.5 text-sm font-bold leading-6 text-[#667085]">시장가로 10주를 매수해보세요.</p>
+                        <div className="mt-5 rounded-xl border border-[#ded9ff] bg-[#f8f7ff] p-5">
+                          <h3 className="font-black text-[#5b45f2] text-sm">미션 1 — 시장가 매수</h3>
+                          <p className="mt-1.5 text-xs font-semibold text-[#667085] leading-relaxed">하단의 매수 버튼을 누르면 실시간 시세로 즉시 체결을 실습합니다.</p>
                         </div>
                       </motion.div>
                     )}
                     {practicePhase === 'sell' && (
                       <motion.div key="sell-guide" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <p className="mt-4 text-sm font-medium leading-7 text-[#667085]">
-                          보유한 10주를 매도해보세요.
-                        </p>
-                        <div className="mt-5 rounded-xl border border-[#ffe3e7] bg-[#fff7f8] p-4">
-                          <h2 className="font-black text-[#ff3f55]">미션 2 — 매도 10주</h2>
-                          <p className="mt-1 text-sm font-medium text-[#667085]">
-                            현재 보유: <strong className="text-[#111827]">{PRACTICE_QTY}주</strong> · 매도하기 버튼을 눌러보세요.
-                          </p>
+                        <p className="mt-3.5 text-sm font-bold leading-6 text-[#667085]">보유한 10주를 매도해보세요.</p>
+                        <div className="mt-5 rounded-xl border border-[#ffe3e7] bg-[#fff7f8] p-5">
+                          <h3 className="font-black text-[#ff3f55] text-sm">미션 2 — 보유 주식 매도</h3>
+                          <p className="mt-1.5 text-xs font-semibold text-[#667085] leading-relaxed">현재 보유: <strong className="text-[#111827]">{PRACTICE_QTY}주</strong> · 매도하기 버튼을 눌러보세요.</p>
                         </div>
                       </motion.div>
                     )}
                     {practicePhase === 'done' && (
                       <motion.div key="done-guide" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <p className="mt-4 text-sm font-medium leading-7 text-[#667085]">
-                          매수와 매도를 모두 완료했습니다! 🎉
-                        </p>
-                        <div className="mt-5 rounded-xl border border-[#c3f0d8] bg-[#edfff6] p-4">
-                          <h2 className="font-black text-[#14a86b]">훈련 완료!</h2>
-                          <p className="mt-1 text-sm font-medium text-[#667085]">이제 실전 시나리오에 도전할 준비가 됐어요.</p>
+                        <p className="mt-3.5 text-sm font-bold leading-6 text-[#667085]">매수와 매도를 모두 완료했습니다! 🎉</p>
+                        <div className="mt-5 rounded-xl border border-[#c3f0d8] bg-[#edfff6] p-5">
+                          <h3 className="font-black text-[#14a86b] text-sm">훈련 완료!</h3>
+                          <p className="mt-1.5 text-xs font-semibold text-[#667085] leading-relaxed">이제 실전 시나리오에 도전할 준비가 됐어요.</p>
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  <Mascot className="mt-8" />
-                </aside>
+                </div>
+                <div className="flex justify-center items-center py-3 bg-[#f7f8fc] rounded-xl border border-[#dfe3ee]">
+                  <Mascot className="h-14 w-14" />
+                </div>
+              </aside>
 
-                <section className="rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-card">
+              <section className="rounded-2xl border border-[#dfe3ee] bg-white p-6 shadow-sm min-h-[520px] flex flex-col justify-between">
+                <div className="w-full">
                   <div className="mb-6 flex items-center justify-between border-b border-[#edf0f6] pb-5">
                     <div>
-                      <p className="text-sm font-bold text-[#667085]">KOSPI 지수</p>
+                      <p className="text-xs font-black text-[#667085] uppercase tracking-wider">KOSPI 지수</p>
                       <motion.p
                         key={livePrice}
-                        className="mt-1 text-3xl font-black text-[#ff3f55]"
-                        initial={{ scale: 1.06 }}
+                        className="mt-1.5 text-4xl font-black text-[#ff3f55] tracking-tight"
+                        initial={{ scale: 1.04 }}
                         animate={{ scale: 1 }}
                         transition={{ duration: 0.2 }}
                       >
@@ -305,57 +317,65 @@ export function TutorialPage() {
                       </motion.p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-extrabold text-[#8b95a7]">시장가</p>
+                      <span className="rounded-md bg-[#f8f7ff] border border-[#ded9ff] px-2.5 py-1 text-[11px] font-black text-[#5b45f2]">
+                        가상 실시간 시세
+                      </span>
                       {practicePhase === 'sell' && (
-                        <p className="mt-1 text-xs font-extrabold text-[#5b45f2]">보유 {PRACTICE_QTY}주</p>
+                        <p className="mt-2 text-xs font-black text-[#5b45f2]">보유 {PRACTICE_QTY}주</p>
                       )}
                     </div>
                   </div>
                   {practicePhase !== 'done' ? (
-                    <div className="space-y-5">
-                      <div className="flex items-center justify-between rounded-xl bg-[#f7f8fc] px-5 py-4">
-                        <span className="font-bold text-[#667085]">수량</span>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between rounded-xl bg-[#f7f8fc] px-6 py-4 border border-[#edf0f6]">
+                        <span className="text-sm font-extrabold text-[#667085]">수량</span>
                         <span className="text-lg font-black text-[#111827]">{PRACTICE_QTY}주</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#667085]">예상 금액</span>
-                        <strong className="text-[#5b45f2]">{formatKRW(PRACTICE_QTY * livePrice)}</strong>
+                      <div className="flex items-center justify-between px-1">
+                        <span className="text-sm font-extrabold text-[#667085]">예상 금액</span>
+                        <strong className="text-2xl font-black text-[#5b45f2] tracking-tight">{formatKRW(PRACTICE_QTY * livePrice)}</strong>
                       </div>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="w-full pt-6">
+                  {practicePhase !== 'done' ? (
+                    <div className="space-y-3">
                       {practicePhase === 'buy' ? (
-                        <Button variant="danger" className="w-full" onClick={submitBuy}>
+                        <Button className="w-full py-4 text-base font-black rounded-xl" onClick={submitBuy}>
                           매수하기 ({PRACTICE_QTY}주)
                         </Button>
                       ) : (
-                        <Button variant="ghost" className="w-full border border-[#5b45f2] text-[#5b45f2]" onClick={submitSell}>
+                        <Button variant="ghost" className="w-full border-2 border-[#5b45f2] text-[#5b45f2] py-4 text-base font-black rounded-xl hover:bg-[#fbfbfe]" onClick={submitSell}>
                           매도하기 ({PRACTICE_QTY}주)
                         </Button>
                       )}
                       {message && (
-                        <p className="rounded-xl bg-[#edfff6] p-4 text-sm font-extrabold text-[#14a86b]">
+                        <p className="rounded-xl bg-[#edfff6] border border-[#c3f0d8] p-4 text-xs font-black text-[#14a86b] text-center">
                           {message}
                         </p>
                       )}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-5 py-6 text-center">
-                      <p className="text-4xl">🏆</p>
-                      <p className="text-lg font-black text-[#111827]">매수 & 매도 완료!</p>
-                      <Button className="w-full" onClick={() => navigate('/select')}>
-                        실전 시나리오 시작하기 →
+                    <div className="flex flex-col items-center gap-4 text-center py-4">
+                      <p className="text-5xl animate-bounce">🏆</p>
+                      <h3 className="text-xl font-black text-[#111827]">매수 & 매도 완료!</h3>
+                      <Button className="w-full py-4 text-base font-black rounded-xl shadow-md" onClick={() => navigate('/select')}>
+                        실전 시나리오 시작하기
                       </Button>
                     </div>
                   )}
-                </section>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
-    </main>
+                </div>
+              </section>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }
 
-// 퀴즈 선택지 버튼 컴포넌트
 function QuizButton({
   word,
   correct,
@@ -376,15 +396,15 @@ function QuizButton({
       onClick={onClick}
       animate={
         correct
-          ? { backgroundColor: ['#ffffff', '#dcfce7', '#dcfce7', '#ffffff'], scale: [1, 1.04, 1] }
+          ? { backgroundColor: ['#ffffff', '#dcfce7', '#dcfce7', '#ffffff'], scale: [1, 1.02, 1] }
           : wrong
-            ? { backgroundColor: ['#ffffff', '#fee2e2', '#fee2e2', '#ffffff'], x: [0, -8, 8, -6, 6, 0] }
+            ? { backgroundColor: ['#ffffff', '#fee2e2', '#fee2e2', '#ffffff'], x: [0, -5, 5, -3, 3, 0] }
             : { backgroundColor: '#ffffff', scale: 1, x: 0 }
       }
-      transition={{ duration: 0.6 }}
-      className={`rounded-xl border px-4 py-4 text-sm font-extrabold text-[#111827] transition-colors
-        ${correct ? 'border-[#14a86b] text-[#14a86b]' : wrong ? 'border-[#ff3f55] text-[#ff3f55]' : 'border-[#dfe3ee] hover:border-[#5b45f2]'}
-        ${disabled && !correct && !wrong ? 'cursor-not-allowed opacity-60' : ''}
+      transition={{ duration: 0.5 }}
+      className={`rounded-xl border px-6 py-4 text-base font-black text-[#111827] transition-colors shadow-sm
+        ${correct ? 'border-[#14a86b] text-[#14a86b]' : wrong ? 'border-[#ff3f55] text-[#ff3f55]' : 'border-[#dfe3ee] hover:border-[#5b45f2] bg-white hover:bg-[#fbfbfe]'}
+        ${disabled && !correct && !wrong ? 'cursor-not-allowed opacity-50' : ''}
       `}
     >
       {word}
