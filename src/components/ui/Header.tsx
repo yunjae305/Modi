@@ -34,7 +34,7 @@ export function Header() {
         {user ? (
           <>
             <span className="hidden text-[15px] font-bold text-[#111827] sm:block">{user.nickname}님</span>
-            <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block font-bold rounded-xl shadow-sm" onClick={() => logout()}>
+            <Button variant="primary" className="hidden px-4 py-2 text-xs sm:block font-bold rounded-full shadow-sm" onClick={() => logout()}>
               로그아웃
             </Button>
           </>
