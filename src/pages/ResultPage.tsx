@@ -1,5 +1,5 @@
 // Modi 시나리오 투자 결과 페이지
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubHeader } from '../components/ui/SubHeader';
 import { InvestorBadge } from '../components/result/InvestorBadge';
@@ -11,10 +11,25 @@ import { Mascot } from '../components/ui/Mascot';
 import { useTradeContext } from '../context/TradeContext';
 import { calcHoldReturnFromStocks, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
 import { formatRate } from '../utils/format';
+import { apiPost } from '../services/api';
+import { useAuthContext } from '../context/AuthContext';
+import { getInvestorType } from '../utils/getInvestorType';
 
 export function ResultPage() {
   const navigate = useNavigate();
-  const { scenario, scenarioStocks, tradeHistory, maxDrawdown, profitRate, reset } = useTradeContext();
+  const {
+    scenario,
+    scenarioStocks,
+    tradeHistory,
+    maxDrawdown,
+    profitRate,
+    portfolioValue,
+    reset,
+  } = useTradeContext();
+
+  const { user, refreshUser } = useAuthContext();
+  const hasSavedResult = useRef(false);
+  const [saveMessage, setSaveMessage] = useState('');
   
   const holdReturn = scenario ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : 0;
   const series = useMemo(
@@ -27,6 +42,46 @@ export function ResultPage() {
       navigate('/select');
     }
   }, [navigate, scenario]);
+
+  useEffect(() => {
+    if (!scenario || hasSavedResult.current) {
+      return;
+    }
+
+    if (scenario.id === 'practice') {
+      return;
+    }
+
+    hasSavedResult.current = true;
+
+    void (async () => {
+      const currentUser = user ?? await refreshUser();
+
+      if (!currentUser) {
+        setSaveMessage('로그인한 사용자만 랭킹 기록이 저장됩니다.');
+        return;
+      }
+
+      if (currentUser.provider === 'GUEST') {
+        setSaveMessage('게스트 로그인은 랭킹 기록이 반영되지 않습니다.');
+        return;
+      }
+
+      await apiPost('/scenario-rankings', {
+        scenarioId: scenario.id,
+        finalAsset: portfolioValue,
+        profitRate,
+        maxDrawdown,
+        tradeCount: tradeHistory.length,
+        investorType: getInvestorType(profitRate).type,
+      });
+
+      setSaveMessage('랭킹 기록이 저장되었습니다.');
+    })().catch((error) => {
+      hasSavedResult.current = false;
+      setSaveMessage(error instanceof Error ? error.message : '랭킹 기록 저장에 실패했습니다.');
+    });
+  }, [scenario, user, refreshUser, portfolioValue, profitRate, maxDrawdown, tradeHistory.length]);
 
   if (!scenario) {
     return null;
@@ -71,6 +126,11 @@ export function ResultPage() {
               <p className="text-xs font-extrabold text-[#5b45f2] uppercase tracking-wider">시뮬레이션 완료</p>
               <h2 className="mt-1 text-xl font-black tracking-tight text-[#111827] sm:text-2xl">시뮬레이션이 완료되었습니다!</h2>
               <p className="mt-2 text-[14px] font-semibold leading-5 text-[#667085]">{scenario.revealText}</p>
+              {saveMessage && (
+                <p className="mt-3 text-xs font-bold text-[#667085]">
+                  {saveMessage}
+                </p>
+              )}
             </div>
 
             {/* 투자 자산 추이 차트판 */}

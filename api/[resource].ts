@@ -1,6 +1,13 @@
 import { requireUser } from './_lib/auth.ts';
-import { executions, listStocks, portfolio, rankings, scenarioRankings } from './_lib/trading.ts';
-import { allowMethods, fail, handleError, ok } from './_lib/http.ts';
+import {
+  executions,
+  listStocks,
+  portfolio,
+  rankings,
+  scenarioRankings,
+  saveScenarioResult,
+} from './_lib/trading.ts';
+import { allowMethods, fail, handleError, ok, readBody } from './_lib/http.ts';
 
 const resources = new Set(['stocks', 'portfolio', 'executions', 'rankings', 'scenario-rankings']);
 
@@ -11,7 +18,9 @@ export default async function handler(req: any, res: any) {
     return fail(res, 404, '지원하지 않는 API입니다.');
   }
 
-  if (!allowMethods(req, res, ['GET'])) {
+  const allowedMethods = resource === 'scenario-rankings' ? ['GET', 'POST'] : ['GET'];
+
+  if (!allowMethods(req, res, allowedMethods)) {
     return;
   }
 
@@ -24,6 +33,11 @@ export default async function handler(req: any, res: any) {
     }
     const user = await requireUser(req);
     if (resource === 'scenario-rankings') {
+      if (req.method === 'POST') {
+        const body = await readBody(req);
+        return ok(res, await saveScenarioResult(user, body));
+      }
+
       return ok(res, await scenarioRankings(user));
     }
     if (resource === 'portfolio') {
