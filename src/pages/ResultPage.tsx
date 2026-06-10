@@ -1,11 +1,10 @@
 // Modi 시나리오 투자 결과 페이지
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubHeader } from '../components/ui/SubHeader';
 import { InvestorBadge } from '../components/result/InvestorBadge';
 import { ProfitChart } from '../components/result/ProfitChart';
 import { TradeHistory } from '../components/result/TradeHistory';
-import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { Mascot } from '../components/ui/Mascot';
 import { useTradeContext } from '../context/TradeContext';
@@ -28,7 +27,8 @@ export function ResultPage() {
   } = useTradeContext();
 
   const { user, refreshUser } = useAuthContext();
-  const hasSavedResult = useRef(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
   
   const holdReturn = scenario ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : 0;
@@ -43,18 +43,13 @@ export function ResultPage() {
     }
   }, [navigate, scenario]);
 
-  useEffect(() => {
-    if (!scenario || hasSavedResult.current) {
-      return;
-    }
+  async function handleSaveRanking() {
+    if (!scenario || isSaving || saved) return;
 
-    if (scenario.id === 'practice') {
-      return;
-    }
+    setIsSaving(true);
+    setSaveMessage('');
 
-    hasSavedResult.current = true;
-
-    void (async () => {
+    try {
       const currentUser = user ?? await refreshUser();
 
       if (!currentUser) {
@@ -76,12 +71,14 @@ export function ResultPage() {
         investorType: getInvestorType(profitRate).type,
       });
 
+      setSaved(true);
       setSaveMessage('랭킹 기록이 저장되었습니다.');
-    })().catch((error) => {
-      hasSavedResult.current = false;
+    } catch (error) {
       setSaveMessage(error instanceof Error ? error.message : '랭킹 기록 저장에 실패했습니다.');
-    });
-  }, [scenario, user, refreshUser, portfolioValue, profitRate, maxDrawdown, tradeHistory.length]);
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   if (!scenario) {
     return null;
@@ -126,10 +123,20 @@ export function ResultPage() {
               <p className="text-xs font-extrabold text-[#5b45f2] uppercase tracking-wider">시뮬레이션 완료</p>
               <h2 className="mt-1 text-xl font-black tracking-tight text-[#111827] sm:text-2xl">시뮬레이션이 완료되었습니다!</h2>
               <p className="mt-2 text-[14px] font-semibold leading-5 text-[#667085]">{scenario.revealText}</p>
-              {saveMessage && (
-                <p className="mt-3 text-xs font-bold text-[#667085]">
-                  {saveMessage}
-                </p>
+              {scenario.id !== 'practice' && (
+                <div className="mt-4 flex items-center gap-3">
+                  <Button
+                    variant={saved ? 'soft' : 'primary'}
+                    className="px-4 py-1.5 text-xs font-bold shadow-sm rounded-full"
+                    disabled={isSaving || saved}
+                    onClick={handleSaveRanking}
+                  >
+                    {isSaving ? '저장 중...' : saved ? '저장 완료' : '랭킹 기록 저장하기'}
+                  </Button>
+                  {saveMessage && (
+                    <p className="text-xs font-bold text-[#667085]">{saveMessage}</p>
+                  )}
+                </div>
               )}
             </div>
 
