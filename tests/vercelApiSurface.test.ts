@@ -14,7 +14,6 @@ test('Vercel API는 계획서의 인증, 거래, 랭킹 함수를 배포한다',
     'api/auth/oauth/kakao/[step].ts',
     'api/[resource].ts',
     'api/orders/[side].ts',
-    'api/prices/sync.ts',
     'supabase/schema.sql',
   ];
 
@@ -27,13 +26,10 @@ test('Vercel API는 계획서의 인증, 거래, 랭킹 함수를 배포한다',
 
   assert.match(env, /SUPABASE_URL=/);
   assert.match(env, /SUPABASE_SERVICE_ROLE_KEY=/);
-  assert.match(env, /KIS_APP_KEY=/);
-  assert.match(env, /KIS_APP_SECRET=/);
   assert.match(schema, /password_hash text/);
   assert.match(schema, /create table if not exists public\.latest_prices/);
   assert.match(schema, /create table if not exists public\.positions/);
   assert.match(schema, /create table if not exists public\.executions/);
-  assert.match(schema, /create table if not exists public\.kis_tokens/);
   assert.match(schema, /grant select, insert, update, delete on table public\.users to service_role/);
   assert.match(schema, /notify pgrst, 'reload schema'/);
   assert.match(schema, /alter publication supabase_realtime/);

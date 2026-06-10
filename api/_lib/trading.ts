@@ -1,5 +1,4 @@
 import { eq, insertRow, patchRows, selectRows, upsertRows } from './supabase.ts';
-import { syncLatestPricesIfNeeded } from './kis.ts';
 import type { UserRow } from './auth';
 
 interface StockRow {
@@ -44,12 +43,9 @@ interface ExecutionRow {
 const sellNetRateNumerator = 99685;
 const sellNetRateDenominator = 100000;
 
-export async function listStocks(sync = true) {
+export async function listStocks() {
   await ensureSeedRows();
   const stocks = await stockRows();
-  if (sync) {
-    await syncLatestPricesIfNeeded(stocks).catch(() => null);
-  }
   const prices = await priceMap();
   return stocks.map((stock) => stockItem(stock, prices.get(stock.id)));
 }
@@ -254,14 +250,8 @@ export async function saveScenarioResult(user: UserRow, input: SaveScenarioResul
   };
 }
 
-export async function forceSyncPrices() {
-  await ensureSeedRows();
-  const stocks = await stockRows();
-  return syncLatestPricesIfNeeded(stocks, true);
-}
-
 async function currentPrice(stockId: string) {
-  const stocks = await listStocks(false);
+  const stocks = await listStocks();
   const stock = stocks.find((item) => item.id === stockId);
   if (!stock) {
     throw new Error('종목을 찾을 수 없습니다.');
