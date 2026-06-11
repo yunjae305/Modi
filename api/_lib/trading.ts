@@ -1,5 +1,4 @@
 import { eq, insertRow, patchRows, selectRows, upsertRows } from './supabase.ts';
-import { syncLatestPricesIfNeeded } from './kis.ts';
 import type { UserRow } from './auth';
 
 interface StockRow {
@@ -44,12 +43,9 @@ interface ExecutionRow {
 const sellNetRateNumerator = 99685;
 const sellNetRateDenominator = 100000;
 
-export async function listStocks(sync = true) {
+export async function listStocks() {
   await ensureSeedRows();
   const stocks = await stockRows();
-  if (sync) {
-    await syncLatestPricesIfNeeded(stocks).catch(() => null);
-  }
   const prices = await priceMap();
   return stocks.map((stock) => stockItem(stock, prices.get(stock.id)));
 }
@@ -184,14 +180,78 @@ export async function scenarioRankings(currentUser: UserRow) {
   }));
 }
 
-export async function forceSyncPrices() {
-  await ensureSeedRows();
-  const stocks = await stockRows();
-  return syncLatestPricesIfNeeded(stocks, true);
+interface SaveScenarioResultInput {
+  scenarioId?: unknown;
+  finalAsset?: unknown;
+  profitRate?: unknown;
+  maxDrawdown?: unknown;
+  tradeCount?: unknown;
+  investorType?: unknown;
+}
+
+const allowedScenarioIds = new Set(['corona', 'subprime', 'dotcom']);
+const allowedInvestorTypes = new Set(['lion', 'turtle', 'rabbit', 'monkey']);
+
+export async function saveScenarioResult(user: UserRow, input: SaveScenarioResultInput) {
+  if (user.provider === 'GUEST') {
+    throw new Error('게스트 로그인은 랭킹 기록이 반영되지 않습니다.');
+  }
+
+  const scenarioId = String(input.scenarioId ?? '');
+  const investorType = String(input.investorType ?? '');
+  const finalAsset = Number(input.finalAsset);
+  const profitRate = Number(input.profitRate);
+  const maxDrawdown = Number(input.maxDrawdown);
+  const tradeCount = Number(input.tradeCount);
+
+  if (!allowedScenarioIds.has(scenarioId)) {
+    throw new Error('저장할 수 없는 시나리오입니다.');
+  }
+
+  if (!Number.isFinite(finalAsset) || finalAsset < 0) {
+    throw new Error('최종 자산값이 올바르지 않습니다.');
+  }
+
+  if (!Number.isFinite(profitRate)) {
+    throw new Error('수익률 값이 올바르지 않습니다.');
+  }
+
+  if (!Number.isFinite(maxDrawdown)) {
+    throw new Error('최대 낙폭 값이 올바르지 않습니다.');
+  }
+
+  if (!Number.isInteger(tradeCount) || tradeCount < 0) {
+    throw new Error('매매 횟수 값이 올바르지 않습니다.');
+  }
+
+  if (!allowedInvestorTypes.has(investorType)) {
+    throw new Error('투자 성향 값이 올바르지 않습니다.');
+  }
+
+  const row = await insertRow<ResultRecordRow>('result_records', {
+    user_id: user.id,
+    scenario_id: scenarioId,
+    final_asset: Math.round(finalAsset),
+    profit_rate: profitRate,
+    max_drawdown: maxDrawdown,
+    trade_count: tradeCount,
+    investor_type: investorType,
+  });
+
+  return {
+    id: row.id,
+    scenarioId: row.scenario_id,
+    finalAsset: Number(row.final_asset),
+    profitRate: Number(row.profit_rate),
+    maxDrawdown: Number(row.max_drawdown),
+    tradeCount: Number(row.trade_count),
+    investorType: row.investor_type,
+    createdAt: row.created_at,
+  };
 }
 
 async function currentPrice(stockId: string) {
-  const stocks = await listStocks(false);
+  const stocks = await listStocks();
   const stock = stocks.find((item) => item.id === stockId);
   if (!stock) {
     throw new Error('종목을 찾을 수 없습니다.');

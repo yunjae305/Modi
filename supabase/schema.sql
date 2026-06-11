@@ -69,13 +69,6 @@ create table if not exists public.result_records (
   created_at timestamptz not null default now()
 );
 
-create table if not exists public.kis_tokens (
-  id text primary key,
-  access_token text not null,
-  expires_at timestamptz not null,
-  updated_at timestamptz not null default now()
-);
-
 insert into public.stocks (id, name, market, fallback_price, previous_close, image_url, enabled) values
 ('005930', '삼성전자', 'KOSPI', 67500, 68400, 'https://file.alphasquare.co.kr/media/images/stock_logo/kr/005930.png', true),
 ('000660', 'SK하이닉스', 'KOSPI', 114700, 112000, 'https://file.alphasquare.co.kr/media/images/stock_logo/kr/000660.png', true),
@@ -110,7 +103,6 @@ alter table public.latest_prices enable row level security;
 alter table public.positions enable row level security;
 alter table public.executions enable row level security;
 alter table public.result_records enable row level security;
-alter table public.kis_tokens enable row level security;
 
 grant usage on schema public to anon, authenticated, service_role;
 grant select on table public.stocks to anon, authenticated;
@@ -121,7 +113,6 @@ grant select, insert, update, delete on table public.latest_prices to service_ro
 grant select, insert, update, delete on table public.positions to service_role;
 grant select, insert, update, delete on table public.executions to service_role;
 grant select, insert, update, delete on table public.result_records to service_role;
-grant select, insert, update, delete on table public.kis_tokens to service_role;
 
 drop policy if exists stocks_public_select on public.stocks;
 create policy stocks_public_select on public.stocks for select to anon, authenticated using (true);

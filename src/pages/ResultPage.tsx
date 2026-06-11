@@ -1,5 +1,5 @@
 // Modi 시나리오 투자 결과 페이지
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubHeader } from '../components/ui/SubHeader';
 import { InvestorBadge } from '../components/result/InvestorBadge';
@@ -10,10 +10,26 @@ import { Mascot } from '../components/ui/Mascot';
 import { useTradeContext } from '../context/TradeContext';
 import { calcHoldReturnFromStocks, calcPortfolioTimeSeriesFromStocks } from '../utils/calcMetrics';
 import { formatRate } from '../utils/format';
+import { apiPost } from '../services/api';
+import { useAuthContext } from '../context/AuthContext';
+import { getInvestorType } from '../utils/getInvestorType';
 
 export function ResultPage() {
   const navigate = useNavigate();
-  const { scenario, scenarioStocks, tradeHistory, maxDrawdown, profitRate, reset } = useTradeContext();
+  const {
+    scenario,
+    scenarioStocks,
+    tradeHistory,
+    maxDrawdown,
+    profitRate,
+    portfolioValue,
+    reset,
+  } = useTradeContext();
+
+  const { user, refreshUser } = useAuthContext();
+  const [isSaving, setIsSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
   
   const holdReturn = scenario ? calcHoldReturnFromStocks(scenarioStocks, scenario.initialCash) : 0;
   const series = useMemo(
@@ -26,6 +42,43 @@ export function ResultPage() {
       navigate('/select');
     }
   }, [navigate, scenario]);
+
+  async function handleSaveRanking() {
+    if (!scenario || isSaving || saved) return;
+
+    setIsSaving(true);
+    setSaveMessage('');
+
+    try {
+      const currentUser = user ?? await refreshUser();
+
+      if (!currentUser) {
+        setSaveMessage('로그인한 사용자만 랭킹 기록이 저장됩니다.');
+        return;
+      }
+
+      if (currentUser.provider === 'GUEST') {
+        setSaveMessage('게스트 로그인은 랭킹 기록이 반영되지 않습니다.');
+        return;
+      }
+
+      await apiPost('/scenario-rankings', {
+        scenarioId: scenario.id,
+        finalAsset: portfolioValue,
+        profitRate,
+        maxDrawdown,
+        tradeCount: tradeHistory.length,
+        investorType: getInvestorType(profitRate).type,
+      });
+
+      setSaved(true);
+      setSaveMessage('랭킹 기록이 저장되었습니다.');
+    } catch (error) {
+      setSaveMessage(error instanceof Error ? error.message : '랭킹 기록 저장에 실패했습니다.');
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   if (!scenario) {
     return null;
@@ -70,6 +123,21 @@ export function ResultPage() {
               <p className="text-xs font-extrabold text-[#5b45f2] uppercase tracking-wider">시뮬레이션 완료</p>
               <h2 className="mt-1 text-xl font-black tracking-tight text-[#111827] sm:text-2xl">시뮬레이션이 완료되었습니다!</h2>
               <p className="mt-2 text-[14px] font-semibold leading-5 text-[#667085]">{scenario.revealText}</p>
+              {scenario.id !== 'practice' && (
+                <div className="mt-4 flex items-center gap-3">
+                  <Button
+                    variant={saved ? 'soft' : 'primary'}
+                    className="px-4 py-1.5 text-xs font-bold shadow-sm rounded-full"
+                    disabled={isSaving || saved}
+                    onClick={handleSaveRanking}
+                  >
+                    {isSaving ? '저장 중...' : saved ? '저장 완료' : '랭킹 기록 저장하기'}
+                  </Button>
+                  {saveMessage && (
+                    <p className="text-xs font-bold text-[#667085]">{saveMessage}</p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* 투자 자산 추이 차트판 */}
