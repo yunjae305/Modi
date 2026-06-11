@@ -1,9 +1,9 @@
 // Modi 랜딩 페이지
 import { useEffect, useState } from 'react';
-import { Header } from '../components/ui/Header'; // 🌟 조립
-import { Footer } from '../components/ui/Footer'; // 🌟 조립
-import { HeroSection } from '../components/landing/HeroSection'; // 🌟 조립
-import { FeatureCard } from '../components/landing/FeatureCard'; // 🌟 조립
+import { Header } from '../components/ui/Header';
+import { Footer } from '../components/ui/Footer';
+import { HeroSection } from '../components/landing/HeroSection'; 
+import { FeatureCard } from '../components/landing/FeatureCard';
 import { ModeSelectModal } from '../components/ui/ModeSelectModal';
 import { useAuthContext } from '../context/AuthContext';
 
@@ -38,7 +38,7 @@ export function LandingPage() {
       {/* Footer 영역 */}
       <Footer />
 
-      {/* Modal */}
+      {/* 모드 선택 Modal */}
       <ModeSelectModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );

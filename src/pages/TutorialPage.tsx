@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { SubHeader } from '../components/ui/SubHeader';
 import { CandleChart } from '../components/chart/CandleChart';
 import { Button } from '../components/ui/Button';
-import { BrandLogo } from '../components/ui/BrandLogo';
 import { Mascot } from '../components/ui/Mascot';
 import { learningTerms } from '../data/learningTerms';
 import type { LearningTerm } from '../data/learningTerms';
@@ -102,16 +101,6 @@ export function TutorialPage() {
     setTimeout(() => setPracticePhase('done'), 1000);
   };
 
-  const stepLabel = (target: number, label: string) => {
-    const active = step === target;
-    const done = step > target;
-    return (
-      <span className={`text-xs font-black transition-colors ${active ? 'text-[#5b45f2]' : done ? 'text-[#14a86b]' : 'text-[#a3aab8]'}`}>
-        {done ? '✓' : `0${target}`} {label}
-      </span>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-[#f8f9fa] px-0 pb-6 overflow-hidden flex flex-col">
       
@@ -152,7 +141,7 @@ export function TutorialPage() {
 
         <AnimatePresence mode="wait">
           
-          {/* [1단계] */}
+          {/* 1단계: 주식 용어 학습 */}
           {step === 1 && (
             <motion.div
               key="learn"
@@ -196,7 +185,7 @@ export function TutorialPage() {
             </motion.div>
           )}
 
-          {/* [2단계] */}
+          {/* 2단계: 주식 용어 퀴즈 */}
           {step === 2 && (
             <motion.div
               key="quiz"
@@ -243,7 +232,7 @@ export function TutorialPage() {
             </motion.div>
           )}
 
-          {/* [3단계] */}
+          {/* 3단계: 주식 매수 및 매도 학습 */}
           {step === 3 && (
             <motion.div
               key="practice"
@@ -367,6 +356,7 @@ export function TutorialPage() {
   );
 }
 
+{/* 퀴즈 버튼 컴포넌트 */}
 function QuizButton({
   word,
   correct,

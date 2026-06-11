@@ -1,3 +1,4 @@
+//Modi 모드 선택 모달 팝업 컴포넌트
 import { useNavigate } from 'react-router-dom';
 import { Modal } from './Modal';
 

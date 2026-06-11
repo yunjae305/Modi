@@ -1,3 +1,4 @@
+//Modi 시뮬레이션, 시뮬레이션 결과, 초보자 가이드 페이지 Header 컴포넌트
 import React from 'react';
 import { BrandLogo } from './BrandLogo';
 

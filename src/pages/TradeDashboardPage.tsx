@@ -120,7 +120,7 @@ export function TradeDashboardPage() {
 
         </motion.main>
       
-        {/* 모드 선택 모달 */}
+        {/* 모드 선택 Modal */}
         <ModeSelectModal isOpen={isModeModalOpen} onClose={() => setIsModeModalOpen(false)} />
       </>
   );

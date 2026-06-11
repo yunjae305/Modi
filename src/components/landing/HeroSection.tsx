@@ -1,3 +1,4 @@
+//Modi 랜딩페이지 Main영역 일러스트 컴포넌트
 import { motion } from 'framer-motion';
 import { Button } from '../ui/Button';
 import { HeroIllustration } from '../ui/HeroIllustration';

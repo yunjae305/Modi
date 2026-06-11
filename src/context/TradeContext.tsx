@@ -1,3 +1,4 @@
+//Modi 시나리오 및 시뮬레이션 과정에서 사용되는 주식 정보 컨트롤러
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type { MarketSpeed, OHLCVBar, Scenario, ScenarioPosition, ScenarioStock, Trade } from '../types';
 import { getDayDurationMs, getStockPriceAtProgress } from '../utils/marketTime';

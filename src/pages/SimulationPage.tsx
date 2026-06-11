@@ -1,3 +1,4 @@
+//Modi 시나리오 시뮬레이션 트레이딩 페이지
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SubHeader } from '../components/ui/SubHeader';
@@ -8,7 +9,6 @@ import { MarketTimeControls } from '../components/trade/MarketTimeControls';
 import { NextDayButton } from '../components/trade/NextDayButton';
 import { StockList } from '../components/trade/StockList';
 import { TradePanel } from '../components/trade/TradePanel';
-import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { useChartData } from '../hooks/useChartData';
@@ -109,7 +109,7 @@ export function SimulationPage() {
       </Button>
     </SubHeader>
 
-      {/* 4열 레이아웃 바디 */}
+      {/* Main 영역: 4열 레이아웃 */}
       <div className="pt-5 pb-6 px-6 w-full grid gap-5 xl:grid-cols-[290px_minmax(0,1fr)_310px_340px] lg:grid-cols-[260px_minmax(0,1fr)_280px_280px] md:grid-cols-2 grid-cols-1">
         
         {/* 1열: 종목 리스트 */}
@@ -119,6 +119,7 @@ export function SimulationPage() {
         
         {/* 2열: 차트, 매매 기록 */}
         <div className="flex flex-col gap-5 min-w-0">
+          {/* 차트 및 캔들차트 컴포넌트 */}
           <section className="rounded-2xl border border-[#dfe3ee] bg-white p-4 shadow-sm">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -132,6 +133,7 @@ export function SimulationPage() {
             <CandleChart data={liveChartData} visibleCount={currentDay + 1} height={260} />
           </section>
           
+          {/* 매매기록 컴포넌트 */}
           <div className="min-w-0">
             <TradeHistory trades={tradeHistory} />
           </div>
@@ -139,8 +141,10 @@ export function SimulationPage() {
         
         {/* 3열: 주문 패널, 알아두기 가이드 배너 */}
         <div className="grid content-start gap-5 min-w-0">
+          {/* 주문 패널 */}
           <TradePanel />
           
+          {/* 알아두기 가이드 배너 (일러스트는 마스코트 컴포넌트 사용) */}
           <section className="rounded-2xl border border-[#ded9ff] bg-[#f8f7ff] p-5 shadow-card flex items-center justify-between">
             <div className="max-w-[75%]">
               <h2 className="font-black text-[#5b45f2] text-sm">알아두기</h2>
@@ -155,6 +159,7 @@ export function SimulationPage() {
         {/* 4열: 시나리오 진행, 내 자산 현황, 시장 시간 */}
         <aside className="grid content-start gap-5 min-w-0">
           
+          {/* 시나리오 진행 상황 (다음 시나리오 넘기는 버튼은 컴포넌트로 구현) */}
           <section className="rounded-2xl border border-[#dfe3ee] bg-white p-5 shadow-card space-y-4">
             <div className="flex items-center justify-between text-xs font-extrabold text-[#667085]">
               <span className="text-[#111827] font-black text-sm">시나리오 진행</span>
@@ -171,13 +176,16 @@ export function SimulationPage() {
             <NextDayButton />
           </section>
 
+          {/* 내 자산 현황 컴포넌트 */}
           <AssetStatus />
+
+          {/* 시장 시간 컨트롤 컴포넌트 */}
           <MarketTimeControls />
         </aside>
 
       </div>
 
-      {/* 모달 컴포넌트 */}
+      {/* Modal 컴포넌트를 이용하여 시뮬레이션 전용 Modal로 재설계 */}
       <Modal isOpen={!!activeModal} onClose={() => setActiveModal(null)}>
         <h3 className="text-lg font-black text-[#111827]">
           {activeModal === 'change' ? '시나리오를 변경하시겠어요?' : '시뮬레이션을 포기하시겠어요?'}

@@ -1,3 +1,4 @@
+//Modi Footer 영역 컴포넌트 (랜딩페이지)
 export function Footer() {
   return (
     <footer className="border-t border-[#edf0f6] pt-8 pb-16 max-w-[90rem] mx-auto w-full flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between text-xs font-semibold text-[#8b95a7]">

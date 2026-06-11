@@ -1,3 +1,4 @@
+//Modi 랜딩페이지, 시나리오 선택, 랭킹 페이지 Header 컴포넌트
 import { useNavigate, useLocation } from 'react-router-dom';
 import { BrandLogo } from './BrandLogo';
 import { Button } from './Button';

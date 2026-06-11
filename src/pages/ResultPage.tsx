@@ -5,7 +5,6 @@ import { SubHeader } from '../components/ui/SubHeader';
 import { InvestorBadge } from '../components/result/InvestorBadge';
 import { ProfitChart } from '../components/result/ProfitChart';
 import { TradeHistory } from '../components/result/TradeHistory';
-import { BrandLogo } from '../components/ui/BrandLogo';
 import { Button } from '../components/ui/Button';
 import { Mascot } from '../components/ui/Mascot';
 import { useTradeContext } from '../context/TradeContext';
@@ -81,25 +80,25 @@ export function ResultPage() {
 
           </div>
           
-          {/* 2열: 상하 해상도 노이즈가 제거된 3행 스택 구조 */}
+          {/* 2열: 평가 뱃지, 트레이딩 결과값, 매매기록 */}
           <div className="flex flex-col gap-5 min-w-0">
             
+            {/* 평가 뱃지 컴포넌트 */}
             <InvestorBadge rate={profitRate} />
 
+            {/* 트레이딩 결과값 컴포넌트 */}
             <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
               <MetricCard title="내 최종 수익률" value={formatRate(profitRate)} tone={profitRate >= 0 ? 'good' : 'bad'} />
               <MetricCard title="존버 수익률" value={formatRate(holdReturn)} tone={holdReturn >= 0 ? 'good' : 'bad'} />
               <MetricCard title="최대 낙폭 MDD" value={formatRate(maxDrawdown)} tone="bad" />
               <MetricCard title="총 매매 횟수" value={`${tradeHistory.length}회`} tone="neutral" />
             </div>
- 
 
+            {/* 매매기록 컴포넌트 */}
             <TradeHistory trades={tradeHistory} />
             
           </div>
-
         </div>
-
         <div className="pt-4 pb-4" />
 
       </div>

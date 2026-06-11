@@ -1,3 +1,4 @@
+//Modi Auth처리 컨트롤 컴포넌트
 import { createContext, useCallback, useContext, useState } from 'react';
 import type { AuthUser } from '../types/auth';
 import { apiGet, apiPost, API_BASE_URL } from '../services/api';

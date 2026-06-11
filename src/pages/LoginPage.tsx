@@ -73,7 +73,7 @@ export function LoginPage() {
         </button>
       </header>
 
-      {/* Body 영역: 로그인/회원가입 */}
+      {/* Body 영역: 로그인 및 회원가입 */}
       <main className="flex flex-1 items-center justify-center w-full py-8">
         <div className="w-full max-w-xl rounded-3xl border border-[#edf0f6] bg-white p-4 sm:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
 
@@ -147,7 +147,6 @@ export function LoginPage() {
                   <span className="text-xs font-extrabold text-[#8b95a7]">또는</span>
                   <span className="h-px flex-1 bg-[#dfe3ee]" />
                 </div>
-                {/* 3. 요구사항: 카카오 심볼 아이콘 삽입 */}
                 <Button
                   type="button"
                   variant="soft"
@@ -180,7 +179,7 @@ export function LoginPage() {
         </div>
       </main>
 
-      {/* Footer 영역 */}
+      {/* Footer 영역 (Footer 컴포넌트는 사용하지 않음) */}
       <footer className="text-center text-xs font-medium text-gray-400">
         © 2026 Modi. All rights reserved.
       </footer>

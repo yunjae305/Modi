@@ -1,3 +1,4 @@
+//Modi 시뮬레이션 결과 평가 뱃지 컴포넌트
 import { motion } from 'framer-motion';
 import { getInvestorType } from '../../utils/getInvestorType';
 

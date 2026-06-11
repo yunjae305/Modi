@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion'; 
-import { Header } from '../components/ui/Header'; // 🌟 조립
+import { Header } from '../components/ui/Header';
 import { scenarios } from '../data/scenarios'; 
 import { useAuthContext } from '../context/AuthContext';
 import { useTradeContext } from '../context/TradeContext';

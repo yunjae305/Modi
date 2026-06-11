@@ -1,3 +1,4 @@
+//Modi 랜딩페이지 특장점 그리드 카드 컴포넌트
 interface FeatureCardProps {
   title: string;
   desc: string;

@@ -1,3 +1,4 @@
+//Modi 주식 용어 데이터 (배열 저장)
 export interface LearningTerm {
   word: string;
   meaning: string;

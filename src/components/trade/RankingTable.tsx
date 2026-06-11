@@ -55,7 +55,6 @@ export function RankingTable({ rankings }: RankingTableProps) {
   );
 }
 
-// 🌟 테이블 내부에서만 쓰이는 랭킹 배지도 깔끔하게 묶어둠
 function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) {
     return <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#fbbf24] text-xs font-black text-white shadow-sm">{rank}</span>;
